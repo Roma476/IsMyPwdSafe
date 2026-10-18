@@ -471,18 +471,35 @@ def calculate_score(log10_value, pattern_warning, pwned_count):
     """
     Computes a 0-100 security score combining entropy, patterns, and breach history.
     """
-    # Base score from entropy: log10 0->0, log10 20->100
     base_score = int(min(100, max(0, log10_value * 5)))
     
-    # Pattern penalty: cap at 30 if there's a known pattern
     if pattern_warning:
         base_score = min(base_score, 30)
         
-    # Breach penalty: cap at 10 if the password was leaked
     if isinstance(pwned_count, int) and pwned_count > 0:
         base_score = min(base_score, 10)
         
     return base_score
+
+def format_time(time_seconds):
+    """
+    Formats seconds into a human-readable string, max 9 chars.
+    """
+    if time_seconds < 1:
+        return "Instant"
+    if time_seconds < 60:
+        return f"{time_seconds:.1f} s"
+    if time_seconds < 3600:
+        return f"{time_seconds/60:.1f} min"
+    if time_seconds < 86400:
+        return f"{time_seconds/3600:.1f} hrs"
+    
+    years = time_seconds / 31536000
+    
+    if years < 1000:
+        return f"{years:.1f} y"
+    
+    return "1000+ y"
 
 def strength(log10_value, pattern_warning):
     """
@@ -557,19 +574,8 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
     
     for label, aps in speeds:
         time_seconds = (10**log10_value) / aps
-        if time_seconds < 1:
-            time_str = "Instant"
-            bar_value = 0
-        else:
-            if time_seconds < 3600:
-                time_str = f"{time_seconds/60:.1f} min"
-            elif time_seconds < 86400:
-                time_str = f"{time_seconds/3600:.1f} hours"
-            elif time_seconds < 31536000:
-                time_str = f"{time_seconds/86400:.1f} days"
-            else:
-                time_str = f"{time_seconds/31536000:.1e} y"
-            bar_value = math.log10(time_seconds)
+        time_str = format_time(time_seconds)
+        bar_value = math.log10(time_seconds) if time_seconds > 0 else 0
             
         bar = progress_bar(bar_value, 12, col_w-36)
         graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
