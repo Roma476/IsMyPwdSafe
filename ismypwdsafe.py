@@ -179,6 +179,7 @@ def strength(log10_value):
 def print_output(password, C, L, combinations, log10_value, mask_mode=False):
     """
     Renders the complete audit assessment report interface layout.
+    Fixed the hardware speed graph calculations to eliminate clipping anomalies on instant cracks.
     """
     banner()
     width = get_width()
@@ -219,17 +220,22 @@ def print_output(password, C, L, combinations, log10_value, mask_mode=False):
         # User-friendly relative time parsing representation
         if time_seconds < 1:
             time_str = "Instant"
-        elif time_seconds < 3600:
-            time_str = f"{time_seconds/60:.1f} min"
-        elif time_seconds < 86400:
-            time_str = f"{time_seconds/3600:.1f} hours"
-        elif time_seconds < 31536000:
-            time_str = f"{time_seconds/86400:.1f} days"
+            bar_value = 0  # if attack takes less than 1 second, the resistance progress bar stays empty
         else:
-            time_str = f"{time_seconds/31536000:.1e} years"
+            if time_seconds < 3600:
+                time_str = f"{time_seconds/60:.1f} min"
+            elif time_seconds < 86400:
+                time_str = f"{time_seconds/3600:.1f} hours"
+            elif time_seconds < 31536000:
+                time_str = f"{time_seconds/86400:.1f} days"
+            else:
+                time_str = f"{time_seconds/31536000:.1e} years"
             
-        log_t = math.log10(max(time_seconds, 1e-5))
-        bar = progress_bar(log_t + 5, 20, col_w-32)
+            # Logarithmic resistance calculation map from 1 second (log10=0) up to 10^15 seconds (~31 million years)
+            bar_value = math.log10(time_seconds)
+            
+        # Draw the dynamic progress bar (Scale upper bound limit parameter set to 15)
+        bar = progress_bar(bar_value, 15, col_w-32)
         graph_lines.append(f"{label:<14} [{bar}] {time_str}")
 
     box3 = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
@@ -250,7 +256,6 @@ def print_output(password, C, L, combinations, log10_value, mask_mode=False):
     ], width)
     for line in sec:
         print(line)
-
 
 # ================== MAIN EXECUTION ==================
 
