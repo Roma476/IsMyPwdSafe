@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import re
 import time
+import textwrap
 import requests
 
 
@@ -293,7 +294,7 @@ def check_patterns(password):
 
     for item in top_150_passwords:
         if item in password.lower() or item in normalized:
-            return f"Top 150 list match ('{item}')"
+            return f"Top 150 most used passwords list match ('{item}')"
 
     if check_keyboard_spatial(password):
         return "Keyboard spatial walk detected (QWERTY layout)"
@@ -514,7 +515,7 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
     leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
     norm_pwd = password.lower().translate(leet_map)
     is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
-    status_top150 = err("[✘] Present") if is_in_top150 else ok("[✔] Clean")
+    status_top150 = err("[✘] Found") if is_in_top150 else ok("[✔] Clean")
 
     search_lines = [
         f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
@@ -536,6 +537,7 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
     # Box Right: Hardware Resistance Graph (Bilanciamo le righe interne per renderlo alto uguale al box di sinistra)
     speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
     graph_lines = []
+    
     for label, aps in speeds:
         time_seconds = (10**log10_value) / aps
         if time_seconds < 1:
@@ -553,8 +555,14 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
             bar_value = math.log10(time_seconds)
             
         bar = progress_bar(bar_value, 12, col_w-36)
-        # Testo hardware in bianco tenue/grigio, barra in bianco
         graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
+        
+    if pattern_warning:
+        graph_lines.append("")
+        disclaimer_text = "[!] The presence of known patterns makes cracking this password significantly faster than brute-force estimates. (in the scale of milliseconds to seconds)"
+        wrapped_lines = textwrap.wrap(disclaimer_text, width=col_w-4)
+        for line in wrapped_lines:
+            graph_lines.append(warn(line))
         
     while len(graph_lines) < len(search_lines):
         graph_lines.append("")
