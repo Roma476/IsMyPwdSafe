@@ -79,6 +79,108 @@ def check_pwned(password):
     except Exception:
         return "You are offline or the API is unreachable. Cannot check if the password has been pwned."
 
+def check_keyboard_spatial(password):
+    """
+    Real QWERTY keyboard coordinate modeling for spatial walk detection.
+    Rows mapped as (row_index, col_index).
+    """
+    keyboard = {
+        '1': (0, 0), '2': (0, 1), '3': (0, 2), '4': (0, 3), '5': (0, 4), '6': (0, 5), '7': (0, 6), '8': (0, 7), '9': (0, 8), '0': (0, 9),
+        'q': (1, 0), 'w': (1, 1), 'e': (1, 2), 'r': (1, 3), 't': (1, 4), 'y': (1, 5), 'u': (1, 6), 'i': (1, 7), 'o': (1, 8), 'p': (1, 9),
+        'a': (2, 0), 's': (2, 1), 'd': (2, 2), 'f': (2, 3), 'g': (2, 4), 'h': (2, 5), 'j': (2, 6), 'k': (2, 7), 'l': (2, 8),
+        'z': (3, 0), 'x': (3, 1), 'c': (3, 2), 'v': (3, 3), 'b': (3, 4), 'n': (3, 5), 'm': (3, 6)
+    }
+    
+    pwd_lower = password.lower()
+    coords = [keyboard[c] for c in pwd_lower if c in keyboard]
+    
+    if len(coords) < 3:
+        return False
+
+    # Check if consecutive characters maintain a strict directional step (horizontal/diagonal/vertical)
+    straight_walks = 0
+    for i in range(len(coords) - 1):
+        r1, c1 = coords[i]
+        r2, c2 = coords[i+1]
+        dr = abs(r2 - r1)
+        dc = abs(c2 - c1)
+        # Valid single step on a keyboard (horizontal, vertical, or diagonal)
+        if (dr == 0 and dc == 1) or (dr == 1 and dc == 0) or (dr == 1 and dc == 1):
+            straight_walks += 1
+        else:
+            straight_walks = 0
+            
+        if straight_walks >= 3:  # 4 or more keys in a direct geometric sequence
+            return True
+            
+    return False
+
+def get_top150_set():
+    return {
+        "123456", "12345678", "123456789", "admin", "12345", "Aa123456", "password",
+        "123", "1234567890", "qwerty", "qwerty123", "Aa@123456", "1234567", "Password",
+        "P@ssw0rd", "admin123", "111111", "Pass@123", "123123", "welcome", "1q2w3e4r",
+        "abc123", "Admin@123", "iloveyou", "000000", "password1", "qwerty1", "Abcd@1234",
+        "dragon", "monkey", "letmein", "1q2w3e4r5t", "qwertyuiop", "********", "secret",
+        "password123", "football", "shadow", "sunshine", "princess", "master", "michael",
+        "ashley", "charlie", "1qaz2wsx", "asdfghjkl", "zxcvbnm", "654321", "666666",
+        "superman", "batman", "India@123", "trustno1", "hello", "love", "whatever",
+        "donald", "liverpool", "arsenal", "chelsea", "jordan", "nicole", "taylor",
+        "access", "thomas", "buster", "hockey", "hunter", "soccer", "ranger",
+        "andrew", "harley", "tigger", "joshua", "starwars", "matthew", "george",
+        "summer", "friday", "cheese", "cookie", "coffee", "pepper", "guitar",
+        "chicken", "ginger", "maggie", "jessica", "jennifer", "amanda", "Robert",
+        "daniel", "william", "maria", "veronica", "susana", "skibidi", "minecraft",
+        "Minecraft", "fortnite", "roblox", "warcraft", "newmember", "newuser",
+        "newpass", "temppass", "test", "test123", "guest", "root", "pass",
+        "passw0rd", "Password1", "Password123", "eminem", "50cent", "metallica",
+        "slipknot", "blink182", "spiderman", "hellokitty", "barbie", "mario",
+        "joker", "thor", "elsa", "987654321", "147258369", "112233", "121212",
+        "131313", "696969", "777777", "888888", "999999", "aaaaaa", "qqqqqq",
+        "london", "manchester", "password!", "qwerty!", "123456!", "computer",
+        "internet", "louvre", "diamond", "killer", "yankees", "lakers"
+    }
+
+def check_patterns(password):
+    """
+    Advanced pattern recognition engine:
+    1. Exact match and containment check against the 150 most common passwords (with leet-speak normalization)
+    2. QWERTY geometric spatial keyboard modeling
+    3. Year range detection (1900 - 2050)
+    4. Excessive character repetitions
+    """
+    if not password:
+        return None
+
+    leet_map = str.maketrans({
+        '@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', 
+        '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'
+    })
+    normalized = password.lower().translate(leet_map)
+
+    top_150_passwords = get_top150_set()
+
+    for item in top_150_passwords:
+        if item in password.lower() or item in normalized:
+            return f"Top 150 list match ('{item}')"
+
+    if check_keyboard_spatial(password):
+        return "Keyboard spatial walk detected (QWERTY layout)"
+
+    for i in range(len(password) - 3):
+        chunk = password[i:i+4]
+        if chunk.isdigit():
+            year = int(chunk)
+            if 1900 <= year <= 2050:
+                return f"Contains common year ({year})"
+
+    pwd_lower = password.lower()
+    for i in range(len(pwd_lower) - 2):
+        if pwd_lower[i] == pwd_lower[i+1] == pwd_lower[i+2]:
+            return "Excessive character repetition"
+
+    return None
+
 
 # ================== TERMINAL ==================
 
@@ -193,11 +295,11 @@ def suggestions(password):
         examples.append(f"{base} → {base}!99#$")
     return examples[:4]
 
-def strength(log10_value):
+def strength(log10_value, pattern_warning):
     """
     Translates mathematical entropy into human-readable assessment rankings.
     """
-    if log10_value < 10:
+    if pattern_warning or log10_value < 10:
         return "WEAK"
     elif log10_value < 14:
         return "MEDIUM"
@@ -215,6 +317,7 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
     display_pwd = "*" * L if mask_mode else password  
 
     pwned_count = check_pwned(password)
+    pattern_warning = check_patterns(password)
 
     # ===== 1. TOP ROW: INPUT STATUS =====
     input_box = make_box("INPUT METRICS", [
@@ -230,16 +333,30 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
     status_num = "[✔] Present" if has_num else "[✘] Missing"
     status_sym = "[✔] Present" if has_sym else "[✘] Missing"
 
-    # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
-    box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", [
+    # Check top 150 match specifically for the checkbox status
+    leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
+    norm_pwd = password.lower().translate(leet_map)
+    is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
+    status_top150 = "[✘] Present" if is_in_top150 else "[✔] Clean"
+
+    search_lines = [
         f"Combinations : {comb_str}",
         f"Lowercase a-z: {status_low}",
         f"Uppercase A-Z: {status_upp}",
         f"Digits 0-9   : {status_num}",
         f"Symbols !@#$ : {status_sym}",
-    ], col_w)
+        f"Top 150 List : {status_top150}",
+    ]
+    
+    if pattern_warning:
+        search_lines.append(f"Pattern Risk : [!] {pattern_warning}")
+    else:
+        search_lines.append(f"Pattern Risk : [+] No structural patterns found")
 
-    # Box Right: Hardware Resistance Graph 
+    # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
+    box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
+
+    # Box Right: Hardware Resistance Graph (Bilanciamo le righe interne per renderlo alto uguale al box di sinistra)
     speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
     graph_lines = []
     for label, aps in speeds:
@@ -257,7 +374,8 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
         bar = progress_bar(bar_value, 15, col_w-32)
         graph_lines.append(f"{label:<14} [{bar}] {time_str}")
         
-    graph_lines.append("")
+    while len(graph_lines) < len(search_lines):
+        graph_lines.append("")
 
     box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
 
@@ -285,7 +403,7 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
     print()
 
     # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
-    lvl = strength(log10_value)
+    lvl = strength(log10_value, pattern_warning)
     sec = make_box("OVERALL SECURITY ASSESSMENT", [
         f"[{progress_bar(log10_value, 16, width-38)}] {lvl}"
     ], width)
