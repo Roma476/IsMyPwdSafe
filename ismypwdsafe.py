@@ -4,7 +4,109 @@ import shutil
 import os
 import argparse
 import hashlib
+import re
 import requests
+
+
+# ================== ANSI COLOR SUPPORT ==================
+os.system("")
+
+def _supports_color():
+    """
+    Detects whether the current terminal supports ANSI colors.
+    Respects the NO_COLOR standard (https://no-color.org/) and
+    common environment variables used by CI systems.
+    """
+    if os.environ.get("NO_COLOR"):
+        return False
+    if os.environ.get("FORCE_COLOR"):
+        return True
+    if not sys.stdout.isatty():
+        return False
+    if os.name == "nt":
+        # Windows: assume modern terminal after os.system("") above
+        return True
+    # Linux/macOS: check TERM
+    term = os.environ.get("TERM", "")
+    return term not in ("", "dumb")
+
+
+USE_COLOR = _supports_color()
+
+
+class C:
+    """ANSI color palette. Empty strings if colors are disabled."""
+    RESET   = "\033[0m"       if USE_COLOR else ""
+    BOLD    = "\033[1m"       if USE_COLOR else ""
+    DIM     = "\033[2m"       if USE_COLOR else ""
+    ITALIC  = "\033[3m"       if USE_COLOR else ""
+    UNDER   = "\033[4m"       if USE_COLOR else ""
+
+    # Foreground
+    BLACK   = "\033[30m"      if USE_COLOR else ""
+    RED     = "\033[31m"      if USE_COLOR else ""
+    GREEN   = "\033[32m"      if USE_COLOR else ""
+    YELLOW  = "\033[33m"      if USE_COLOR else ""
+    BLUE    = "\033[34m"      if USE_COLOR else ""
+    MAGENTA = "\033[35m"      if USE_COLOR else ""
+    CYAN    = "\033[36m"      if USE_COLOR else ""
+    WHITE   = "\033[37m"      if USE_COLOR else ""
+    GRAY    = "\033[90m"      if USE_COLOR else ""
+
+    # Bright
+    BRIGHT_RED     = "\033[91m" if USE_COLOR else ""
+    BRIGHT_GREEN   = "\033[92m" if USE_COLOR else ""
+    BRIGHT_YELLOW  = "\033[93m" if USE_COLOR else ""
+    BRIGHT_BLUE    = "\033[94m" if USE_COLOR else ""
+    BRIGHT_MAGENTA = "\033[95m" if USE_COLOR else ""
+    BRIGHT_CYAN    = "\033[96m" if USE_COLOR else ""
+    BRIGHT_WHITE   = "\033[97m" if USE_COLOR else ""
+
+
+def colorize(text, *codes):
+    """Wrap text in ANSI codes and reset. No-op if colors disabled."""
+    if not USE_COLOR or not codes:
+        return text
+    return "".join(codes) + str(text) + C.RESET
+
+
+# Convenience helpers
+def ok(s):    return colorize(s, C.BRIGHT_GREEN)
+def warn(s):  return colorize(s, C.BRIGHT_YELLOW)
+def err(s):   return colorize(s, C.BRIGHT_RED)
+def info(s):  return colorize(s, C.BRIGHT_CYAN)
+def dim(s):   return colorize(s, C.GRAY)
+def bold(s):  return colorize(s, C.BOLD)
+def accent(s):return colorize(s, C.BRIGHT_MAGENTA, C.BOLD)
+
+
+ANSI_RE = re.compile(r"\033\[[0-9;]*m")
+
+def visible_len(s):
+    return len(ANSI_RE.sub("", s))
+
+def pad_visible(s, width, align="left"):
+    v = visible_len(s)
+    p = max(width - v, 0)
+    if align == "left":
+        return s + " " * p
+    if align == "right":
+        return " " * p + s
+    left = p // 2
+    return " " * left + s + " " * (p - left)
+
+def truncate_visible(s, width):
+    out, vis, i = [], 0, 0
+    while i < len(s) and vis < width:
+        m = ANSI_RE.match(s, i)
+        if m:
+            out.append(m.group(0))
+            i = m.end()
+        else:
+            out.append(s[i])
+            vis += 1
+            i += 1
+    return "".join(out) + (C.RESET if USE_COLOR else "")
 
 
 # ================== CORE LOGIC ==================
@@ -227,26 +329,40 @@ r"                                \______/",
     block_pad = max((width - max_art_width) // 2, 0)
 
     for line in art:
-        print(" " * block_pad + line)
+        print(" " * block_pad + colorize(line, C.BRIGHT_CYAN, C.BOLD))
     
     subtitle = "IsMyPwdSafe Engine -> The only password audit that doesn't spy on you."
     pad_sub = max((width - len(subtitle)) // 2, 0)
-    print("\n" + " " * pad_sub + subtitle)
+    print("\n" + " " * pad_sub + colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC))
     
     credits = "Made by Robert Gabriel Friciu"
     pad_cred = max((width - len(credits)) // 2, 0)
-    print(" " * pad_cred + credits + "\n")
+    print(" " * pad_cred + colorize(credits, C.GRAY) + "\n")
 
-def make_box(title, lines, width):
+def make_box(title, lines, width, title_color=None):
     """
     Generates a structured box layout using Unicode box-drawing characters.
     """
     box = []
     box.append("╔" + "═"*(width-2) + "╗")
-    box.append("║" + title.center(width-2) + "║")
+    
+    tc = title_color if title_color is not None else C.BRIGHT_WHITE
+    inner = (width - 2 - len(title)) // 2
+    right_pad = (width - 2 - len(title)) - inner
+    
+    colored_title = (
+        " " * inner +
+        colorize(title, tc, C.BOLD) +
+        " " * right_pad
+    )
+    box.append("║" + colored_title + "║")
     box.append("╠" + "═"*(width-2) + "╣")
+    
     for line in lines:
-        box.append("║ " + line.ljust(width-4)[:width-4] + " ║")
+        padded = pad_visible(line, width-4)
+        padded = truncate_visible(padded, width-4)
+        box.append("║ " + padded + " ║")
+        
     box.append("╚" + "═"*(width-2) + "╝")
     return box
 
@@ -261,9 +377,9 @@ def merge_boxes(left, right, width):
     left  += ["║" + " "*(col-2) + " ║"] * (max_rows - len(left))
     right += ["║" + " "*(col-2) + " ║"] * (max_rows - len(right))
     for l, r in zip(left, right):
-        print(l[:col].ljust(col) + r[:col].ljust(col))
+        print(pad_visible(truncate_visible(l, col), col) + pad_visible(truncate_visible(r, col), col))
 
-def progress_bar(value, max_value, width):
+def progress_bar(value, max_value, width, colored=False):
     """
     Generates a visual text-based loading bar indicator.
     """
@@ -271,7 +387,19 @@ def progress_bar(value, max_value, width):
         return "░" * max(width, 0)
     ratio = min(max(value / max_value, 0), 1)
     filled = int(ratio * width)
-    return "█"*filled + "░"*(width-filled)
+    bar_filled = "█"*filled
+    bar_empty  = "░"*(width-filled)
+    
+    if not colored or not USE_COLOR:
+        return bar_filled + bar_empty
+        
+    if ratio < 0.35:
+        col = C.BRIGHT_RED
+    elif ratio < 0.65:
+        col = C.BRIGHT_YELLOW
+    else:
+        col = C.BRIGHT_GREEN
+    return col + bar_filled + C.RESET + C.GRAY + bar_empty + C.RESET
 
 
 # ================== PASSWORD EXAMPLES ==================
@@ -308,7 +436,7 @@ def strength(log10_value, pattern_warning):
 
 # ================== OUTPUT ==================
 
-def print_output(password, C, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=False):
+def print_output(password, charset, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=False):
     banner()
     width = get_width()
     col_w = width // 2
@@ -320,27 +448,34 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
     pattern_warning = check_patterns(password)
 
     # ===== 1. TOP ROW: INPUT STATUS =====
+    pwd_label = colorize("Password: ", C.GRAY)
+    pwd_value = colorize(display_pwd, C.BRIGHT_WHITE, C.BOLD)
+    len_label = colorize("Length: ", C.GRAY)
+    len_value = colorize(f"{L}", C.BRIGHT_WHITE, C.BOLD)
+    cs_label  = colorize("Total Charset: ", C.GRAY)
+    cs_value  = colorize(f"{charset}", C.BRIGHT_WHITE, C.BOLD)
+
     input_box = make_box("INPUT METRICS", [
-        f"Password: {display_pwd}  │  Length: {L} characters  │  Total Charset: {C} options"
+        f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
     ], width)
     
     for line in input_box:
         print(line)
     print()
 
-    status_low = "[✔] Present" if has_low else "[✘] Missing"
-    status_upp = "[✔] Present" if has_upp else "[✘] Missing"
-    status_num = "[✔] Present" if has_num else "[✘] Missing"
-    status_sym = "[✔] Present" if has_sym else "[✘] Missing"
+    status_low = ok("[✔] Present") if has_low else err("[✘] Missing")
+    status_upp = ok("[✔] Present") if has_upp else err("[✘] Missing")
+    status_num = ok("[✔] Present") if has_num else err("[✘] Missing")
+    status_sym = ok("[✔] Present") if has_sym else err("[✘] Missing")
 
     # Check top 150 match specifically for the checkbox status
     leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
     norm_pwd = password.lower().translate(leet_map)
     is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
-    status_top150 = "[✘] Present" if is_in_top150 else "[✔] Clean"
+    status_top150 = err("[✘] Present") if is_in_top150 else ok("[✔] Clean")
 
     search_lines = [
-        f"Combinations : {comb_str}",
+        f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
         f"Lowercase a-z: {status_low}",
         f"Uppercase A-Z: {status_upp}",
         f"Digits 0-9   : {status_num}",
@@ -349,9 +484,9 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
     ]
     
     if pattern_warning:
-        search_lines.append(f"Pattern Risk : [!] {pattern_warning}")
+        search_lines.append("Pattern Risk : " + warn("[!] " + pattern_warning))
     else:
-        search_lines.append(f"Pattern Risk : [+] No structural patterns found")
+        search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
 
     # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
     box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
@@ -365,14 +500,19 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
             time_str = "Instant"
             bar_value = 0
         else:
-            if time_seconds < 3600: time_str = f"{time_seconds/60:.1f} min"
-            elif time_seconds < 86400: time_str = f"{time_seconds/3600:.1f} hours"
-            elif time_seconds < 31536000: time_str = f"{time_seconds/86400:.1f} days"
-            else: time_str = f"{time_seconds/31536000:.1e} years"
+            if time_seconds < 3600:
+                time_str = f"{time_seconds/60:.1f} min"
+            elif time_seconds < 86400:
+                time_str = f"{time_seconds/3600:.1f} hours"
+            elif time_seconds < 31536000:
+                time_str = f"{time_seconds/86400:.1f} days"
+            else:
+                time_str = f"{time_seconds/31536000:.1e} y"
             bar_value = math.log10(time_seconds)
             
-        bar = progress_bar(bar_value, 15, col_w-32)
-        graph_lines.append(f"{label:<14} [{bar}] {time_str}")
+        bar = progress_bar(bar_value, 12, col_w-36)
+        # Testo hardware in bianco tenue/grigio, barra in bianco
+        graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
         
     while len(graph_lines) < len(search_lines):
         graph_lines.append("")
@@ -384,19 +524,19 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
 
     if isinstance(pwned_count, int):
         if pwned_count > 0:
-            risk_status = "[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!"
-            risk_details = f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it."
+            risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
+            risk_details = colorize(f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it.", C.BRIGHT_RED)
         else:
-            risk_status = "[+] DATABASE CLEAN: NO MATCHES FOUND"
-            risk_details = "Good news. This password asset does not appear in any known public data breaches."
+            risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
+            risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
     else:
-        risk_status = "[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES"
-        risk_details = f"API Telemetry State: {pwned_count}"
+        risk_status = warn("[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES")
+        risk_details = dim(f"API Telemetry State: {pwned_count}")
 
     darkweb_box = make_box("DARKWEB SCANNER", [
         risk_status,
         risk_details
-    ], width)
+    ], width, title_color=C.BRIGHT_MAGENTA)
     
     for line in darkweb_box:
         print(line)
@@ -404,8 +544,24 @@ def print_output(password, C, L, combinations, log10_value, has_low, has_upp, ha
 
     # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
     lvl = strength(log10_value, pattern_warning)
+    lvl_color = {
+        "WEAK":   C.BRIGHT_RED,
+        "MEDIUM": C.BRIGHT_YELLOW,
+        "STRONG": C.BRIGHT_GREEN,
+    }[lvl]
+    lvl_fill = {
+        "WEAK":   0.15,
+        "MEDIUM": 0.50,
+        "STRONG": 1.00,
+    }[lvl]
+    
+    bar_width = width - 38
+    filled = int(bar_width * lvl_fill)
+    bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
+    
+    lvl_colored = colorize(lvl, lvl_color, C.BOLD)
     sec = make_box("OVERALL SECURITY ASSESSMENT", [
-        f"[{progress_bar(log10_value, 16, width-38)}] {lvl}"
+        f"[{bar}] {lvl_colored}"
     ], width)
     for line in sec:
         print(line)
