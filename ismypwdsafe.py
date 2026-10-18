@@ -467,6 +467,23 @@ def suggestions(password):
         examples.append(f"{base} → {base}!99#$")
     return examples[:4]
 
+def calculate_score(log10_value, pattern_warning, pwned_count):
+    """
+    Computes a 0-100 security score combining entropy, patterns, and breach history.
+    """
+    # Base score from entropy: log10 0->0, log10 20->100
+    base_score = int(min(100, max(0, log10_value * 5)))
+    
+    # Pattern penalty: cap at 30 if there's a known pattern
+    if pattern_warning:
+        base_score = min(base_score, 30)
+        
+    # Breach penalty: cap at 10 if the password was leaked
+    if isinstance(pwned_count, int) and pwned_count > 0:
+        base_score = min(base_score, 10)
+        
+    return base_score
+
 def strength(log10_value, pattern_warning):
     """
     Translates mathematical entropy into human-readable assessment rankings.
@@ -593,18 +610,16 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
 
     # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
     lvl = strength(log10_value, pattern_warning)
+    score = calculate_score(log10_value, pattern_warning, pwned_count)
+    
     lvl_color = {
         "WEAK":   C.BRIGHT_RED,
         "MEDIUM": C.BRIGHT_YELLOW,
         "STRONG": C.BRIGHT_GREEN,
     }[lvl]
-    lvl_fill = {
-        "WEAK":   0.15,
-        "MEDIUM": 0.50,
-        "STRONG": 1.00,
-    }[lvl]
     
-    lvl_colored = colorize(lvl, lvl_color, C.BOLD)
+    lvl_fill = score / 100.0
+    lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
     
     if ANIMATE:
         bar_width = width - 38
@@ -620,11 +635,11 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
         
         for f in range(0, target_fill + 1, max(1, target_fill // 30)):
             bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
-            sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl))))
+            sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
             sys.stdout.flush()
             time.sleep(0.008)
         bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
-        sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl))))
+        sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
         sys.stdout.flush()
         print("\n╚" + "═"*(width-2) + "╝")
     else:
