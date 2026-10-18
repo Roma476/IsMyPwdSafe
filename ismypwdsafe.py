@@ -3,6 +3,9 @@ import math
 import shutil
 import os
 import argparse
+import hashlib
+import requests
+
 
 # ================== CORE LOGIC ==================
 
@@ -17,16 +20,13 @@ def must_use_log(C, L):
         return L >= 5
     return L >= 4
 
-
 def calc_charset(password):
     """
-    Calculates the potential character set (search space) size.
-    Fixed to properly handle symbols and prevent false positives with Unicode characters.
+    Calculates the potential character set size and returns individual flags.
     """
     number = lower = upper = symbol = False
     total = 0
     for char in password:
-        # Enforce standard ASCII range checks to prevent bugs with accented letters
         if char.isdigit() and not number:
             number = True
             total += 10
@@ -39,8 +39,8 @@ def calc_charset(password):
         elif not char.isalnum() and ord(char) < 128 and not symbol:
             symbol = True
             total += 33
-    return total
-
+            
+    return total, lower, upper, number, symbol
 
 def calc_combinations(C, L):
     """
@@ -52,6 +52,33 @@ def calc_combinations(C, L):
     else:
         return C ** L, log10_value
 
+def hash_password(password):
+    """
+    Computes the SHA-1 hash of the input password for secure transmission.
+    """
+    sha1 = hashlib.sha1()
+    sha1.update(password.encode('utf-8'))
+    return sha1.hexdigest()
+
+def check_pwned(password):
+    prefix = hash_password(password)[:5].upper()
+    suffix = hash_password(password)[5:].upper()
+
+    url = f"https://api.pwnedpasswords.com/range/{prefix}"
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code != 200:
+            return "API request failed with status code: {}".format(response.status_code)
+
+        lines = response.text.splitlines()
+        for line in lines:
+            server_suffix, count = line.split(':')
+            if server_suffix == suffix:
+                return int(count)
+        return 0
+    except Exception:
+        return "You are offline or the API is unreachable. Cannot check if the password has been pwned."
+
 
 # ================== TERMINAL ==================
 
@@ -60,7 +87,6 @@ def get_width():
     Retrieves the current terminal column width dynamically.
     """
     return shutil.get_terminal_size((120, 30)).columns
-
 
 def clear():
     """
@@ -109,7 +135,6 @@ r"                                \______/",
     pad_cred = max((width - len(credits)) // 2, 0)
     print(" " * pad_cred + credits + "\n")
 
-
 def make_box(title, lines, width):
     """
     Generates a structured box layout using Unicode box-drawing characters.
@@ -123,7 +148,6 @@ def make_box(title, lines, width):
     box.append("╚" + "═"*(width-2) + "╝")
     return box
 
-
 def merge_boxes(left, right, width):
     """
     Prints two independent box objects side-by-side balanced inside the viewport.
@@ -136,7 +160,6 @@ def merge_boxes(left, right, width):
     right += ["║" + " "*(col-2) + " ║"] * (max_rows - len(right))
     for l, r in zip(left, right):
         print(l[:col].ljust(col) + r[:col].ljust(col))
-
 
 def progress_bar(value, max_value, width):
     """
@@ -160,15 +183,15 @@ def suggestions(password):
     examples = []
     base = password
     examples.append(f"{base} → {base}123!")
-    examples.append(f"{base} → {base.capitalize()}!")
+    examples.append(f"{base} → {base.capitalize()}=")
     leet = base.replace('a','@').replace('o','0').replace('e','3').replace('i','1')
     examples.append(f"{base} → {leet}")
-    examples.append(f"{base} → {base}_Secure2026!")
+    examples.append(f"{base} → {base}_hf3f?")
     if len(base) >= 4:
         examples.append(f"{base} → {base[:3]}!{base[3:]}99#")
     else:
         examples.append(f"{base} → {base}!99#$")
-    return examples[:5]
+    return examples[:4]
 
 def strength(log10_value):
     """
@@ -183,86 +206,92 @@ def strength(log10_value):
 
 # ================== OUTPUT ==================
 
-def print_output(password, C, L, combinations, log10_value, mask_mode=False):
-    """
-    Renders the complete audit assessment report interface layout.
-    Fixed the hardware speed graph calculations to eliminate clipping anomalies on instant cracks.
-    """
+def print_output(password, C, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=False):
     banner()
     width = get_width()
     col_w = width // 2
 
     comb_str = f"{combinations:,}" if combinations else f"10^{log10_value:.2f}"
+    display_pwd = "*" * L if mask_mode else password  
 
-    # Conditional Privacy Logic based on user CLI flag setting
-    if mask_mode:
-        display_pwd = "*" * L
-    else:
-        display_pwd = password  # Default show 
+    pwned_count = check_pwned(password)
 
-    # ===== TOP ROW =====
-    box1 = make_box("INPUT STATUS", [
-        f"Password : {display_pwd}",
-        f"Length   : {L}",
-        f"Charset  : {C}",
-    ], col_w)
-
-    box2 = make_box("SEARCH SPACE", [
-        f"Combinations : {comb_str}",
-        f"log10        : {log10_value:.2f}",
-        "",
-        "Entropy: " + progress_bar(log10_value, 20, col_w-19)
-    ], col_w)
-
-    merge_boxes(box1, box2, width)
+    # ===== 1. TOP ROW: INPUT STATUS =====
+    input_box = make_box("INPUT METRICS", [
+        f"Password: {display_pwd}  │  Length: {L} characters  │  Total Charset: {C} options"
+    ], width)
+    
+    for line in input_box:
+        print(line)
     print()
 
-    # ===== SPEED GRAPH (COMPUTATIONAL RESISTANCE) =====
+    status_low = "[✔] Present" if has_low else "[✘] Missing"
+    status_upp = "[✔] Present" if has_upp else "[✘] Missing"
+    status_num = "[✔] Present" if has_num else "[✘] Missing"
+    status_sym = "[✔] Present" if has_sym else "[✘] Missing"
+
+    # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
+    box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", [
+        f"Combinations : {comb_str}",
+        f"Lowercase a-z: {status_low}",
+        f"Uppercase A-Z: {status_upp}",
+        f"Digits 0-9   : {status_num}",
+        f"Symbols !@#$ : {status_sym}",
+    ], col_w)
+
+    # Box Right: Hardware Resistance Graph 
     speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
     graph_lines = []
-    
     for label, aps in speeds:
         time_seconds = (10**log10_value) / aps
-        
-        # User-friendly relative time parsing representation
         if time_seconds < 1:
             time_str = "Instant"
-            bar_value = 0  # if attack takes less than 1 second, the resistance progress bar stays empty
+            bar_value = 0
         else:
-            if time_seconds < 3600:
-                time_str = f"{time_seconds/60:.1f} min"
-            elif time_seconds < 86400:
-                time_str = f"{time_seconds/3600:.1f} hours"
-            elif time_seconds < 31536000:
-                time_str = f"{time_seconds/86400:.1f} days"
-            else:
-                time_str = f"{time_seconds/31536000:.1e} years"
-            
-            # Logarithmic resistance calculation map from 1 second (log10=0) up to 10^15 seconds (~31 million years)
+            if time_seconds < 3600: time_str = f"{time_seconds/60:.1f} min"
+            elif time_seconds < 86400: time_str = f"{time_seconds/3600:.1f} hours"
+            elif time_seconds < 31536000: time_str = f"{time_seconds/86400:.1f} days"
+            else: time_str = f"{time_seconds/31536000:.1e} years"
             bar_value = math.log10(time_seconds)
             
-        # Draw the dynamic progress bar (Scale upper bound limit parameter set to 15)
         bar = progress_bar(bar_value, 15, col_w-32)
         graph_lines.append(f"{label:<14} [{bar}] {time_str}")
+        
+    graph_lines.append("")
 
-    box3 = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
+    box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
 
-    # ===== PASSWORD IMPROVEMENTS =====
-    tips = list(suggestions(password))
-    while len(tips) < len(graph_lines):
-        tips.append("")
-    box4 = make_box("PASSWORD IMPROVEMENTS", tips, col_w)
-
-    merge_boxes(box3, box4, width)
+    merge_boxes(box_search, box_hardware, width)
     print()
 
-    # ===== GLOBAL SECURITY SUMMARY =====
+    if isinstance(pwned_count, int):
+        if pwned_count > 0:
+            risk_status = "[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!"
+            risk_details = f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it."
+        else:
+            risk_status = "[+] DATABASE CLEAN: NO MATCHES FOUND"
+            risk_details = "Good news. This password asset does not appear in any known public data breaches."
+    else:
+        risk_status = "[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES"
+        risk_details = f"API Telemetry State: {pwned_count}"
+
+    darkweb_box = make_box("DARKWEB SCANNER", [
+        risk_status,
+        risk_details
+    ], width)
+    
+    for line in darkweb_box:
+        print(line)
+    print()
+
+    # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
     lvl = strength(log10_value)
-    sec = make_box("SECURITY LEVEL ASSESSMENT", [
+    sec = make_box("OVERALL SECURITY ASSESSMENT", [
         f"[{progress_bar(log10_value, 16, width-38)}] {lvl}"
     ], width)
     for line in sec:
         print(line)
+
 
 # ================== MAIN EXECUTION ==================
 
@@ -298,7 +327,7 @@ def main():
         return
 
     password = args.password
-    C = calc_charset(password)
+    C, has_low, has_upp, has_num, has_sym = calc_charset(password)
     
     if C == 0:
         print("[!] Could not determine charset.")
@@ -308,7 +337,7 @@ def main():
     combinations, log10_value = calc_combinations(C, L)
     
     # Push data variables matrix structures forward into formatting layout routines
-    print_output(password, C, L, combinations, log10_value, mask_mode=args.Mask)
+    print_output(password, C, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=args.Mask)
 
 
 if __name__ == "__main__":
