@@ -5,6 +5,7 @@ import os
 import argparse
 import hashlib
 import re
+import time
 import requests
 
 
@@ -32,6 +33,7 @@ def _supports_color():
 
 
 USE_COLOR = _supports_color()
+ANIMATE = sys.stdout.isatty() and USE_COLOR
 
 
 class C:
@@ -107,6 +109,33 @@ def truncate_visible(s, width):
             vis += 1
             i += 1
     return "".join(out) + (C.RESET if USE_COLOR else "")
+
+
+# ================== ANIMATION ==================
+
+def typewrite(text, delay=0.005, end="\n"):
+    """Prints text character by character with a small delay."""
+    if not ANIMATE:
+        print(text + end.rstrip("\n"))
+        return
+    for ch in text:
+        sys.stdout.write(ch)
+        sys.stdout.flush()
+        time.sleep(delay)
+    sys.stdout.write(end)
+    sys.stdout.flush()
+
+
+def print_lines_animated(lines, delay=0.015):
+    """Prints a list of lines one by one with a small delay."""
+    if not ANIMATE:
+        for line in lines:
+            print(line)
+        return
+    for line in lines:
+        print(line)
+        sys.stdout.flush()
+        time.sleep(delay)
 
 
 # ================== CORE LOGIC ==================
@@ -333,11 +362,22 @@ r"                                \______/",
     
     subtitle = "IsMyPwdSafe Engine -> The only password audit that doesn't spy on you."
     pad_sub = max((width - len(subtitle)) // 2, 0)
-    print("\n" + " " * pad_sub + colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC))
     
     credits = "Made by Robert Gabriel Friciu"
     pad_cred = max((width - len(credits)) // 2, 0)
-    print(" " * pad_cred + colorize(credits, C.GRAY) + "\n")
+
+    print()
+    
+    if ANIMATE:
+        sys.stdout.write(" " * pad_sub)
+        typewrite(colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC), delay=0.005)
+        
+        sys.stdout.write(" " * pad_cred)
+        typewrite(colorize(credits, C.GRAY), delay=0.005)
+        print()
+    else:
+        print(" " * pad_sub + colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC))
+        print(" " * pad_cred + colorize(credits, C.GRAY) + "\n")
 
 def make_box(title, lines, width, title_color=None):
     """
@@ -378,6 +418,9 @@ def merge_boxes(left, right, width):
     right += ["║" + " "*(col-2) + " ║"] * (max_rows - len(right))
     for l, r in zip(left, right):
         print(pad_visible(truncate_visible(l, col), col) + pad_visible(truncate_visible(r, col), col))
+        if ANIMATE:
+            sys.stdout.flush()
+            time.sleep(0.012)
 
 def progress_bar(value, max_value, width, colored=False):
     """
@@ -459,8 +502,7 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
         f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
     ], width)
     
-    for line in input_box:
-        print(line)
+    print_lines_animated(input_box, delay=0.015)
     print()
 
     status_low = ok("[✔] Present") if has_low else err("[✘] Missing")
@@ -538,8 +580,7 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
         risk_details
     ], width, title_color=C.BRIGHT_MAGENTA)
     
-    for line in darkweb_box:
-        print(line)
+    print_lines_animated(darkweb_box, delay=0.02)
     print()
 
     # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
@@ -555,16 +596,38 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
         "STRONG": 1.00,
     }[lvl]
     
-    bar_width = width - 38
-    filled = int(bar_width * lvl_fill)
-    bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
-    
     lvl_colored = colorize(lvl, lvl_color, C.BOLD)
-    sec = make_box("OVERALL SECURITY ASSESSMENT", [
-        f"[{bar}] {lvl_colored}"
-    ], width)
-    for line in sec:
-        print(line)
+    
+    if ANIMATE:
+        bar_width = width - 38
+        target_fill = int(bar_width * lvl_fill)
+        
+        print("╔" + "═"*(width-2) + "╗")
+        title = "OVERALL SECURITY ASSESSMENT"
+        inner = (width - 2 - len(title)) // 2
+        right_pad = (width - 2 - len(title)) - inner
+        colored_title = " " * inner + colorize(title, C.BRIGHT_WHITE, C.BOLD) + " " * right_pad
+        print("║" + colored_title + "║")
+        print("╠" + "═"*(width-2) + "╣")
+        
+        for f in range(0, target_fill + 1, max(1, target_fill // 30)):
+            bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
+            sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl))))
+            sys.stdout.flush()
+            time.sleep(0.008)
+        bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
+        sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl))))
+        sys.stdout.flush()
+        print("\n╚" + "═"*(width-2) + "╝")
+    else:
+        bar_width = width - 38
+        filled = int(bar_width * lvl_fill)
+        bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
+        sec = make_box("OVERALL SECURITY ASSESSMENT", [
+            f"[{bar}] {lvl_colored}"
+        ], width)
+        for line in sec:
+            print(line)
 
 
 # ================== MAIN EXECUTION ==================
