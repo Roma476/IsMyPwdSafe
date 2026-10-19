@@ -20,7 +20,7 @@
 [![Runtime deps](https://img.shields.io/badge/deps-1_(requests)-63e6b4?style=flat-square)](pyproject.toml)
 [![Network calls](https://img.shields.io/badge/network_calls-2-729dff?style=flat-square)](#privacy-and-network)
 
-**Read this before you run it:** `imps "your-password"` puts the password in your shell history, terminal scrollback and any log your terminal writes to. If you need the password out of history, prefix the command with a space (requires `HISTCONTROL=ignorespace` in bash/zsh), clear the history after or wait for the interactive mode on the roadmap. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
+**Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
 
 > **Project status - actively developed.** IsMyPwdSafe is under active development. A `--offline` flag that skips both network calls (HIBP and the GitHub version check) is planned for the next release, so a fully offline audit will be a single flag instead of a firewall rule. Additional flags are in progress. If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls). See [Roadmap](#roadmap) and [Contributing](#contributing).
 
@@ -53,6 +53,14 @@ python -m ismypwdsafe.main "correct-horse-battery-staple"
 ```
 
 ### 2. Run an audit
+
+```bash
+$ imps 
+Enter password to audit: 
+# (The terminal automatically hides your keystrokes as you type)
+```
+
+If you prefer to pass the password as an inline argument (e.g., for scripts or non-interactive environments):
 
 ```bash
 imps "correct-horse-battery-staple"
@@ -102,6 +110,7 @@ The password appears as `************` in the INPUT METRICS panel. Everything el
 | [HaveIBeenPwned range lookup](#network-behavior) | k-anonymity breach check; only a 5-character SHA-1 prefix leaves the machine |
 | [Hardware resistance graph](#scoring) | Estimated time-to-crack on PC, server, GPU rig and cluster |
 | [Privacy mask mode](#4-mask-the-password-in-the-output) | `-M` / `--Mask` replaces the password with asterisks in all output |
+| [Secure interactive prompt](#2-run-an-audit) | Run `imps` without arguments to enter the password via a hidden prompt, preventing shell history leaks |
 | [Skip update check](#network-behavior) | `--no-update-check` disables the single GitHub request at startup |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -259,7 +268,7 @@ A `--offline` flag that disables **both** requests in a single switch is in prog
 
 ## Known limitations
 
-- **Shell history.** `imps "pass"` ends up in bash/zsh history, terminal scrollback and any log the terminal writes to. Workaround: prefix the command with a space (requires `HISTCONTROL=ignorespace`) or clear history afterwards. An interactive mode that reads from stdin without echoing is on the roadmap.
+- **Shell history.** If you pass the password inline (`imps "pass"`), it ends up in bash/zsh history and terminal scrollback. **Workaround:** Just run `imps` without arguments to use the secure interactive prompt, or prefix the command with a space (requires `HISTCONTROL=ignorespace`).
 - **Two network calls still happen by default.** `--no-update-check` only disables the GitHub request. Disabling the HIBP request currently requires firewall rules; the `--offline` flag on the roadmap will cover both.
 - **ASCII only.** The charset is estimated over printable ASCII. Non-ASCII passwords are underestimated in entropy.
 - **Finite pattern list.** Top-150 plus four structural rules. An uncommon password is not automatically strong - it is only not *obviously* weak.
@@ -325,7 +334,6 @@ Actively in progress, in rough order of priority:
 - **`--offline` flag** - skips both the HIBP and the GitHub requests in a single switch, so a fully offline audit does not require firewall rules.
 - **`--json` output** - machine-readable audit result for scripting and CI pipelines.
 - **`--quiet` mode** - exit code only, useful in pre-commit hooks and pipelines.
-- **Interactive / stdin mode** - read the password without echoing it and without putting it in shell history.
 - **Test suite and CI** - `unittest` coverage for the entropy engine, the pattern rules and the score caps, plus a GitHub Actions workflow on 3.8 / 3.10 / 3.12.
 - **Expanded pattern dictionary** - the top-150 list is a starting point, not the endpoint.
 
