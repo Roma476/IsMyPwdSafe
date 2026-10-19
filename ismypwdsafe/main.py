@@ -728,12 +728,15 @@ def main():
     if not args.password:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
+        except KeyboardInterrupt:
+            print(warn("\n[!] Input interrupted by user."))
+            return
         except Exception as e:
             print(err(f"[!] Error reading password: {e}"))
             return
 
         if not password:
-            print(err("[!] No password provided."))
+            print(warn("[!] No password provided."))
             return
 
     # Update Checker (safe, silent, timeouts after 1.5s)
