@@ -10,6 +10,8 @@ import textwrap
 import requests
 
 
+__version__ = "1.0.0"
+
 # ================== ANSI COLOR SUPPORT ==================
 os.system("")
 
@@ -137,6 +139,32 @@ def print_lines_animated(lines, delay=0.015):
         print(line)
         sys.stdout.flush()
         time.sleep(delay)
+
+
+# ================== UPDATE CHECKER ==================
+
+def _version_tuple(v):
+    """Converts '1.2.3' to (1, 2, 3) for correct comparison."""
+    try:
+        return tuple(map(int, v.strip().split(".")))
+    except ValueError:
+        return (0,)
+
+def check_for_updates(current_version):
+    """
+    Checks GitHub for a newer version. Returns the new version string if available.
+    Silently returns None on any error (offline, timeout, etc.).
+    """
+    url = "https://raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/version.txt"
+    try:
+        response = requests.get(url, timeout=1.5)
+        if response.status_code == 200:
+            latest = response.text.strip()
+            if _version_tuple(latest) > _version_tuple(current_version):
+                return latest
+    except Exception:
+        pass
+    return None
 
 
 # ================== CORE LOGIC ==================
@@ -676,6 +704,13 @@ def main():
         help="Completely mask the input password with asterisks in the summary screen box"
     )
     
+    # Disable update checker (for privacy or offline usage)
+    parser.add_argument(
+        "--no-update-check",
+        action="store_true",
+        help="Disable the remote update check on startup"
+    )
+    
     # Target Positional Data Input (Required, parsed at the end)
     parser.add_argument(
         "password", 
@@ -691,6 +726,15 @@ def main():
         print("Usage: imps [-M | --Mask] <password>")
         print("Run 'imps -h' or 'imps --help' for comprehensive instructions manual.")
         return
+
+    # Update Checker (safe, silent, timeouts after 1.5s)
+    if not args.no_update_check:
+        new_ver = check_for_updates(__version__)
+        if new_ver:
+            width = get_width()
+            msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"
+            print(warn(msg.center(width)))
+            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))
 
     password = args.password
     C, has_low, has_upp, has_num, has_sym = calc_charset(password)
