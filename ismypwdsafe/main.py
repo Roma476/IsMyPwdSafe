@@ -728,9 +728,6 @@ def main():
     if not args.password:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
-        except KeyboardInterrupt:
-            print(warn("\n[!] Input interrupted by user."))
-            return
         except Exception as e:
             print(err(f"[!] Error reading password: {e}"))
             return
@@ -762,4 +759,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n" + warn("[!] Audit interrupted by user."))
+        sys.exit(130) # Exit code 130 for SIGINT (Ctrl+C)
