@@ -8,9 +8,11 @@ import re
 import time
 import textwrap
 import requests
+import getpass
 
 
 __version__ = "1.0.0"
+
 
 # ================== ANSI COLOR SUPPORT ==================
 os.system("")
@@ -720,12 +722,19 @@ def main():
     )
 
     args = parser.parse_args()
+    password = args.password
     
-    # Catch empty constraints inputs parameters gracefully and fallback to error manual screen
+    # Catch empty constraints inputs and prompt for password securely if not provided
     if not args.password:
-        print("Usage: imps [-M | --Mask] <password>")
-        print("Run 'imps -h' or 'imps --help' for comprehensive instructions manual.")
-        return
+        try:
+            password = getpass.getpass(prompt="Enter password to audit: ")
+        except Exception as e:
+            print(err(f"[!] Error reading password: {e}"))
+            return
+
+        if not password:
+            print(err("[!] No password provided."))
+            return
 
     # Update Checker (safe, silent, timeouts after 1.5s)
     if not args.no_update_check:
@@ -736,7 +745,6 @@ def main():
             print(warn(msg.center(width)))
             print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))
 
-    password = args.password
     C, has_low, has_upp, has_num, has_sym = calc_charset(password)
     
     if C == 0:
