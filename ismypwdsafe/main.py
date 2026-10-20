@@ -546,14 +546,28 @@ def strength(log10_value, pattern_warning):
 
 def print_output(password, charset, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=False, short_mode=False):
+                 mask_mode=False, view="full"):
+    """
+    Renders the audit report.
+
+    view can be:
+      - "full"    : banner, input metrics, search/hardware, darkweb, overall
+      - "short"   : overall assessment only
+      - "darkweb" : darkweb scanner only
+    """
     width = get_width()
     col_w = width // 2
-    
+
+    # Always computed: the darkweb box needs pwned_count, the overall
+    # assessment needs pwned_count and pattern_warning.
     pwned_count = check_pwned(password)
     pattern_warning = check_patterns(password)
 
-    if not short_mode:
+    show_full    = view == "full"
+    show_darkweb = view in ("full", "darkweb")
+    show_overall = view in ("full", "short")
+
+    if show_full:
         banner()
 
         comb_str = f"{combinations:,}" if combinations else f"10^{log10_value:.2f}"
@@ -629,6 +643,7 @@ def print_output(password, charset, L, combinations, log10_value,
         merge_boxes(box_search, box_hardware, width)
         print()
 
+    if show_darkweb:
         if isinstance(pwned_count, int):
             if pwned_count > 0:
                 risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
@@ -644,53 +659,56 @@ def print_output(password, charset, L, combinations, log10_value,
             risk_status,
             risk_details
         ], width, title_color=C.BRIGHT_MAGENTA)
-        
-        print_lines_animated(darkweb_box, delay=0.02)
+
+        if show_full:
+            print_lines_animated(darkweb_box, delay=0.02)
+        else:
+            print("\n".join(darkweb_box))
         print()
 
-    # ================== FINAL ROW: SECURITY LEVEL ASSESSMENT (sempre) ==================
-    lvl = strength(log10_value, pattern_warning)
-    score = calculate_score(log10_value, pattern_warning, pwned_count)
-    
-    lvl_color = {
-        "WEAK":   C.BRIGHT_RED,
-        "MEDIUM": C.BRIGHT_YELLOW,
-        "STRONG": C.BRIGHT_GREEN,
-    }[lvl]
-    
-    lvl_fill = score / 100.0
-    lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
-    
-    if ANIMATE and not short_mode:
-        bar_width = width - 38
-        target_fill = int(bar_width * lvl_fill)
-        
-        print("╔" + "═"*(width-2) + "╗")
-        title = "OVERALL SECURITY ASSESSMENT"
-        inner = (width - 2 - len(title)) // 2
-        right_pad = (width - 2 - len(title)) - inner
-        colored_title = " " * inner + colorize(title, C.BRIGHT_WHITE, C.BOLD) + " " * right_pad
-        print("║" + colored_title + "║")
-        print("╠" + "═"*(width-2) + "╣")
-        
-        for f in range(0, target_fill + 1, max(1, target_fill // 30)):
-            bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
+    if show_overall:
+        lvl = strength(log10_value, pattern_warning)
+        score = calculate_score(log10_value, pattern_warning, pwned_count)
+
+        lvl_color = {
+            "WEAK":   C.BRIGHT_RED,
+            "MEDIUM": C.BRIGHT_YELLOW,
+            "STRONG": C.BRIGHT_GREEN,
+        }[lvl]
+
+        lvl_fill = score / 100.0
+        lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
+
+        if ANIMATE and show_full:
+            bar_width = width - 38
+            target_fill = int(bar_width * lvl_fill)
+
+            print("╔" + "═"*(width-2) + "╗")
+            title = "OVERALL SECURITY ASSESSMENT"
+            inner = (width - 2 - len(title)) // 2
+            right_pad = (width - 2 - len(title)) - inner
+            colored_title = " " * inner + colorize(title, C.BRIGHT_WHITE, C.BOLD) + " " * right_pad
+            print("║" + colored_title + "║")
+            print("╠" + "═"*(width-2) + "╣")
+
+            for f in range(0, target_fill + 1, max(1, target_fill // 30)):
+                bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
+                sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
+                sys.stdout.flush()
+                time.sleep(0.008)
+            bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
             sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
             sys.stdout.flush()
-            time.sleep(0.008)
-        bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
-        sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
-        sys.stdout.flush()
-        print("\n╚" + "═"*(width-2) + "╝")
-    else:
-        bar_width = width - 38
-        filled = int(bar_width * lvl_fill)
-        bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
-        sec = make_box("OVERALL SECURITY ASSESSMENT", [
-            f"[{bar}] {lvl_colored}"
-        ], width)
-        for line in sec:
-            print(line)
+            print("\n╚" + "═"*(width-2) + "╝")
+        else:
+            bar_width = width - 38
+            filled = int(bar_width * lvl_fill)
+            bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
+            sec = make_box("OVERALL SECURITY ASSESSMENT", [
+                f"[{bar}] {lvl_colored}"
+            ], width)
+            for line in sec:
+                print(line)
 
 
 # ================== MAIN EXECUTION ==================
@@ -699,7 +717,7 @@ def main():
     # Enforce standard POSIX/Unix CLI syntax formatting guidelines
     parser = argparse.ArgumentParser(
         description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
-        usage="imps [-M | --Mask] [-s | --short] <password>",
+        usage="imps [-M | --Mask] [-s | --short | -dw | --darkweb] <password>",
         add_help=True
     )
     
@@ -717,11 +735,17 @@ def main():
         help="Disable the remote update check on startup"
     )
 
-    # Display only the overall security assessment (Optional, defined before the argument)
-    parser.add_argument(
+    # View modes: mutually exclusive, each renders a single section of the report
+    view_group = parser.add_mutually_exclusive_group()
+    view_group.add_argument(
         "-s", "--short",
         action="store_true",
         help="Display only the overall security assessment"
+    )
+    view_group.add_argument(
+        "-dw", "--darkweb",
+        action="store_true",
+        help="Display only the dark web breach check"
     )
     
     # Target Positional Data Input (Required, parsed at the end)
@@ -734,7 +758,14 @@ def main():
 
     args = parser.parse_args()
     password = args.password
-    
+
+    if args.short:
+        view = "short"
+    elif args.darkweb:
+        view = "darkweb"
+    else:
+        view = "full"
+
     # Catch empty constraints inputs and prompt for password securely if not provided
     if not args.password:
         try:
@@ -747,9 +778,9 @@ def main():
             print(warn("[!] No password provided."))
             return
 
-    # Update Checker (safe, silent, timeouts after 1.5s)
-    # In short mode saltiamo anche questo, così l'output è davvero solo l'assessment.
-    if not args.no_update_check and not args.short:
+    # Update Checker (timeouts after 1.5s)
+    # Skipped for non-full views so those modes stay scriptable.
+    if not args.no_update_check and view == "full":
         new_ver = check_for_updates(__version__)
         if new_ver:
             width = get_width()
@@ -765,11 +796,11 @@ def main():
         
     L = len(password)
     combinations, log10_value = calc_combinations(C, L)
-    
-    # Push data variables matrix structures forward into formatting layout routines
+
+    # Pass computed values to the output renderer
     print_output(password, C, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=args.Mask, short_mode=args.short)
+                 mask_mode=args.Mask, view=view)
 
 
 if __name__ == "__main__":
