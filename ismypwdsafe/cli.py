@@ -9,7 +9,7 @@ from .core import analyze_password
 from .ui import dim, err, get_width, print_output, warn
 
 
-def _build_parser():
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
         usage="imps [-M] [-o | --no-breach-check] [-s | -dw] <password>",
@@ -55,7 +55,7 @@ def _build_parser():
     return parser
 
 
-def main():
+def main() -> int:
     parser = _build_parser()
     args = parser.parse_args()
     password = args.password
@@ -107,10 +107,10 @@ def main():
     return result.exit_code
 
 
-def entry():
+def entry() -> int:
     """Console-script entry point. Handles KeyboardInterrupt."""
     try:
         return main()
     except KeyboardInterrupt:
         print("\n" + warn("[!] Audit interrupted by user."))
-        return 130 # Exit code 130 for SIGINT (Ctrl+C)
+        return 130

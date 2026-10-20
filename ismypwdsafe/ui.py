@@ -6,12 +6,15 @@ import shutil
 import sys
 import textwrap
 import time
+from typing import List, Optional
+
+from .core import AuditResult
 
 # Enable ANSI escape processing on Windows consoles.
 os.system("")
 
 
-def _supports_color():
+def _supports_color() -> bool:
     if os.environ.get("NO_COLOR"):
         return False
     if os.environ.get("FORCE_COLOR"):
@@ -55,29 +58,29 @@ class C:
     BRIGHT_WHITE   = "\033[97m" if USE_COLOR else ""
 
 
-def colorize(text, *codes):
+def colorize(text: str, *codes: str) -> str:
     if not USE_COLOR or not codes:
         return text
     return "".join(codes) + str(text) + C.RESET
 
 
-def ok(s):     return colorize(s, C.BRIGHT_GREEN)
-def warn(s):   return colorize(s, C.BRIGHT_YELLOW)
-def err(s):    return colorize(s, C.BRIGHT_RED)
-def info(s):   return colorize(s, C.BRIGHT_CYAN)
-def dim(s):    return colorize(s, C.GRAY)
-def bold(s):   return colorize(s, C.BOLD)
-def accent(s): return colorize(s, C.BRIGHT_MAGENTA, C.BOLD)
+def ok(s: str) -> str:     return colorize(s, C.BRIGHT_GREEN)
+def warn(s: str) -> str:   return colorize(s, C.BRIGHT_YELLOW)
+def err(s: str) -> str:    return colorize(s, C.BRIGHT_RED)
+def info(s: str) -> str:   return colorize(s, C.BRIGHT_CYAN)
+def dim(s: str) -> str:    return colorize(s, C.GRAY)
+def bold(s: str) -> str:   return colorize(s, C.BOLD)
+def accent(s: str) -> str: return colorize(s, C.BRIGHT_MAGENTA, C.BOLD)
 
 
 ANSI_RE = re.compile(r"\033\[[0-9;]*m")
 
 
-def visible_len(s):
+def visible_len(s: str) -> int:
     return len(ANSI_RE.sub("", s))
 
 
-def pad_visible(s, width, align="left"):
+def pad_visible(s: str, width: int, align: str = "left") -> str:
     v = visible_len(s)
     p = max(width - v, 0)
     if align == "left":
@@ -88,8 +91,9 @@ def pad_visible(s, width, align="left"):
     return " " * left + s + " " * (p - left)
 
 
-def truncate_visible(s, width):
-    out, vis, i = [], 0, 0
+def truncate_visible(s: str, width: int) -> str:
+    out: List[str] = []
+    vis, i = 0, 0
     while i < len(s) and vis < width:
         m = ANSI_RE.match(s, i)
         if m:
@@ -104,7 +108,7 @@ def truncate_visible(s, width):
 
 # ================== ANIMATION ==================
 
-def typewrite(text, delay=0.005, end="\n"):
+def typewrite(text: str, delay: float = 0.005, end: str = "\n") -> None:
     if not ANIMATE:
         print(text + end.rstrip("\n"))
         return
@@ -116,7 +120,7 @@ def typewrite(text, delay=0.005, end="\n"):
     sys.stdout.flush()
 
 
-def print_lines_animated(lines, delay=0.015):
+def print_lines_animated(lines: List[str], delay: float = 0.015) -> None:
     if not ANIMATE:
         for line in lines:
             print(line)
@@ -129,17 +133,17 @@ def print_lines_animated(lines, delay=0.015):
 
 # ================== TERMINAL ==================
 
-def get_width():
+def get_width() -> int:
     return shutil.get_terminal_size((120, 30)).columns
 
 
-def clear():
+def clear() -> None:
     os.system("cls" if os.name == "nt" else "clear")
 
 
 # ================== UI ==================
 
-def banner():
+def banner() -> None:
     raw_art = [
 r"                                                                                                        ",
 r"$$$$$$\           $$\      $$\           $$$$$$$\                      $$\  $$$$$$\             $$$$$$\ ",
@@ -181,8 +185,9 @@ r"                                \______/",
         print(" " * pad_cred + colorize(credits, C.GRAY) + "\n")
 
 
-def make_box(title, lines, width, title_color=None):
-    box = []
+def make_box(title: str, lines: List[str], width: int,
+             title_color: Optional[str] = None) -> List[str]:
+    box: List[str] = []
     box.append("╔" + "═" * (width - 2) + "╗")
     tc = title_color if title_color is not None else C.BRIGHT_WHITE
     inner = (width - 2 - len(title)) // 2
@@ -198,7 +203,7 @@ def make_box(title, lines, width, title_color=None):
     return box
 
 
-def merge_boxes(left, right, width):
+def merge_boxes(left: List[str], right: List[str], width: int) -> None:
     col = width // 2
     left = list(left)
     right = list(right)
@@ -212,7 +217,8 @@ def merge_boxes(left, right, width):
             time.sleep(0.012)
 
 
-def progress_bar(value, max_value, width, colored=False):
+def progress_bar(value: float, max_value: float, width: int,
+                 colored: bool = False) -> str:
     if max_value == 0 or width <= 0:
         return "░" * max(width, 0)
     ratio = min(max(value / max_value, 0), 1)
@@ -230,7 +236,7 @@ def progress_bar(value, max_value, width, colored=False):
     return col + bar_filled + C.RESET + C.GRAY + bar_empty + C.RESET
 
 
-def format_time(time_seconds):
+def format_time(time_seconds: float) -> str:
     if time_seconds < 1:
         return "Instant"
     if time_seconds < 60:
@@ -247,7 +253,8 @@ def format_time(time_seconds):
 
 # ================== OUTPUT ==================
 
-def print_output(result, password, mask_mode=False, view="full"):
+def print_output(result: AuditResult, password: str,
+                 mask_mode: bool = False, view: str = "full") -> None:
     """Render an AuditResult. view: "full" | "short" | "darkweb"."""
     width = get_width()
     col_w = width // 2
@@ -309,7 +316,7 @@ def print_output(result, password, mask_mode=False, view="full"):
 
         box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
 
-        graph_lines = []
+        graph_lines: List[str] = []
         for hw in result.hardware:
             time_str = format_time(hw.seconds)
             bar_value = math.log10(hw.seconds) if hw.seconds > 0 else 0
