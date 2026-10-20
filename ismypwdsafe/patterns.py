@@ -94,7 +94,8 @@ def detect_pattern(password: str) -> PatternResult:
     detail = None
     primary_rule = None
 
-    for item in get_top150_set():
+    # Sort by length descending so longer matches (e.g. "123456") take precedence
+    for item in sorted(get_top150_set(), key=len, reverse=True):
         if item in password.lower() or item in normalized:
             rules_fired.append("top150")
             if primary_rule is None:
