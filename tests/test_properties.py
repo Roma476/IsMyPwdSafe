@@ -7,14 +7,14 @@ from ismypwdsafe import analyze_password
 
 @given(st.text())
 def test_score_bounds(password):
-    """Lo score deve sempre essere compreso tra 0 e 100."""
+    """The score must always be between 0 and 100, inclusive."""
     result = analyze_password(password, check_breach=False)
     if result.error is None:
         assert 0 <= result.score.value <= 100
 
 @given(st.text())
 def test_determinism(password):
-    """Lo stesso input deve sempre produrre lo stesso output."""
+    """The same password should always yield the same score and pattern detection."""
     res1 = analyze_password(password, check_breach=False)
     res2 = analyze_password(password, check_breach=False)
     
@@ -29,7 +29,7 @@ def test_determinism(password):
 
 @given(st.text(min_size=1))
 def test_no_crash(password):
-    """Nessuna stringa generata casualmente deve causare eccezioni."""
+    """No matter the input, analyze_password should not raise an exception."""
     try:
         analyze_password(password, check_breach=False)
     except Exception as e:
