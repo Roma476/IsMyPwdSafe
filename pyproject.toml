@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [project.scripts]
-imps = "ismypwdsafe.main:main"
+imps = "ismypwdsafe.cli:entry"
