@@ -1,5 +1,6 @@
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
-from typing import NamedTuple, Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 _LEET_MAP = str.maketrans({
     '@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i',
@@ -72,70 +73,62 @@ def check_keyboard_spatial(password: str) -> bool:
 
 
 def check_patterns(password: str) -> Optional[str]:
-    """
-    Returns the human-readable warning for the first matching rule, or None.
-    Rules are checked in order: top-150, QWERTY walk, common year, repetition.
-    """
-    if not password:
-        return None
+    """Deprecated: use detect_pattern instead."""
+    return detect_pattern(password).detail
 
-    normalized = normalize_leetspeak(password)
-    top_150 = get_top150_set()
-
-    for item in top_150:
-        if item in password.lower() or item in normalized:
-            return f"Top 150 most used passwords list match ('{item}')"
-
-    if check_keyboard_spatial(password):
-        return "Keyboard spatial walk detected (QWERTY layout)"
-
-    for i in range(len(password) - 3):
-        chunk = password[i:i + 4]
-        if chunk.isdigit():
-            year = int(chunk)
-            if 1900 <= year <= 2050:
-                return f"Contains common year ({year})"
-
-    pwd_lower = password.lower()
-    for i in range(len(pwd_lower) - 2):
-        if pwd_lower[i] == pwd_lower[i + 1] == pwd_lower[i + 2]:
-            return "Excessive character repetition"
-
-    return None
-
-
-class PatternResult(NamedTuple):
+@dataclass(frozen=True)
+class PatternResult:
     detected: bool
     rule: Optional[str]   # "top150" | "qwerty_walk" | "common_year" | "repetition" | None
     detail: Optional[str]  # human-readable warning, None when not detected
+    rules_fired: List[str] = field(default_factory=list)
 
 
 def detect_pattern(password: str) -> PatternResult:
-    """Structured version of check_patterns. First matching rule wins."""
+    """Structured version of check_patterns. Evaluates all rules."""
     if not password:
-        return PatternResult(False, None, None)
+        return PatternResult(False, None, None, [])
 
     normalized = normalize_leetspeak(password)
+    rules_fired: List[str] = []
+    detail = None
+    primary_rule = None
+
     for item in get_top150_set():
         if item in password.lower() or item in normalized:
-            return PatternResult(
-                True, "top150",
-                f"Top 150 most used passwords list match ('{item}')",
-            )
+            rules_fired.append("top150")
+            if primary_rule is None:
+                primary_rule = "top150"
+                detail = f"Top 150 most used passwords list match ('{item}')"
+            break
 
     if check_keyboard_spatial(password):
-        return PatternResult(True, "qwerty_walk", "Keyboard spatial walk detected (QWERTY layout)")
+        rules_fired.append("qwerty_walk")
+        if primary_rule is None:
+            primary_rule = "qwerty_walk"
+            detail = "Keyboard spatial walk detected (QWERTY layout)"
 
     for i in range(len(password) - 3):
         chunk = password[i:i + 4]
         if chunk.isdigit():
             year = int(chunk)
             if 1900 <= year <= 2050:
-                return PatternResult(True, "common_year", f"Contains common year ({year})")
+                if "common_year" not in rules_fired:
+                    rules_fired.append("common_year")
+                if primary_rule is None:
+                    primary_rule = "common_year"
+                    detail = f"Contains common year ({year})"
+                break
 
     pwd_lower = password.lower()
     for i in range(len(pwd_lower) - 2):
         if pwd_lower[i] == pwd_lower[i + 1] == pwd_lower[i + 2]:
-            return PatternResult(True, "repetition", "Excessive character repetition")
+            if "repetition" not in rules_fired:
+                rules_fired.append("repetition")
+            if primary_rule is None:
+                primary_rule = "repetition"
+                detail = "Excessive character repetition"
+            break
 
-    return PatternResult(False, None, None)
+    detected = len(rules_fired) > 0
+    return PatternResult(detected, primary_rule, detail, rules_fired)

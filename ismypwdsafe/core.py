@@ -137,9 +137,12 @@ def calculate_score(
 
 
 def compute_hardware_estimates(log10_value: float) -> Tuple[HardwareEstimate, ...]:
-    out = []
+    out: list[HardwareEstimate] = []
     for key, label, aps in _HARDWARE_PROFILES:
-        seconds = (10 ** log10_value) / aps
+        try:
+            seconds = (10 ** log10_value) / aps
+        except OverflowError:
+            seconds = float("inf")
         out.append(HardwareEstimate(key=key, label=label, attempts_per_second=aps, seconds=seconds))
     return tuple(out)
 
