@@ -1,6 +1,5 @@
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
-from typing import Optional, NamedTuple
-
+from typing import NamedTuple, Optional
 
 _LEET_MAP = str.maketrans({
     '@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i',
@@ -13,7 +12,7 @@ def normalize_leetspeak(password: str) -> str:
     return password.lower().translate(_LEET_MAP)
 
 
-def get_top150_set():
+def get_top150_set() -> set[str]:
     return {
         "123456", "12345678", "123456789", "admin", "12345", "Aa123456", "password",
         "123", "1234567890", "qwerty", "qwerty123", "Aa@123456", "1234567", "Password",
@@ -85,7 +84,7 @@ def check_patterns(password: str) -> Optional[str]:
 
     for item in top_150:
         if item in password.lower() or item in normalized:
-            return "Top 150 most used passwords list match ('{}')".format(item)
+            return f"Top 150 most used passwords list match ('{item}')"
 
     if check_keyboard_spatial(password):
         return "Keyboard spatial walk detected (QWERTY layout)"
@@ -95,7 +94,7 @@ def check_patterns(password: str) -> Optional[str]:
         if chunk.isdigit():
             year = int(chunk)
             if 1900 <= year <= 2050:
-                return "Contains common year ({})".format(year)
+                return f"Contains common year ({year})"
 
     pwd_lower = password.lower()
     for i in range(len(pwd_lower) - 2):
@@ -121,7 +120,7 @@ def detect_pattern(password: str) -> PatternResult:
         if item in password.lower() or item in normalized:
             return PatternResult(
                 True, "top150",
-                "Top 150 most used passwords list match ('{}')".format(item),
+                f"Top 150 most used passwords list match ('{item}')",
             )
 
     if check_keyboard_spatial(password):
@@ -132,7 +131,7 @@ def detect_pattern(password: str) -> PatternResult:
         if chunk.isdigit():
             year = int(chunk)
             if 1900 <= year <= 2050:
-                return PatternResult(True, "common_year", "Contains common year ({})".format(year))
+                return PatternResult(True, "common_year", f"Contains common year ({year})")
 
     pwd_lower = password.lower()
     for i in range(len(pwd_lower) - 2):

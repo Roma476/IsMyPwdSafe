@@ -1,10 +1,8 @@
 """Command-line interface: argparse, update check, exit code orchestration."""
 import argparse
 import getpass
-import sys
 
-from . import __version__
-from . import network
+from . import __version__, network
 from .core import analyze_password
 from .ui import dim, err, get_width, print_output, warn
 
@@ -74,7 +72,7 @@ def main(argv=None) -> int:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
         except Exception as e:
-            print(err("[!] Error reading password: {}".format(e)))
+            print(err(f"[!] Error reading password: {e}"))
             return 65
         if not password:
             print(warn("[!] No password provided."))
@@ -84,10 +82,9 @@ def main(argv=None) -> int:
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
-            msg = "[!] A new version of IsMyPwdSafe is available: v{} (you have v{})".format(
-                new_ver, __version__)
+            msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"  # noqa: E501
             print(warn(msg.center(width)))
-            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))
+            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))  # noqa: E501
 
     if args.offline:
         breach_reason = "offline"
