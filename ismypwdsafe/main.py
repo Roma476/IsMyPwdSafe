@@ -546,7 +546,8 @@ def strength(log10_value, pattern_warning):
 
 def print_output(password, charset, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=False, view="full", offline=False):
+                 mask_mode=False, view="full", offline=False,
+                 no_breach_check=False):
     """
     Renders the audit report.
 
@@ -555,15 +556,16 @@ def print_output(password, charset, L, combinations, log10_value,
       - "short"   : overall assessment only
       - "darkweb" : darkweb scanner only
 
-    offline=True skips the HaveIBeenPwned request and marks the DARKWEB
-    panel as intentionally skipped. The overall score is then computed
-    without the breach-history cap.
+    offline=True skips every outbound request (HIBP and GitHub).
+    no_breach_check=True skips only the HIBP lookup, leaving the GitHub
+    update check active. Both flags leave pwned_count as None, so the
+    overall score is computed without the breach cap.
     """
     width = get_width()
     col_w = width // 2
 
     pwned_count = None
-    if not offline:
+    if not offline and not no_breach_check:
         pwned_count = check_pwned(password)
     pattern_warning = check_patterns(password)
 
@@ -651,6 +653,9 @@ def print_output(password, charset, L, combinations, log10_value,
         if offline:
             risk_status = warn("[!] OFFLINE MODE: BREACH CHECK SKIPPED")
             risk_details = dim("Run without -o/--offline to check this password against the HIBP breach database.")
+        elif no_breach_check:
+            risk_status = warn("[!] BREACH CHECK DISABLED (--no-breach-check)")
+            risk_details = dim("The HIBP request was skipped on request. Run without --no-breach-check to enable it.")
         elif isinstance(pwned_count, int):
             if pwned_count > 0:
                 risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
@@ -724,7 +729,7 @@ def main():
     # Enforce standard POSIX/Unix CLI syntax formatting guidelines
     parser = argparse.ArgumentParser(
         description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
-        usage="imps [-M] [-o] [-s | -dw] <password>",
+        usage="imps [-M] [-o | --no-breach-check] [-s | -dw] <password>",
         add_help=True
     )
     
@@ -739,10 +744,17 @@ def main():
     parser.add_argument(
         "-o", "--offline",
         action="store_true",
-        help="Disable all network requests: skip the HaveIBeenPwned breach check and the GitHub update check"
+        help="Disable all network requests. Implies --no-breach-check and --no-update-check"
     )
-    
-    # Disable update checker (Optional, defined before the argument)
+
+    # Granular: skip only the HIBP lookup, keep the GitHub update check
+    parser.add_argument(
+        "--no-breach-check",
+        action="store_true",
+        help="Skip the HaveIBeenPwned breach lookup, keep the GitHub update check"
+    )
+
+    # Granular: skip only the GitHub update check
     parser.add_argument(
         "--no-update-check",
         action="store_true",
@@ -780,6 +792,10 @@ def main():
     else:
         view = "full"
 
+    # --offline implies both granular skips
+    skip_breach = args.offline or args.no_breach_check
+    skip_update = args.offline or args.no_update_check
+
     # Catch empty constraints inputs and prompt for password securely if not provided
     if not args.password:
         try:
@@ -793,8 +809,8 @@ def main():
             return
 
     # Update Checker (safe, silent, timeouts after 1.5s).
-    # Skipped for non-full views (scriptable output) and in offline mode.
-    if not args.no_update_check and not args.offline and view == "full":
+    # Skipped for non-full views (scriptable output) and when requested.
+    if not skip_update and view == "full":
         new_ver = check_for_updates(__version__)
         if new_ver:
             width = get_width()
@@ -814,7 +830,8 @@ def main():
     # Pass computed values to the output renderer
     print_output(password, C, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=args.Mask, view=view, offline=args.offline)
+                 mask_mode=args.Mask, view=view,
+                 offline=args.offline, no_breach_check=args.no_breach_check)
 
 
 if __name__ == "__main__":
