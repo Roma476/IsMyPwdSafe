@@ -18,11 +18,11 @@
 [![Platforms](https://img.shields.io/badge/platforms-Windows_%7C_macOS_%7C_Linux-729dff?style=flat-square)](#installation)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Roma476/IsMyPwdSafe/issues)
 [![Runtime deps](https://img.shields.io/badge/deps-1_(requests)-63e6b4?style=flat-square)](pyproject.toml)
-[![Network calls](https://img.shields.io/badge/network_calls-2-729dff?style=flat-square)](#privacy-and-network)
+[![Network calls](https://img.shields.io/badge/network_calls-2_(0_with_--offline)-729dff?style=flat-square)](#privacy-and-network-behavior)
 
 **Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
 
-> **Project status - actively developed.** IsMyPwdSafe is under active development. A `--offline` flag that skips both network calls (HIBP and the GitHub version check) is planned for the next release, so a fully offline audit will be a single flag instead of a firewall rule. Additional flags are in progress. If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls). See [Roadmap](#roadmap) and [Contributing](#contributing).
+> **Project status - v1.2.0, actively developed.** This release ships the full granular network control (`--no-breach-check`, `--no-update-check`, `--offline`) and the report view modes (`-s/--short`, `-dw/--darkweb`). A `--json` output mode and a `--quiet` mode for CI pipelines are next on the [Roadmap](#roadmap). If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls).
 
 ---
 
@@ -94,6 +94,59 @@ imps -M "MySecretPassword!"
 
 The password appears as `************` in the INPUT METRICS panel. Everything else is computed normally.
 
+### 5. Pick a view mode
+
+If you only care about the final verdict, or only about the breach check, skip the rest of the report:
+
+```bash
+imps -s "correct-horse-battery-staple"     # only the OVERALL SECURITY ASSESSMENT
+imps -dw "password"                        # only the DARKWEB SCANNER
+```
+The view modes are mutually exclusive: -s and -dw together are rejected by the parser. Both views are scriptable: they do not clear the terminal, do not animate, and do not trigger the update check.
+
+### 6. Audit without touching the network
+
+If you do not want the 5-character SHA-1 prefix of your password to leave the machine - even though it is only a k-anonymity prefix - you have two granular switches and one shortcut:
+
+```bash
+imps --no-breach-check "password"    # HIBP skipped, GitHub update check still runs
+imps --no-update-check "password"    # GitHub skipped, HIBP still runs
+imps -o "password"                   # both skipped, fully air-gapped audit
+```
+
+In every skip case the DARKWEB panel reports why it has no result, and the score is computed without the breach cap, exactly like the API-failure path.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+---
+
+## CLI reference
+
+```text
+imps [-M] [-o | --no-breach-check] [-s | -dw] [--no-update-check] <password>
+```
+
+| Flag | Argument | Description |
+| ---- | -------- | ----------- |
+| `-M`, `--Mask` | - | Replace the password with asterisks in the INPUT METRICS panel. Useful on shared screens and recordings. |
+| `-s`, `--short` | - | Render only the OVERALL SECURITY ASSESSMENT. No banner, no boxes, no update check. Scriptable. |
+| `-dw`, `--darkweb` | - | Render only the DARKWEB SCANNER panel. Scriptable. Mutually exclusive with `-s`. |
+| `-o`, `--offline` | - | Skip **all** outbound requests. Implies `--no-breach-check` and `--no-update-check`. |
+| `--no-breach-check` | - | Skip only the HIBP lookup. The GitHub update check still runs. |
+| `--no-update-check` | - | Skip only the GitHub update check. Implied by `--offline`. |
+| *password* | optional | The raw text password to audit. If omitted, `imps` prompts with a hidden input. |
+
+### Network behaviour matrix
+
+| Command | HIBP | GitHub |
+| ------- | :--: | :----: |
+| `imps "pwd"` | ✓ | ✓ |
+| `imps --no-breach-check "pwd"` | ✗ | ✓ |
+| `imps --no-update-check "pwd"` | ✓ | ✗ |
+| `imps -o "pwd"` | ✗ | ✗ |
+
+`--offline` is the shortcut for the air-gapped case; the two `--no-*-check` flags are the granular controls. In all skip cases the audit still runs, the pattern engine still runs, and the score is computed without the breach cap.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
@@ -107,11 +160,14 @@ The password appears as `************` in the INPUT METRICS panel. Everything el
 | [QWERTY walk detection](#rule-2-qwerty-spatial-walk) | Real keyboard coordinate model catching `qwerty`, `1qaz2wsx`, `zxcvbn` and similar walks |
 | [Common year detection](#rule-3-common-year) | Flags 4-digit runs in the 1900-2050 range |
 | [Character repetition](#rule-4-character-repetition) | Flags three or more identical consecutive characters |
-| [HaveIBeenPwned range lookup](#network-behavior) | k-anonymity breach check; only a 5-character SHA-1 prefix leaves the machine |
+| [HaveIBeenPwned range lookup](#privacy-and-network-behavior) | k-anonymity breach check; only a 5-character SHA-1 prefix leaves the machine |
 | [Hardware resistance graph](#scoring) | Estimated time-to-crack on PC, server, GPU rig and cluster |
 | [Privacy mask mode](#4-mask-the-password-in-the-output) | `-M` / `--Mask` replaces the password with asterisks in all output |
+| [Short view](#5-pick-a-view-mode) | `-s` / `--short` renders only the overall assessment. Scriptable. |
+| [Darkweb view](#5-pick-a-view-mode) | `-dw` / `--darkweb` renders only the breach check. Scriptable. |
+| [Offline mode](#6-audit-without-touching-the-network) | `-o` / `--offline` skips both network requests in a single switch |
+| [Granular network control](#6-audit-without-touching-the-network) | `--no-breach-check` and `--no-update-check` disable one request each |
 | [Secure interactive prompt](#2-run-an-audit) | Run `imps` without arguments to enter the password via a hidden prompt, preventing shell history leaks |
-| [Skip update check](#network-behavior) | `--no-update-check` disables the single GitHub request at startup |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -239,22 +295,34 @@ GET https://api.pwnedpasswords.com/range/{prefix}
 - **Not transmitted:** plaintext password, full hash, length, character composition, any IP-linked identifier.
 - **Timeout:** 5 seconds.
 - **On failure:** the DARKWEB panel shows a warning and the score is computed without the breach cap. The rest of the audit runs normally.
+- **Disable with:** `--no-breach-check` (or `-o/--offline`).
 
 ### 2. GitHub version check
 
-A single `GET` to `raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/version.txt` at startup. No identifier, no analytics, no telemetry. It exists solely to warn if a newer version is available. 1.5-second timeout, silent failure.
+A single `GET` to `raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/version.txt` at startup. No identifier, no analytics, no telemetry. It exists solely to warn if a newer version is available. 1.5-second timeout, silent failure. Disable with `--no-update-check` (or `-o/--offline`).
 
-Disable with `--no-update-check`.
+### Granular network control
 
-### Skipping network calls
-
-Today the two requests are controlled separately:
+The two requests are controlled independently, with `--offline` as the shortcut:
 
 ```bash
-imps --no-update-check "your-password"    # skips the GitHub request
+imps --no-breach-check "your-password"    # HIBP skipped, GitHub still checked
+imps --no-update-check "your-password"    # GitHub skipped, HIBP still checked
+imps -o "your-password"                   # both skipped, fully air-gapped
 ```
 
-A `--offline` flag that disables **both** requests in a single switch is in progress and will land in the next release. Until then, a fully air-gapped run requires blocking `api.pwnedpasswords.com` and `raw.githubusercontent.com` at the firewall; the audit still works minus the DARKWEB panel.
+| Command | HIBP | GitHub |
+| ------- | :--: | :----: |
+| `imps "pwd"` | ✓ | ✓ |
+| `imps --no-breach-check "pwd"` | ✗ | ✓ |
+| `imps --no-update-check "pwd"` | ✓ | ✗ |
+| `imps -o "pwd"` | ✗ | ✗ |
+
+In every skip case:
+
+- The audit still runs. The pattern engine still runs. The hardware resistance graph still runs.
+- The DARKWEB panel reports **why** it has no result (`OFFLINE MODE` vs `BREACH CHECK DISABLED (--no-breach-check)` vs a real network error).
+- The overall score is computed **without** the breach cap, exactly like the API-failure path.
 
 ### What the tool does not do
 
@@ -269,7 +337,7 @@ A `--offline` flag that disables **both** requests in a single switch is in prog
 ## Known limitations
 
 - **Shell history.** If you pass the password inline (`imps "pass"`), it ends up in bash/zsh history and terminal scrollback. **Workaround:** Just run `imps` without arguments to use the secure interactive prompt, or prefix the command with a space (requires `HISTCONTROL=ignorespace`).
-- **Two network calls still happen by default.** `--no-update-check` only disables the GitHub request. Disabling the HIBP request currently requires firewall rules; the `--offline` flag on the roadmap will cover both.
+- **The default still makes two network calls.** `--no-breach-check` and `--no-update-check` disable one request each; `-o/--offline` disables both. A `--quiet`/`--json` pair that composes cleanly with the network flags is on the roadmap.
 - **ASCII only.** The charset is estimated over printable ASCII. Non-ASCII passwords are underestimated in entropy.
 - **Finite pattern list.** Top-150 plus four structural rules. An uncommon password is not automatically strong - it is only not *obviously* weak.
 - **Crack times are theoretical.** They assume a constant hash rate on a given hardware profile. They do not model rainbow tables, targeted dictionaries, GPU-specific optimizations or side channels.
@@ -298,8 +366,17 @@ imps "123456"
 # Mask mode
 imps -M "password"
 
-# Skip update check
-imps --no-update-check "password"
+# View modes
+imps -s "correct-horse-battery-staple"     # only overall assessment
+imps -dw "password"                        # only darkweb scanner
+
+# Network control
+imps --no-breach-check "password"          # HIBP skipped, GitHub checked
+imps --no-update-check "password"          # GitHub skipped, HIBP checked
+imps -o "password"                         # both skipped
+
+# Scriptable, network-free, one line
+imps -o -s "password"
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -312,7 +389,7 @@ imps --no-update-check "password"
 IsMyPwdSafe/
 ├── ismypwdsafe/
 │   ├── __init__.py
-│   └── main.py          # CLI, ~700 lines, single file
+│   └── main.py          # CLI, ~800 lines, single file
 ├── docs/screenshots/    # README screenshots
 ├── .gitignore
 ├── LICENSE              # MIT
@@ -331,10 +408,9 @@ The CLI is a single file by design. It can be read end-to-end in one session and
 
 Actively in progress, in rough order of priority:
 
-- **`--offline` flag** - skips both the HIBP and the GitHub requests in a single switch, so a fully offline audit does not require firewall rules.
 - **`--json` output** - machine-readable audit result for scripting and CI pipelines.
 - **`--quiet` mode** - exit code only, useful in pre-commit hooks and pipelines.
-- **Test suite and CI** - `unittest` coverage for the entropy engine, the pattern rules and the score caps, plus a GitHub Actions workflow on 3.8 / 3.10 / 3.12.
+- **Test suite and CI** - `unittest` coverage for the entropy engine, the pattern rules, the score caps, the network-flag composition and the view modes, plus a GitHub Actions workflow on 3.8 / 3.10 / 3.12.
 - **Expanded pattern dictionary** - the top-150 list is a starting point, not the endpoint.
 
 Out of scope by design: password storage, account systems, cloud sync. IsMyPwdSafe is an audit tool, not a password manager.
