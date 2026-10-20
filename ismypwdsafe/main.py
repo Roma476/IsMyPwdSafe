@@ -544,107 +544,111 @@ def strength(log10_value, pattern_warning):
 
 # ================== OUTPUT ==================
 
-def print_output(password, charset, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=False):
-    banner()
+def print_output(password, charset, L, combinations, log10_value,
+                 has_low, has_upp, has_num, has_sym,
+                 mask_mode=False, short_mode=False):
     width = get_width()
     col_w = width // 2
-
-    comb_str = f"{combinations:,}" if combinations else f"10^{log10_value:.2f}"
-    display_pwd = "*" * L if mask_mode else password  
-
+    
     pwned_count = check_pwned(password)
     pattern_warning = check_patterns(password)
 
-    # ===== 1. TOP ROW: INPUT STATUS =====
-    pwd_label = colorize("Password: ", C.GRAY)
-    pwd_value = colorize(display_pwd, C.BRIGHT_WHITE, C.BOLD)
-    len_label = colorize("Length: ", C.GRAY)
-    len_value = colorize(f"{L}", C.BRIGHT_WHITE, C.BOLD)
-    cs_label  = colorize("Total Charset: ", C.GRAY)
-    cs_value  = colorize(f"{charset}", C.BRIGHT_WHITE, C.BOLD)
+    if not short_mode:
+        banner()
 
-    input_box = make_box("INPUT METRICS", [
-        f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
-    ], width)
-    
-    print_lines_animated(input_box, delay=0.015)
-    print()
+        comb_str = f"{combinations:,}" if combinations else f"10^{log10_value:.2f}"
+        display_pwd = "*" * L if mask_mode else password
 
-    status_low = ok("[✔] Present") if has_low else err("[✘] Missing")
-    status_upp = ok("[✔] Present") if has_upp else err("[✘] Missing")
-    status_num = ok("[✔] Present") if has_num else err("[✘] Missing")
-    status_sym = ok("[✔] Present") if has_sym else err("[✘] Missing")
+        # ===== 1. TOP ROW: INPUT STATUS =====
+        pwd_label = colorize("Password: ", C.GRAY)
+        pwd_value = colorize(display_pwd, C.BRIGHT_WHITE, C.BOLD)
+        len_label = colorize("Length: ", C.GRAY)
+        len_value = colorize(f"{L}", C.BRIGHT_WHITE, C.BOLD)
+        cs_label  = colorize("Total Charset: ", C.GRAY)
+        cs_value  = colorize(f"{charset}", C.BRIGHT_WHITE, C.BOLD)
 
-    # Check top 150 match specifically for the checkbox status
-    leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
-    norm_pwd = password.lower().translate(leet_map)
-    is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
-    status_top150 = err("[✘] Found") if is_in_top150 else ok("[✔] Clean")
-
-    search_lines = [
-        f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
-        f"Lowercase a-z: {status_low}",
-        f"Uppercase A-Z: {status_upp}",
-        f"Digits 0-9   : {status_num}",
-        f"Symbols !@#$ : {status_sym}",
-        f"Top 150 List : {status_top150}",
-    ]
-    
-    if pattern_warning:
-        search_lines.append("Pattern Risk : " + warn("[!] " + pattern_warning))
-    else:
-        search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
-
-    # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
-    box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
-
-    # Box Right: Hardware Resistance Graph (Bilanciamo le righe interne per renderlo alto uguale al box di sinistra)
-    speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
-    graph_lines = []
-    
-    for label, aps in speeds:
-        time_seconds = (10**log10_value) / aps
-        time_str = format_time(time_seconds)
-        bar_value = math.log10(time_seconds) if time_seconds > 0 else 0
-            
-        bar = progress_bar(bar_value, 12, col_w-36)
-        graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
+        input_box = make_box("INPUT METRICS", [
+            f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
+        ], width)
         
-    if pattern_warning:
-        graph_lines.append("")
-        disclaimer_text = "[!] The presence of known patterns makes cracking this password significantly faster than brute-force estimates. (in the scale of milliseconds to seconds)"
-        wrapped_lines = textwrap.wrap(disclaimer_text, width=col_w-4)
-        for line in wrapped_lines:
-            graph_lines.append(warn(line))
+        print_lines_animated(input_box, delay=0.015)
+        print()
+
+        status_low = ok("[✔] Present") if has_low else err("[✘] Missing")
+        status_upp = ok("[✔] Present") if has_upp else err("[✘] Missing")
+        status_num = ok("[✔] Present") if has_num else err("[✘] Missing")
+        status_sym = ok("[✔] Present") if has_sym else err("[✘] Missing")
+
+        # Check top 150 match specifically for the checkbox status
+        leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
+        norm_pwd = password.lower().translate(leet_map)
+        is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
+        status_top150 = err("[✘] Found") if is_in_top150 else ok("[✔] Clean")
+
+        search_lines = [
+            f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
+            f"Lowercase a-z: {status_low}",
+            f"Uppercase A-Z: {status_upp}",
+            f"Digits 0-9   : {status_num}",
+            f"Symbols !@#$ : {status_sym}",
+            f"Top 150 List : {status_top150}",
+        ]
         
-    while len(graph_lines) < len(search_lines):
-        graph_lines.append("")
-
-    box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
-
-    merge_boxes(box_search, box_hardware, width)
-    print()
-
-    if isinstance(pwned_count, int):
-        if pwned_count > 0:
-            risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
-            risk_details = colorize(f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it.", C.BRIGHT_RED)
+        if pattern_warning:
+            search_lines.append("Pattern Risk : " + warn("[!] " + pattern_warning))
         else:
-            risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
-            risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
-    else:
-        risk_status = warn("[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES")
-        risk_details = dim(f"API Telemetry State: {pwned_count}")
+            search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
 
-    darkweb_box = make_box("DARKWEB SCANNER", [
-        risk_status,
-        risk_details
-    ], width, title_color=C.BRIGHT_MAGENTA)
-    
-    print_lines_animated(darkweb_box, delay=0.02)
-    print()
+        # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
+        box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
 
-    # ================== 4. FINAL ROW: SECURITY LEVEL ASSESSMENT ==================
+        # Box Right: Hardware Resistance Graph
+        speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
+        graph_lines = []
+        
+        for label, aps in speeds:
+            time_seconds = (10**log10_value) / aps
+            time_str = format_time(time_seconds)
+            bar_value = math.log10(time_seconds) if time_seconds > 0 else 0
+                
+            bar = progress_bar(bar_value, 12, col_w-36)
+            graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
+            
+        if pattern_warning:
+            graph_lines.append("")
+            disclaimer_text = "[!] The presence of known patterns makes cracking this password significantly faster than brute-force estimates. (in the scale of milliseconds to seconds)"
+            wrapped_lines = textwrap.wrap(disclaimer_text, width=col_w-4)
+            for line in wrapped_lines:
+                graph_lines.append(warn(line))
+            
+        while len(graph_lines) < len(search_lines):
+            graph_lines.append("")
+
+        box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
+
+        merge_boxes(box_search, box_hardware, width)
+        print()
+
+        if isinstance(pwned_count, int):
+            if pwned_count > 0:
+                risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
+                risk_details = colorize(f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it.", C.BRIGHT_RED)
+            else:
+                risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
+                risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
+        else:
+            risk_status = warn("[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES")
+            risk_details = dim(f"API Telemetry State: {pwned_count}")
+
+        darkweb_box = make_box("DARKWEB SCANNER", [
+            risk_status,
+            risk_details
+        ], width, title_color=C.BRIGHT_MAGENTA)
+        
+        print_lines_animated(darkweb_box, delay=0.02)
+        print()
+
+    # ================== FINAL ROW: SECURITY LEVEL ASSESSMENT (sempre) ==================
     lvl = strength(log10_value, pattern_warning)
     score = calculate_score(log10_value, pattern_warning, pwned_count)
     
@@ -657,7 +661,7 @@ def print_output(password, charset, L, combinations, log10_value, has_low, has_u
     lvl_fill = score / 100.0
     lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
     
-    if ANIMATE:
+    if ANIMATE and not short_mode:
         bar_width = width - 38
         target_fill = int(bar_width * lvl_fill)
         
@@ -695,7 +699,7 @@ def main():
     # Enforce standard POSIX/Unix CLI syntax formatting guidelines
     parser = argparse.ArgumentParser(
         description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
-        usage="imps [-M | --Mask] <password>",
+        usage="imps [-M | --Mask] [-s | --short] <password>",
         add_help=True
     )
     
@@ -706,11 +710,18 @@ def main():
         help="Completely mask the input password with asterisks in the summary screen box"
     )
     
-    # Disable update checker (for privacy or offline usage)
+    # Disable update checker (Optional, defined before the argument)
     parser.add_argument(
         "--no-update-check",
         action="store_true",
         help="Disable the remote update check on startup"
+    )
+
+    # Display only the overall security assessment (Optional, defined before the argument)
+    parser.add_argument(
+        "-s", "--short",
+        action="store_true",
+        help="Display only the overall security assessment"
     )
     
     # Target Positional Data Input (Required, parsed at the end)
@@ -737,7 +748,8 @@ def main():
             return
 
     # Update Checker (safe, silent, timeouts after 1.5s)
-    if not args.no_update_check:
+    # In short mode saltiamo anche questo, così l'output è davvero solo l'assessment.
+    if not args.no_update_check and not args.short:
         new_ver = check_for_updates(__version__)
         if new_ver:
             width = get_width()
@@ -755,7 +767,9 @@ def main():
     combinations, log10_value = calc_combinations(C, L)
     
     # Push data variables matrix structures forward into formatting layout routines
-    print_output(password, C, L, combinations, log10_value, has_low, has_upp, has_num, has_sym, mask_mode=args.Mask)
+    print_output(password, C, L, combinations, log10_value,
+                 has_low, has_upp, has_num, has_sym,
+                 mask_mode=args.Mask, short_mode=args.short)
 
 
 if __name__ == "__main__":
