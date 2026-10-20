@@ -3,13 +3,13 @@ import math
 import shutil
 import os
 import argparse
-import hashlib
 import re
 import time
 import textwrap
-import requests
 import getpass
 
+from . import patterns
+from . import network
 
 __version__ = "1.2.0"
 
@@ -143,32 +143,6 @@ def print_lines_animated(lines, delay=0.015):
         time.sleep(delay)
 
 
-# ================== UPDATE CHECKER ==================
-
-def _version_tuple(v):
-    """Converts '1.2.3' to (1, 2, 3) for correct comparison."""
-    try:
-        return tuple(map(int, v.strip().split(".")))
-    except ValueError:
-        return (0,)
-
-def check_for_updates(current_version):
-    """
-    Checks GitHub for a newer version. Returns the new version string if available.
-    Silently returns None on any error (offline, timeout, etc.).
-    """
-    url = "https://raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/version.txt"
-    try:
-        response = requests.get(url, timeout=1.5)
-        if response.status_code == 200:
-            latest = response.text.strip()
-            if _version_tuple(latest) > _version_tuple(current_version):
-                return latest
-    except Exception:
-        pass
-    return None
-
-
 # ================== CORE LOGIC ==================
 
 def must_use_log(C, L):
@@ -213,135 +187,6 @@ def calc_combinations(C, L):
         return None, log10_value
     else:
         return C ** L, log10_value
-
-def hash_password(password):
-    """
-    Computes the SHA-1 hash of the input password for secure transmission.
-    """
-    sha1 = hashlib.sha1()
-    sha1.update(password.encode('utf-8'))
-    return sha1.hexdigest()
-
-def check_pwned(password):
-    prefix = hash_password(password)[:5].upper()
-    suffix = hash_password(password)[5:].upper()
-
-    url = f"https://api.pwnedpasswords.com/range/{prefix}"
-    try:
-        response = requests.get(url, timeout=5)
-        if response.status_code != 200:
-            return "API request failed with status code: {}".format(response.status_code)
-
-        lines = response.text.splitlines()
-        for line in lines:
-            server_suffix, count = line.split(':')
-            if server_suffix == suffix:
-                return int(count)
-        return 0
-    except Exception:
-        return "You are offline or the API is unreachable. Cannot check if the password has been pwned."
-
-def check_keyboard_spatial(password):
-    """
-    Real QWERTY keyboard coordinate modeling for spatial walk detection.
-    Rows mapped as (row_index, col_index).
-    """
-    keyboard = {
-        '1': (0, 0), '2': (0, 1), '3': (0, 2), '4': (0, 3), '5': (0, 4), '6': (0, 5), '7': (0, 6), '8': (0, 7), '9': (0, 8), '0': (0, 9),
-        'q': (1, 0), 'w': (1, 1), 'e': (1, 2), 'r': (1, 3), 't': (1, 4), 'y': (1, 5), 'u': (1, 6), 'i': (1, 7), 'o': (1, 8), 'p': (1, 9),
-        'a': (2, 0), 's': (2, 1), 'd': (2, 2), 'f': (2, 3), 'g': (2, 4), 'h': (2, 5), 'j': (2, 6), 'k': (2, 7), 'l': (2, 8),
-        'z': (3, 0), 'x': (3, 1), 'c': (3, 2), 'v': (3, 3), 'b': (3, 4), 'n': (3, 5), 'm': (3, 6)
-    }
-    
-    pwd_lower = password.lower()
-    coords = [keyboard[c] for c in pwd_lower if c in keyboard]
-    
-    if len(coords) < 3:
-        return False
-
-    # Check if consecutive characters maintain a strict directional step (horizontal/diagonal/vertical)
-    straight_walks = 0
-    for i in range(len(coords) - 1):
-        r1, c1 = coords[i]
-        r2, c2 = coords[i+1]
-        dr = abs(r2 - r1)
-        dc = abs(c2 - c1)
-        # Valid single step on a keyboard (horizontal, vertical, or diagonal)
-        if (dr == 0 and dc == 1) or (dr == 1 and dc == 0) or (dr == 1 and dc == 1):
-            straight_walks += 1
-        else:
-            straight_walks = 0
-            
-        if straight_walks >= 3:  # 4 or more keys in a direct geometric sequence
-            return True
-            
-    return False
-
-def get_top150_set():
-    return {
-        "123456", "12345678", "123456789", "admin", "12345", "Aa123456", "password",
-        "123", "1234567890", "qwerty", "qwerty123", "Aa@123456", "1234567", "Password",
-        "P@ssw0rd", "admin123", "111111", "Pass@123", "123123", "welcome", "1q2w3e4r",
-        "abc123", "Admin@123", "iloveyou", "000000", "password1", "qwerty1", "Abcd@1234",
-        "dragon", "monkey", "letmein", "1q2w3e4r5t", "qwertyuiop", "********", "secret",
-        "password123", "football", "shadow", "sunshine", "princess", "master", "michael",
-        "ashley", "charlie", "1qaz2wsx", "asdfghjkl", "zxcvbnm", "654321", "666666",
-        "superman", "batman", "India@123", "trustno1", "hello", "love", "whatever",
-        "donald", "liverpool", "arsenal", "chelsea", "jordan", "nicole", "taylor",
-        "access", "thomas", "buster", "hockey", "hunter", "soccer", "ranger",
-        "andrew", "harley", "tigger", "joshua", "starwars", "matthew", "george",
-        "summer", "friday", "cheese", "cookie", "coffee", "pepper", "guitar",
-        "chicken", "ginger", "maggie", "jessica", "jennifer", "amanda", "Robert",
-        "daniel", "william", "maria", "veronica", "susana", "skibidi", "minecraft",
-        "Minecraft", "fortnite", "roblox", "warcraft", "newmember", "newuser",
-        "newpass", "temppass", "test", "test123", "guest", "root", "pass",
-        "passw0rd", "Password1", "Password123", "eminem", "50cent", "metallica",
-        "slipknot", "blink182", "spiderman", "hellokitty", "barbie", "mario",
-        "joker", "thor", "elsa", "987654321", "147258369", "112233", "121212",
-        "131313", "696969", "777777", "888888", "999999", "aaaaaa", "qqqqqq",
-        "london", "manchester", "password!", "qwerty!", "123456!", "computer",
-        "internet", "louvre", "diamond", "killer", "yankees", "lakers"
-    }
-
-def check_patterns(password):
-    """
-    Advanced pattern recognition engine:
-    1. Exact match and containment check against the 150 most common passwords (with leet-speak normalization)
-    2. QWERTY geometric spatial keyboard modeling
-    3. Year range detection (1900 - 2050)
-    4. Excessive character repetitions
-    """
-    if not password:
-        return None
-
-    leet_map = str.maketrans({
-        '@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', 
-        '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'
-    })
-    normalized = password.lower().translate(leet_map)
-
-    top_150_passwords = get_top150_set()
-
-    for item in top_150_passwords:
-        if item in password.lower() or item in normalized:
-            return f"Top 150 most used passwords list match ('{item}')"
-
-    if check_keyboard_spatial(password):
-        return "Keyboard spatial walk detected (QWERTY layout)"
-
-    for i in range(len(password) - 3):
-        chunk = password[i:i+4]
-        if chunk.isdigit():
-            year = int(chunk)
-            if 1900 <= year <= 2050:
-                return f"Contains common year ({year})"
-
-    pwd_lower = password.lower()
-    for i in range(len(pwd_lower) - 2):
-        if pwd_lower[i] == pwd_lower[i+1] == pwd_lower[i+2]:
-            return "Excessive character repetition"
-
-    return None
 
 
 # ================== TERMINAL ==================
@@ -566,8 +411,8 @@ def print_output(password, charset, L, combinations, log10_value,
 
     pwned_count = None
     if not offline and not no_breach_check:
-        pwned_count = check_pwned(password)
-    pattern_warning = check_patterns(password)
+        pwned_count = network.check_pwned(password)
+    pattern_warning = patterns.check_patterns(password)
 
     show_full    = view == "full"
     show_darkweb = view in ("full", "darkweb")
@@ -600,9 +445,8 @@ def print_output(password, charset, L, combinations, log10_value,
         status_sym = ok("[✔] Present") if has_sym else err("[✘] Missing")
 
         # Check top 150 match specifically for the checkbox status
-        leet_map = str.maketrans({'@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i', '!': 'i', '$': 's', '5': 's', '7': 't', '8': 'b'})
-        norm_pwd = password.lower().translate(leet_map)
-        is_in_top150 = any(item in password.lower() or item in norm_pwd for item in get_top150_set())
+        norm_pwd = patterns.normalize_leetspeak(password)
+        is_in_top150 = any(item in password.lower() or item in norm_pwd for item in patterns.get_top150_set())
         status_top150 = err("[✘] Found") if is_in_top150 else ok("[✔] Clean")
 
         search_lines = [
@@ -811,7 +655,7 @@ def main():
     # Update Checker (safe, silent, timeouts after 1.5s).
     # Skipped for non-full views (scriptable output) and when requested.
     if not skip_update and view == "full":
-        new_ver = check_for_updates(__version__)
+        new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
             msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"
