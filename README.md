@@ -22,7 +22,7 @@
 
 **Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
 
-> **Project status - v1.2.0, actively developed.** This release ships the full granular network control (`--no-breach-check`, `--no-update-check`, `--offline`) and the report view modes (`-s/--short`, `-dw/--darkweb`). A `--json` output mode and a `--quiet` mode for CI pipelines are next on the [Roadmap](#roadmap). If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls).
+> **Project status - v1.3.0, actively developed.** This release is a structural refactor: the monolithic CLI has been split into focused modules and the analysis engine is now importable as a library (`from ismypwdsafe import analyze_password`). No CLI behaviour changed. A test suite and CI are next on the [Roadmap](#roadmap), followed by the `--json` and `--quiet` modes that turn the tool into a CI/CD building block. If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls).
 
 ---
 
@@ -116,6 +116,23 @@ imps -o "password"                   # both skipped, fully air-gapped audit
 
 In every skip case the DARKWEB panel reports why it has no result, and the score is computed without the breach cap, exactly like the API-failure path.
 
+### 7. Use it as a library
+
+The analysis pipeline is importable. `analyze_password` returns a structured `AuditResult` and performs no I/O unless you ask it to:
+
+```python
+from ismypwdsafe import analyze_password
+
+result = analyze_password("correct-horse-battery-staple", check_breach=False)
+
+print(result.score.value) # 100
+print(result.score.rating) # "strong"
+print(result.pattern.detected) # False
+print(result.breach.checked) # False
+```
+
+`check_breach=True` (the default) performs the HIBP request; `check_breach=False` keeps the call fully offline. The result object is the same one the CLI renders, so anything the terminal shows is available as a field.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
@@ -147,6 +164,8 @@ imps [-M] [-o | --no-breach-check] [-s | -dw] [--no-update-check] <password>
 
 `--offline` is the shortcut for the air-gapped case; the two `--no-*-check` flags are the granular controls. In all skip cases the audit still runs, the pattern engine still runs, and the score is computed without the breach cap.
 
+The CLI is a thin layer over the `ismypwdsafe` package. Every flag maps to a field of `AuditResult`; nothing is computed twice.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
@@ -168,6 +187,8 @@ imps [-M] [-o | --no-breach-check] [-s | -dw] [--no-update-check] <password>
 | [Offline mode](#6-audit-without-touching-the-network) | `-o` / `--offline` skips both network requests in a single switch |
 | [Granular network control](#6-audit-without-touching-the-network) | `--no-breach-check` and `--no-update-check` disable one request each |
 | [Secure interactive prompt](#2-run-an-audit) | Run `imps` without arguments to enter the password via a hidden prompt, preventing shell history leaks |
+| [Importable engine](#7-use-it-as-a-library) | `from ismypwdsafe import analyze_password` returns a structured `AuditResult` with no CLI overhead |
+| [Modular architecture](#project-layout) | Core, patterns, network, UI and CLI live in separate modules; the engine has no terminal dependencies |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -388,17 +409,24 @@ imps -o -s "password"
 ```text
 IsMyPwdSafe/
 ├── ismypwdsafe/
-│   ├── __init__.py
-│   └── main.py          # CLI, ~800 lines, single file
-├── docs/screenshots/    # README screenshots
+│ ├── __init__.py      # __version__, public API re-exports
+│ ├── core.py          # AuditResult data model, analyze_password, entropy math
+│ ├── patterns.py      # top-150 dictionary, QWERTY walks, years, repetition
+│ ├── network.py       # HaveIBeenPwned range lookup, GitHub version check
+│ ├── ui.py            # ANSI helpers, boxes, animation, print_output
+│ ├── cli.py           # argparse, orchestration, exit codes, entry()
+│ └── main.py          # compatibility shim, removed in 2.0
+├── docs/screenshots/  # README screenshots
 ├── .gitignore
-├── LICENSE              # MIT
+├── LICENSE            # MIT
 ├── pyproject.toml
 ├── version.txt
 └── README.md
 ```
 
-The CLI is a single file by design. It can be read end-to-end in one session and copied to any machine to run with `python main.py "password"` without installation.
+The split is deliberate. `core.py` and `patterns.py` contain no I/O and no ANSI: they can be imported and tested in isolation. `network.py` is the only module that talks to the network, and it can be mocked with a single import. `ui.py` is the only module that writes to stdout. `cli.py` is the only module that parses argv.
+
+`main.py` is a three-line shim that keeps `python -m ismypwdsafe.main` working; it will be removed in 2.0 when the `imps` entry point is the only documented invocation.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -408,10 +436,10 @@ The CLI is a single file by design. It can be read end-to-end in one session and
 
 Actively in progress, in rough order of priority:
 
-- **`--json` output** - machine-readable audit result for scripting and CI pipelines.
-- **`--quiet` mode** - exit code only, useful in pre-commit hooks and pipelines.
-- **Test suite and CI** - `unittest` coverage for the entropy engine, the pattern rules, the score caps, the network-flag composition and the view modes, plus a GitHub Actions workflow on 3.8 / 3.10 / 3.12.
-- **Expanded pattern dictionary** - the top-150 list is a starting point, not the endpoint.
+- **Test suite and CI** - `pytest` coverage for the analysis engine, the scoring caps and the CLI flag composition, plus a GitHub Actions workflow on Windows / macOS / Linux and a "tests passing" badge.
+- **`--json` output** - a versioned, structured result for scripting and CI pipelines. Includes the exit code in the payload.
+- **`--quiet` mode** - no stdout, exit code only. Breaking change for anyone relying on the current always-zero exit code, which is why it will ship as a major release.
+- **Engine improvements** - Unicode and emoji support in the charset estimate, weighted scoring in the spirit of `zxcvbn`, expanded pattern rules.
 
 Out of scope by design: password storage, account systems, cloud sync. IsMyPwdSafe is an audit tool, not a password manager.
 
@@ -434,7 +462,10 @@ source .venv/bin/activate     # Linux/macOS
 pip install -e .
 
 imps "test-password"
+python -m ismypwdsafe.main "test-password"
 ```
+
+The `python -m ismypwdsafe.main` form works without an installed console script, and it is what you should use when you are editing `cli.py` and have not reinstalled yet.
 
 For non-trivial changes please open an issue first to agree on the approach.
 
