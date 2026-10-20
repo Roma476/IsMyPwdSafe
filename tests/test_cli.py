@@ -17,16 +17,27 @@ def test_empty_password_returns_data_error(monkeypatch):
     assert cli.main([]) == 65
 
 
-def test_offline_skips_both_requests(monkeypatch, no_network):
+def test_default_skips_update_check(monkeypatch, no_network):
     called = {"update": False}
     def fake_update(v):
         called["update"] = True
         return None
     monkeypatch.setattr(cli.network, "check_for_updates", fake_update)
 
-    code = cli.main(["-o", "correct-horse-battery-staple"])
+    code = cli.main(["correct-horse-battery-staple"])
     assert code == 0
     assert called["update"] is False
+
+def test_check_updates_flag(monkeypatch):
+    called = {"update": False}
+    def fake_update(v):
+        called["update"] = True
+        return None
+    monkeypatch.setattr(cli.network, "check_for_updates", fake_update)
+
+    code = cli.main(["--check-updates", "correct-horse-battery-staple"])
+    assert code == 0
+    assert called["update"] is True
 
 
 def test_exit_code_reflects_result(monkeypatch):

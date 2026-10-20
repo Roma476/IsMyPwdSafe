@@ -36,9 +36,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Skip the HaveIBeenPwned breach lookup, keep the GitHub update check",
     )
     parser.add_argument(
-        "--no-update-check",
+        "--check-updates",
         action="store_true",
-        help="Disable the remote update check on startup (implied by --offline)",
+        help="Check for newer versions on startup (disabled by default for privacy)",
     )
     view_group = parser.add_mutually_exclusive_group()
     view_group.add_argument(
@@ -73,7 +73,6 @@ def main(argv=None) -> int:
         view = "full"
 
     skip_breach = args.offline or args.no_breach_check
-    skip_update = args.offline or args.no_update_check
 
     if password == "-":  # noqa: S105
         password = sys.stdin.read().rstrip("\n")
@@ -87,7 +86,7 @@ def main(argv=None) -> int:
             print(warn("[!] No password provided."))
             return 65
 
-    if not skip_update and view == "full" and not args.json:
+    if args.check_updates and view == "full" and not args.json:
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
