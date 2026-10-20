@@ -19,10 +19,11 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Roma476/IsMyPwdSafe/issues)
 [![Runtime deps](https://img.shields.io/badge/deps-1_(requests)-63e6b4?style=flat-square)](pyproject.toml)
 [![Network calls](https://img.shields.io/badge/network_calls-2_(0_with_--offline)-729dff?style=flat-square)](#privacy-and-network-behavior)
+[![CI](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml/badge.svg)](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml)
 
 **Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
 
-> **Project status - v1.3.0, actively developed.** This release is a structural refactor: the monolithic CLI has been split into focused modules and the analysis engine is now importable as a library (`from ismypwdsafe import analyze_password`). No CLI behaviour changed. A test suite and CI are next on the [Roadmap](#roadmap), followed by the `--json` and `--quiet` modes that turn the tool into a CI/CD building block. If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls).
+> **Project status - v1.4.0, actively developed.** This release adds a `pytest` suite that runs fully offline, a GitHub Actions workflow on Windows, macOS and Linux across Python 3.8, 3.10 and 3.12, and a small `cli.main(argv=None)` change that makes the CLI testable. The engine was already importable since v1.3.0. The `--json` and `--quiet` modes are next on the [Roadmap](#roadmap), and they are what turns the tool into a CI/CD building block. If you have ideas, want to report a bug or want to contribute, open an [issue](https://github.com/Roma476/IsMyPwdSafe/issues) or a [pull request](https://github.com/Roma476/IsMyPwdSafe/pulls).
 
 ---
 
@@ -363,7 +364,6 @@ In every skip case:
 - **Finite pattern list.** Top-150 plus four structural rules. An uncommon password is not automatically strong - it is only not *obviously* weak.
 - **Crack times are theoretical.** They assume a constant hash rate on a given hardware profile. They do not model rainbow tables, targeted dictionaries, GPU-specific optimizations or side channels.
 - **DARKWEB depends on HIBP.** If the API changes behaviour the panel reports it, but the tool does not update itself.
-- **No automated test suite yet.** Manual checks are documented in [Checks](#checks). The roadmap includes a `unittest` suite and a GitHub Actions workflow.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -404,6 +404,19 @@ imps -o -s "password"
 
 ---
 
+## Testing
+
+```bash
+pip install -e ".[test]"
+pytest
+```
+
+The test suite runs offline. `network.check_breach` and `network.check_for_updates` are mocked in `tests/conftest.py`, and a `no_network` fixture fails any test that accidentally performs an HTTP request. CI runs on Windows, macOS and Linux across Python 3.8, 3.10 and 3.12.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+---
+
 ## Project layout
 
 ```text
@@ -416,15 +429,25 @@ IsMyPwdSafe/
 │ ├── ui.py            # ANSI helpers, boxes, animation, print_output
 │ ├── cli.py           # argparse, orchestration, exit codes, entry()
 │ └── main.py          # compatibility shim, removed in 2.0
-├── docs/screenshots/  # README screenshots
+├── tests/                # pytest suite, runs offline
+│ ├── conftest.py
+│ ├── test_patterns.py
+│ ├── test_core.py
+│ ├── test_network.py
+│ └── test_cli.py
+├── .github/workflows/    # CI on Windows, macOS, Linux
+│ └── ci.yml
+├── docs/screenshots/     # README screenshots
 ├── .gitignore
-├── LICENSE            # MIT
+├── LICENSE               # MIT
 ├── pyproject.toml
 ├── version.txt
 └── README.md
 ```
 
 The split is deliberate. `core.py` and `patterns.py` contain no I/O and no ANSI: they can be imported and tested in isolation. `network.py` is the only module that talks to the network, and it can be mocked with a single import. `ui.py` is the only module that writes to stdout. `cli.py` is the only module that parses argv.
+
+`tests/` mirrors the module split: one file per module. The suite is offline by construction, so it runs on a plane and in CI without flakiness.
 
 `main.py` is a three-line shim that keeps `python -m ismypwdsafe.main` working; it will be removed in 2.0 when the `imps` entry point is the only documented invocation.
 
@@ -436,10 +459,9 @@ The split is deliberate. `core.py` and `patterns.py` contain no I/O and no ANSI:
 
 Actively in progress, in rough order of priority:
 
-- **Test suite and CI** - `pytest` coverage for the analysis engine, the scoring caps and the CLI flag composition, plus a GitHub Actions workflow on Windows / macOS / Linux and a "tests passing" badge.
+- **Engine improvements** - Unicode and emoji support in the charset estimate, weighted scoring in the spirit of `zxcvbn`, expanded pattern rules.
 - **`--json` output** - a versioned, structured result for scripting and CI pipelines. Includes the exit code in the payload.
 - **`--quiet` mode** - no stdout, exit code only. Breaking change for anyone relying on the current always-zero exit code, which is why it will ship as a major release.
-- **Engine improvements** - Unicode and emoji support in the charset estimate, weighted scoring in the spirit of `zxcvbn`, expanded pattern rules.
 
 Out of scope by design: password storage, account systems, cloud sync. IsMyPwdSafe is an audit tool, not a password manager.
 
