@@ -1,4 +1,3 @@
-import pytest
 from ismypwdsafe import patterns
 
 
@@ -27,7 +26,6 @@ def test_qwerty_walk_helper():
 
 
 def test_qwerty_walk_via_detect_pattern():
-    # "zxcvbnm" non è nella top-150, quindi la regola walk scatta
     result = patterns.detect_pattern("mnbvcxz")
     assert result.detected is True
     assert result.rule == "qwerty_walk"

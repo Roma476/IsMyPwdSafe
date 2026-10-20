@@ -6,13 +6,11 @@ Pure logic, no I/O except what network.py does. Importable as a library:
     result = analyze_password("hunter2", check_breach=False)
     print(result.score.value, result.score.rating)
 """
+import math
 from dataclasses import dataclass
 from typing import Optional, Tuple
-import math
 
-from . import patterns
-from . import network
-
+from . import network, patterns
 
 SCHEMA_VERSION = 1
 
@@ -86,7 +84,7 @@ def must_use_log(charset_size: int, length: int) -> bool:
     return length >= 4
 
 
-def calc_charset(password: str):
+def calc_charset(password: str) -> tuple[int, bool, bool, bool, bool]:
     number = lower = upper = symbol = False
     total = 0
     for char in password:
@@ -105,7 +103,7 @@ def calc_charset(password: str):
     return total, lower, upper, number, symbol
 
 
-def calc_combinations(charset_size: int, length: int):
+def calc_combinations(charset_size: int, length: int) -> tuple[Optional[int], float]:
     log10_value = length * math.log10(charset_size) if charset_size > 0 else 0
     if must_use_log(charset_size, length):
         return None, log10_value
@@ -139,9 +137,12 @@ def calculate_score(
 
 
 def compute_hardware_estimates(log10_value: float) -> Tuple[HardwareEstimate, ...]:
-    out = []
+    out: list[HardwareEstimate] = []
     for key, label, aps in _HARDWARE_PROFILES:
-        seconds = (10 ** log10_value) / aps
+        try:
+            seconds = (10 ** log10_value) / aps
+        except OverflowError:
+            seconds = float("inf")
         out.append(HardwareEstimate(key=key, label=label, attempts_per_second=aps, seconds=seconds))
     return tuple(out)
 
@@ -161,7 +162,8 @@ def analyze_password(
     tool_version defaults to the package __version__ when not provided.
     """
     if tool_version is None:
-        from . import __version__ as tool_version
+        from . import __version__ as package_version
+        tool_version = package_version
 
     if not password:
         return AuditResult(
@@ -193,7 +195,7 @@ def analyze_password(
         breach_result = network.check_breach(password)
     else:
         breach_result = network.BreachResult(
-            checked=False, pwned=None, count=None, reason=breach_skip_reason,
+            checked=False, pwned=None, breach_count=None, reason=breach_skip_reason,
         )
 
     score = calculate_score(log10_value, pattern_result, breach_result)

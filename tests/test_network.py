@@ -1,4 +1,3 @@
-import pytest
 from ismypwdsafe import network
 
 
@@ -19,7 +18,7 @@ def test_check_breach_pwned(monkeypatch):
     result = network.check_breach("password")
     assert result.checked is True
     assert result.pwned is True
-    assert result.count == 9545824
+    assert result.breach_count == 9545824
     assert result.reason is None
 
 
@@ -31,7 +30,7 @@ def test_check_breach_clean(monkeypatch):
     result = network.check_breach("password")
     assert result.checked is True
     assert result.pwned is False
-    assert result.count == 0
+    assert result.breach_count == 0
 
 
 def test_check_breach_api_error(monkeypatch):

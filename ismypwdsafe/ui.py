@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Terminal rendering: ANSI helpers, boxes, animation, print_output."""
 import math
 import os
@@ -11,7 +12,7 @@ from typing import List, Optional
 from .core import AuditResult
 
 # Enable ANSI escape processing on Windows consoles.
-os.system("")
+os.system("")  # noqa: S605, S607
 
 
 def _supports_color() -> bool:
@@ -138,7 +139,7 @@ def get_width() -> int:
 
 
 def clear() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
+    os.system("cls" if os.name == "nt" else "clear")  # noqa: S605
 
 
 # ================== UI ==================
@@ -210,8 +211,8 @@ def merge_boxes(left: List[str], right: List[str], width: int) -> None:
     max_rows = max(len(left), len(right))
     left  += ["║" + " " * (col - 2) + " ║"] * (max_rows - len(left))
     right += ["║" + " " * (col - 2) + " ║"] * (max_rows - len(right))
-    for l, r in zip(left, right):
-        print(pad_visible(truncate_visible(l, col), col) + pad_visible(truncate_visible(r, col), col))
+    for left_line, right_line in zip(left, right):
+        print(pad_visible(truncate_visible(left_line, col), col) + pad_visible(truncate_visible(right_line, col), col))
         if ANIMATE:
             sys.stdout.flush()
             time.sleep(0.012)
@@ -240,14 +241,14 @@ def format_time(time_seconds: float) -> str:
     if time_seconds < 1:
         return "Instant"
     if time_seconds < 60:
-        return "{:.1f} s".format(time_seconds)
+        return f"{time_seconds:.1f} s"
     if time_seconds < 3600:
-        return "{:.1f} min".format(time_seconds / 60)
+        return f"{time_seconds / 60:.1f} min"
     if time_seconds < 86400:
-        return "{:.1f} hrs".format(time_seconds / 3600)
+        return f"{time_seconds / 3600:.1f} hrs"
     years = time_seconds / 31536000
     if years < 1000:
-        return "{:.1f} y".format(years)
+        return f"{years:.1f} y"
     return "1000+ y"
 
 
@@ -273,9 +274,9 @@ def print_output(result: AuditResult, password: str,
         L = result.input.length
         charset = result.input.charset_size
         comb_str = (
-            "{:,}".format(result.entropy.combinations)
+            f"{result.entropy.combinations:,}"
             if result.entropy.combinations is not None
-            else "10^{:.2f}".format(result.entropy.log10_value)
+            else f"10^{result.entropy.log10_value:.2f}"
         )
         display_pwd = "*" * L if mask_mode else password
 
@@ -287,8 +288,7 @@ def print_output(result: AuditResult, password: str,
         cs_value  = colorize(str(charset), C.BRIGHT_WHITE, C.BOLD)
 
         input_box = make_box("INPUT METRICS", [
-            "{}{}  │  {}{} characters  │  {}{} options".format(
-                pwd_label, pwd_value, len_label, len_value, cs_label, cs_value)
+            f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
         ], width)
         print_lines_animated(input_box, delay=0.015)
         print()
@@ -302,12 +302,12 @@ def print_output(result: AuditResult, password: str,
         status_top150 = err("[✘] Found") if in_top150 else ok("[✔] Clean")
 
         search_lines = [
-            "Combinations : {}".format(colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)),
-            "Lowercase a-z: {}".format(status_low),
-            "Uppercase A-Z: {}".format(status_upp),
-            "Digits 0-9   : {}".format(status_num),
-            "Symbols !@#$ : {}".format(status_sym),
-            "Top 150 List : {}".format(status_top150),
+            f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
+            f"Lowercase a-z: {status_low}",
+            f"Uppercase A-Z: {status_upp}",
+            f"Digits 0-9   : {status_num}",
+            f"Symbols !@#$ : {status_sym}",
+            f"Top 150 List : {status_top150}",
         ]
         if result.pattern.detected:
             search_lines.append("Pattern Risk : " + warn("[!] " + result.pattern.detail))
@@ -323,7 +323,7 @@ def print_output(result: AuditResult, password: str,
             bar = progress_bar(bar_value, 12, col_w - 36)
             graph_lines.append(
                 "{} [{}] {}".format(
-                    colorize("{:<14}".format(hw.label), C.GRAY),
+                    colorize(f"{hw.label:<14}", C.GRAY),
                     colorize(bar, C.WHITE),
                     colorize(time_str, C.BRIGHT_WHITE),
                 )
@@ -363,7 +363,7 @@ def print_output(result: AuditResult, password: str,
                 C.BRIGHT_RED, C.BOLD,
             )
             risk_details = colorize(
-                "This exact password was found leaked {:,} times online. Hackers already know it.".format(b.count),
+                f"This exact password was found leaked {b.breach_count:,} times online. Hackers already know it.",
                 C.BRIGHT_RED,
             )
         else:
@@ -388,7 +388,7 @@ def print_output(result: AuditResult, password: str,
             "STRONG": C.BRIGHT_GREEN,
         }[lvl]
         lvl_fill = score / 100.0
-        lvl_colored = colorize("{} {}/100".format(lvl, score), lvl_color, C.BOLD)
+        lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
 
         if ANIMATE and show_full:
             bar_width = width - 38
@@ -418,5 +418,5 @@ def print_output(result: AuditResult, password: str,
             filled = int(bar_width * lvl_fill)
             bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
             for line in make_box("OVERALL SECURITY ASSESSMENT",
-                                 ["[{}] {}".format(bar, lvl_colored)], width):
+                                 [f"[{bar}] {lvl_colored}"], width):
                 print(line)

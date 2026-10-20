@@ -3,9 +3,9 @@ import argparse
 import getpass
 import sys
 
-from . import __version__
-from . import network
+from . import __version__, network
 from .core import analyze_password
+from .render import render_json
 from .ui import dim, err, get_width, print_output, warn
 
 
@@ -21,6 +21,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Completely mask the input password with asterisks in the summary screen box",
     )
     parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output the result as a machine-readable JSON document",
+    )
+    parser.add_argument(
         "-o", "--offline",
         action="store_true",
         help="Disable all network requests. Implies --no-breach-check and --no-update-check",
@@ -31,9 +36,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Skip the HaveIBeenPwned breach lookup, keep the GitHub update check",
     )
     parser.add_argument(
-        "--no-update-check",
+        "--check-updates",
         action="store_true",
-        help="Disable the remote update check on startup (implied by --offline)",
+        help="Check for newer versions on startup (disabled by default for privacy)",
     )
     view_group = parser.add_mutually_exclusive_group()
     view_group.add_argument(
@@ -68,26 +73,26 @@ def main(argv=None) -> int:
         view = "full"
 
     skip_breach = args.offline or args.no_breach_check
-    skip_update = args.offline or args.no_update_check
 
-    if not password:
+    if password == "-":  # noqa: S105
+        password = sys.stdin.read().rstrip("\n")
+    elif not password:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
         except Exception as e:
-            print(err("[!] Error reading password: {}".format(e)))
+            print(err(f"[!] Error reading password: {e}"))
             return 65
         if not password:
             print(warn("[!] No password provided."))
             return 65
 
-    if not skip_update and view == "full":
+    if args.check_updates and view == "full" and not args.json:
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
-            msg = "[!] A new version of IsMyPwdSafe is available: v{} (you have v{})".format(
-                new_ver, __version__)
+            msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"  # noqa: E501
             print(warn(msg.center(width)))
-            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))
+            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))  # noqa: E501
 
     if args.offline:
         breach_reason = "offline"
@@ -103,7 +108,10 @@ def main(argv=None) -> int:
         tool_version=__version__,
     )
 
-    print_output(result, password, mask_mode=args.Mask, view=view)
+    if args.json:
+        print(render_json(result))
+    else:
+        print_output(result, password, mask_mode=args.Mask, view=view)
     return result.exit_code
 
 

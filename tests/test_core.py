@@ -1,7 +1,8 @@
 import pytest
-from ismypwdsafe import core, analyze_password
-from ismypwdsafe.patterns import PatternResult
+
+from ismypwdsafe import analyze_password, core
 from ismypwdsafe.network import BreachResult
+from ismypwdsafe.patterns import PatternResult
 
 
 @pytest.mark.parametrize("pwd, expected_charset", [
@@ -44,7 +45,7 @@ def test_score_pattern_capped(clean_breach):
 
 
 def test_score_pwned_capped(pattern=None):
-    breach = BreachResult(checked=True, pwned=True, count=100, reason=None)
+    breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
     pattern = PatternResult(False, None, None)
     score = core.calculate_score(25.0, pattern, breach)
     assert score.value == 10
@@ -53,7 +54,7 @@ def test_score_pwned_capped(pattern=None):
 
 def test_score_pattern_and_pwned_breach_wins():
     pattern = PatternResult(True, "top150", "x")
-    breach = BreachResult(checked=True, pwned=True, count=100, reason=None)
+    breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
     score = core.calculate_score(25.0, pattern, breach)
     assert score.value == 10
     assert score.capped_by == "breach"
