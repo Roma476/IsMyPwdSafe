@@ -49,22 +49,20 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  publish-to-testpypi:
-    name: Publish to TestPyPI
+  publish-to-pypi:
+    name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: testpypi
-      url: https://test.pypi.org/p/ismypwdsafe
+      name: pypi
+      url: https://pypi.org/p/ismypwdsafe
     permissions:
-      id-token: write   
+      id-token: write
     steps:
       - name: Download distributions
         uses: actions/download-artifact@v6
         with:
           name: python-package-distributions
           path: dist/
-      - name: Publish to TestPyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
