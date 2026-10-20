@@ -1,9 +1,11 @@
 """Command-line interface: argparse, update check, exit code orchestration."""
 import argparse
 import getpass
+import sys
 
 from . import __version__, network
 from .core import analyze_password
+from .render import render_json
 from .ui import dim, err, get_width, print_output, warn
 
 
@@ -17,6 +19,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "-M", "--Mask",
         action="store_true",
         help="Completely mask the input password with asterisks in the summary screen box",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output the result as a machine-readable JSON document",
     )
     parser.add_argument(
         "-o", "--offline",
@@ -68,7 +75,9 @@ def main(argv=None) -> int:
     skip_breach = args.offline or args.no_breach_check
     skip_update = args.offline or args.no_update_check
 
-    if not password:
+    if password == "-":  # noqa: S105
+        password = sys.stdin.read().rstrip("\n")
+    elif not password:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
         except Exception as e:
@@ -78,7 +87,7 @@ def main(argv=None) -> int:
             print(warn("[!] No password provided."))
             return 65
 
-    if not skip_update and view == "full":
+    if not skip_update and view == "full" and not args.json:
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
@@ -100,7 +109,10 @@ def main(argv=None) -> int:
         tool_version=__version__,
     )
 
-    print_output(result, password, mask_mode=args.Mask, view=view)
+    if args.json:
+        print(render_json(result))
+    else:
+        print_output(result, password, mask_mode=args.Mask, view=view)
     return result.exit_code
 
 
