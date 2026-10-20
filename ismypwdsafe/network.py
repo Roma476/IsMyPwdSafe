@@ -1,6 +1,6 @@
 """Outbound HTTP: HaveIBeenPwned range API and GitHub version check."""
 import hashlib
-from typing import Optional, Union
+from typing import Optional, Union, NamedTuple
 
 import requests
 
@@ -53,3 +53,30 @@ def check_for_updates(current_version: str) -> Optional[str]:
     except Exception:
         pass
     return None
+
+
+class BreachResult(NamedTuple):
+    checked: bool
+    pwned: Optional[bool]
+    count: Optional[int]
+    reason: Optional[str]   # "offline" | "disabled" | "api_error" | None
+
+
+def check_breach(password: str) -> BreachResult:
+    """Structured version of check_pwned. Never raises."""
+    sha1 = _hash_password(password)
+    prefix = sha1[:5].upper()
+    suffix = sha1[5:].upper()
+
+    url = "https://api.pwnedpasswords.com/range/{}".format(prefix)
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code != 200:
+            return BreachResult(checked=True, pwned=None, count=None, reason="api_error")
+        for line in response.text.splitlines():
+            server_suffix, count = line.split(':')
+            if server_suffix == suffix:
+                return BreachResult(checked=True, pwned=True, count=int(count), reason=None)
+        return BreachResult(checked=True, pwned=False, count=0, reason=None)
+    except Exception:
+        return BreachResult(checked=True, pwned=None, count=None, reason="api_error")

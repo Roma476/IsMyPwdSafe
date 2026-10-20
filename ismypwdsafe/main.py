@@ -8,10 +8,10 @@ import time
 import textwrap
 import getpass
 
-from . import patterns
+from . import __version__
 from . import network
+from .core import analyze_password
 
-__version__ = "1.2.0"
 
 
 # ================== ANSI COLOR SUPPORT ==================
@@ -130,7 +130,6 @@ def typewrite(text, delay=0.005, end="\n"):
     sys.stdout.write(end)
     sys.stdout.flush()
 
-
 def print_lines_animated(lines, delay=0.015):
     """Prints a list of lines one by one with a small delay."""
     if not ANIMATE:
@@ -141,52 +140,6 @@ def print_lines_animated(lines, delay=0.015):
         print(line)
         sys.stdout.flush()
         time.sleep(delay)
-
-
-# ================== CORE LOGIC ==================
-
-def must_use_log(C, L):
-    """
-    Determines whether to switch to logarithmic calculations 
-    to prevent integer overflow when processing large combinations.
-    """
-    if C > 95:
-        return L >= 3
-    if C in (62, 63):
-        return L >= 5
-    return L >= 4
-
-def calc_charset(password):
-    """
-    Calculates the potential character set size and returns individual flags.
-    """
-    number = lower = upper = symbol = False
-    total = 0
-    for char in password:
-        if char.isdigit() and not number:
-            number = True
-            total += 10
-        elif char.islower() and not lower:
-            lower = True
-            total += 26
-        elif char.isupper() and not upper:
-            upper = True
-            total += 26
-        elif not char.isalnum() and ord(char) < 128 and not symbol:
-            symbol = True
-            total += 33
-            
-    return total, lower, upper, number, symbol
-
-def calc_combinations(C, L):
-    """
-    Computes total possible key combinations and the log10 equivalent value.
-    """
-    log10_value = L * math.log10(C) if C > 0 else 0
-    if must_use_log(C, L):
-        return None, log10_value
-    else:
-        return C ** L, log10_value
 
 
 # ================== TERMINAL ==================
@@ -323,39 +276,6 @@ def progress_bar(value, max_value, width, colored=False):
 
 # ================== PASSWORD EXAMPLES ==================
 
-def suggestions(password):
-    """
-    Generates alternative variants to strengthen the input password.
-    """
-    if not password:
-        return ["(no password provided)"]
-    examples = []
-    base = password
-    examples.append(f"{base} → {base}123!")
-    examples.append(f"{base} → {base.capitalize()}=")
-    leet = base.replace('a','@').replace('o','0').replace('e','3').replace('i','1')
-    examples.append(f"{base} → {leet}")
-    examples.append(f"{base} → {base}_hf3f?")
-    if len(base) >= 4:
-        examples.append(f"{base} → {base[:3]}!{base[3:]}99#")
-    else:
-        examples.append(f"{base} → {base}!99#$")
-    return examples[:4]
-
-def calculate_score(log10_value, pattern_warning, pwned_count):
-    """
-    Computes a 0-100 security score combining entropy, patterns, and breach history.
-    """
-    base_score = int(min(100, max(0, log10_value * 5)))
-    
-    if pattern_warning:
-        base_score = min(base_score, 30)
-        
-    if isinstance(pwned_count, int) and pwned_count > 0:
-        base_score = min(base_score, 10)
-        
-    return base_score
-
 def format_time(time_seconds):
     """
     Formats seconds into a human-readable string, max 9 chars.
@@ -376,43 +296,21 @@ def format_time(time_seconds):
     
     return "1000+ y"
 
-def strength(log10_value, pattern_warning):
-    """
-    Translates mathematical entropy into human-readable assessment rankings.
-    """
-    if pattern_warning or log10_value < 10:
-        return "WEAK"
-    elif log10_value < 14:
-        return "MEDIUM"
-    return "STRONG"
-
 
 # ================== OUTPUT ==================
 
-def print_output(password, charset, L, combinations, log10_value,
-                 has_low, has_upp, has_num, has_sym,
-                 mask_mode=False, view="full", offline=False,
-                 no_breach_check=False):
+def print_output(result, password, mask_mode=False, view="full"):
     """
-    Renders the audit report.
+    Render an AuditResult.
 
-    view can be:
-      - "full"    : banner, input metrics, search/hardware, darkweb, overall
-      - "short"   : overall assessment only
-      - "darkweb" : darkweb scanner only
-
-    offline=True skips every outbound request (HIBP and GitHub).
-    no_breach_check=True skips only the HIBP lookup, leaving the GitHub
-    update check active. Both flags leave pwned_count as None, so the
-    overall score is computed without the breach cap.
+    view: "full" | "short" | "darkweb".
     """
     width = get_width()
     col_w = width // 2
 
-    pwned_count = None
-    if not offline and not no_breach_check:
-        pwned_count = network.check_pwned(password)
-    pattern_warning = patterns.check_patterns(password)
+    if result.error:
+        print(err("[!] " + result.error))
+        return
 
     show_full    = view == "full"
     show_darkweb = view in ("full", "darkweb")
@@ -421,101 +319,108 @@ def print_output(password, charset, L, combinations, log10_value,
     if show_full:
         banner()
 
-        comb_str = f"{combinations:,}" if combinations else f"10^{log10_value:.2f}"
+        L = result.input.length
+        charset = result.input.charset_size
+        comb_str = (
+            "{:,}".format(result.entropy.combinations)
+            if result.entropy.combinations is not None
+            else "10^{:.2f}".format(result.entropy.log10_value)
+        )
         display_pwd = "*" * L if mask_mode else password
 
-        # ===== 1. TOP ROW: INPUT STATUS =====
         pwd_label = colorize("Password: ", C.GRAY)
         pwd_value = colorize(display_pwd, C.BRIGHT_WHITE, C.BOLD)
         len_label = colorize("Length: ", C.GRAY)
-        len_value = colorize(f"{L}", C.BRIGHT_WHITE, C.BOLD)
+        len_value = colorize(str(L), C.BRIGHT_WHITE, C.BOLD)
         cs_label  = colorize("Total Charset: ", C.GRAY)
-        cs_value  = colorize(f"{charset}", C.BRIGHT_WHITE, C.BOLD)
+        cs_value  = colorize(str(charset), C.BRIGHT_WHITE, C.BOLD)
 
         input_box = make_box("INPUT METRICS", [
-            f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
+            "{}{}  │  {}{} characters  │  {}{} options".format(
+                pwd_label, pwd_value, len_label, len_value, cs_label, cs_value)
         ], width)
-        
         print_lines_animated(input_box, delay=0.015)
         print()
 
-        status_low = ok("[✔] Present") if has_low else err("[✘] Missing")
-        status_upp = ok("[✔] Present") if has_upp else err("[✘] Missing")
-        status_num = ok("[✔] Present") if has_num else err("[✘] Missing")
-        status_sym = ok("[✔] Present") if has_sym else err("[✘] Missing")
+        status_low = ok("[✔] Present") if result.input.has_lowercase else err("[✘] Missing")
+        status_upp = ok("[✔] Present") if result.input.has_uppercase else err("[✘] Missing")
+        status_num = ok("[✔] Present") if result.input.has_digits    else err("[✘] Missing")
+        status_sym = ok("[✔] Present") if result.input.has_symbols   else err("[✘] Missing")
 
-        # Check top 150 match specifically for the checkbox status
-        norm_pwd = patterns.normalize_leetspeak(password)
-        is_in_top150 = any(item in password.lower() or item in norm_pwd for item in patterns.get_top150_set())
-        status_top150 = err("[✘] Found") if is_in_top150 else ok("[✔] Clean")
+        in_top150 = result.pattern.detected and result.pattern.rule == "top150"
+        status_top150 = err("[✘] Found") if in_top150 else ok("[✔] Clean")
 
         search_lines = [
-            f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
-            f"Lowercase a-z: {status_low}",
-            f"Uppercase A-Z: {status_upp}",
-            f"Digits 0-9   : {status_num}",
-            f"Symbols !@#$ : {status_sym}",
-            f"Top 150 List : {status_top150}",
+            "Combinations : {}".format(colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)),
+            "Lowercase a-z: {}".format(status_low),
+            "Uppercase A-Z: {}".format(status_upp),
+            "Digits 0-9   : {}".format(status_num),
+            "Symbols !@#$ : {}".format(status_sym),
+            "Top 150 List : {}".format(status_top150),
         ]
-        
-        if pattern_warning:
-            search_lines.append("Pattern Risk : " + warn("[!] " + pattern_warning))
+        if result.pattern.detected:
+            search_lines.append("Pattern Risk : " + warn("[!] " + result.pattern.detail))
         else:
             search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
 
-        # Box Left: SEARCH SPACE & STRUCTURAL ANALYSIS
         box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
 
-        # Box Right: Hardware Resistance Graph
-        speeds = [("PC (1K/s)", 1e3), ("Server (1M/s)", 1e6), ("GPU Rig (1B/s)", 1e9), ("Cluster (1T/s)", 1e12)]
         graph_lines = []
-        
-        for label, aps in speeds:
-            time_seconds = (10**log10_value) / aps
-            time_str = format_time(time_seconds)
-            bar_value = math.log10(time_seconds) if time_seconds > 0 else 0
-                
-            bar = progress_bar(bar_value, 12, col_w-36)
-            graph_lines.append(f"{colorize(f'{label:<14}', C.GRAY)} [{colorize(bar, C.WHITE)}] {colorize(time_str, C.BRIGHT_WHITE)}")
-            
-        if pattern_warning:
+        for hw in result.hardware:
+            time_str = format_time(hw.seconds)
+            bar_value = math.log10(hw.seconds) if hw.seconds > 0 else 0
+            bar = progress_bar(bar_value, 12, col_w - 36)
+            graph_lines.append(
+                "{} [{}] {}".format(
+                    colorize("{:<14}".format(hw.label), C.GRAY),
+                    colorize(bar, C.WHITE),
+                    colorize(time_str, C.BRIGHT_WHITE),
+                )
+            )
+
+        if result.pattern.detected:
             graph_lines.append("")
-            disclaimer_text = "[!] The presence of known patterns makes cracking this password significantly faster than brute-force estimates. (in the scale of milliseconds to seconds)"
-            wrapped_lines = textwrap.wrap(disclaimer_text, width=col_w-4)
-            for line in wrapped_lines:
+            disclaimer_text = (
+                "[!] The presence of known patterns makes cracking this password "
+                "significantly faster than brute-force estimates. "
+                "(in the scale of milliseconds to seconds)"
+            )
+            for line in textwrap.wrap(disclaimer_text, width=col_w - 4):
                 graph_lines.append(warn(line))
-            
+
         while len(graph_lines) < len(search_lines):
             graph_lines.append("")
 
         box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
-
         merge_boxes(box_search, box_hardware, width)
         print()
 
     if show_darkweb:
-        if offline:
+        b = result.breach
+        if b.reason == "offline":
             risk_status = warn("[!] OFFLINE MODE: BREACH CHECK SKIPPED")
             risk_details = dim("Run without -o/--offline to check this password against the HIBP breach database.")
-        elif no_breach_check:
+        elif b.reason == "disabled":
             risk_status = warn("[!] BREACH CHECK DISABLED (--no-breach-check)")
             risk_details = dim("The HIBP request was skipped on request. Run without --no-breach-check to enable it.")
-        elif isinstance(pwned_count, int):
-            if pwned_count > 0:
-                risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
-                risk_details = colorize(f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it.", C.BRIGHT_RED)
-            else:
-                risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
-                risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
-        else:
+        elif b.reason == "api_error":
             risk_status = warn("[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES")
-            risk_details = dim(f"API Telemetry State: {pwned_count}")
+            risk_details = dim("The HIBP API is unreachable. The audit was computed without the breach cap.")
+        elif b.pwned:
+            risk_status = colorize(
+                "[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!",
+                C.BRIGHT_RED, C.BOLD,
+            )
+            risk_details = colorize(
+                "This exact password was found leaked {:,} times online. Hackers already know it.".format(b.count),
+                C.BRIGHT_RED,
+            )
+        else:
+            risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
+            risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
 
-        darkweb_box = make_box("DARKWEB SCANNER", [
-            risk_status,
-            risk_details
-        ], width, title_color=C.BRIGHT_MAGENTA)
-
+        darkweb_box = make_box("DARKWEB SCANNER", [risk_status, risk_details],
+                               width, title_color=C.BRIGHT_MAGENTA)
         if show_full:
             print_lines_animated(darkweb_box, delay=0.02)
         else:
@@ -523,9 +428,9 @@ def print_output(password, charset, L, combinations, log10_value,
         print()
 
     if show_overall:
-        lvl = strength(log10_value, pattern_warning)
-        score = calculate_score(log10_value, pattern_warning, pwned_count)
-
+        s = result.score
+        lvl = s.rating.upper()
+        score = s.value
         lvl_color = {
             "WEAK":   C.BRIGHT_RED,
             "MEDIUM": C.BRIGHT_YELLOW,
@@ -533,37 +438,37 @@ def print_output(password, charset, L, combinations, log10_value,
         }[lvl]
 
         lvl_fill = score / 100.0
-        lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
+        lvl_colored = colorize("{} {}/100".format(lvl, score), lvl_color, C.BOLD)
 
         if ANIMATE and show_full:
             bar_width = width - 38
             target_fill = int(bar_width * lvl_fill)
 
-            print("╔" + "═"*(width-2) + "╗")
+            print("╔" + "═" * (width - 2) + "╗")
             title = "OVERALL SECURITY ASSESSMENT"
             inner = (width - 2 - len(title)) // 2
             right_pad = (width - 2 - len(title)) - inner
             colored_title = " " * inner + colorize(title, C.BRIGHT_WHITE, C.BOLD) + " " * right_pad
             print("║" + colored_title + "║")
-            print("╠" + "═"*(width-2) + "╣")
+            print("╠" + "═" * (width - 2) + "╣")
 
             for f in range(0, target_fill + 1, max(1, target_fill // 30)):
                 bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
-                sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
+                sys.stdout.write("\r║ [{}] {} {}".format(
+                    bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
                 sys.stdout.flush()
                 time.sleep(0.008)
             bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
-            sys.stdout.write("\r║ [{}] {} {}".format(bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
+            sys.stdout.write("\r║ [{}] {} {}".format(
+                bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
             sys.stdout.flush()
-            print("\n╚" + "═"*(width-2) + "╝")
+            print("\n╚" + "═" * (width - 2) + "╝")
         else:
             bar_width = width - 38
             filled = int(bar_width * lvl_fill)
             bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
-            sec = make_box("OVERALL SECURITY ASSESSMENT", [
-                f"[{bar}] {lvl_colored}"
-            ], width)
-            for line in sec:
+            for line in make_box("OVERALL SECURITY ASSESSMENT",
+                                 ["[{}] {}".format(bar, lvl_colored)], width):
                 print(line)
 
 
@@ -636,51 +541,48 @@ def main():
     else:
         view = "full"
 
-    # --offline implies both granular skips
     skip_breach = args.offline or args.no_breach_check
     skip_update = args.offline or args.no_update_check
 
-    # Catch empty constraints inputs and prompt for password securely if not provided
-    if not args.password:
+    if not password:
         try:
             password = getpass.getpass(prompt="Enter password to audit: ")
         except Exception as e:
-            print(err(f"[!] Error reading password: {e}"))
-            return
-
+            print(err("[!] Error reading password: {}".format(e)))
+            return 65
         if not password:
             print(warn("[!] No password provided."))
-            return
+            return 65
 
-    # Update Checker (safe, silent, timeouts after 1.5s).
-    # Skipped for non-full views (scriptable output) and when requested.
     if not skip_update and view == "full":
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
-            msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"
+            msg = "[!] A new version of IsMyPwdSafe is available: v{} (you have v{})".format(new_ver, __version__)
             print(warn(msg.center(width)))
             print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))
 
-    C, has_low, has_upp, has_num, has_sym = calc_charset(password)
-    
-    if C == 0:
-        print("[!] Could not determine charset.")
-        return
-        
-    L = len(password)
-    combinations, log10_value = calc_combinations(C, L)
+    if args.offline:
+        breach_reason = "offline"
+    elif args.no_breach_check:
+        breach_reason = "disabled"
+    else:
+        breach_reason = None
 
-    # Pass computed values to the output renderer
-    print_output(password, C, L, combinations, log10_value,
-                 has_low, has_upp, has_num, has_sym,
-                 mask_mode=args.Mask, view=view,
-                 offline=args.offline, no_breach_check=args.no_breach_check)
+    result = analyze_password(
+        password,
+        check_breach=not skip_breach,
+        breach_skip_reason=breach_reason,
+        tool_version=__version__,
+    )
+
+    print_output(result, password, mask_mode=args.Mask, view=view)
+    return result.exit_code
 
 
 if __name__ == "__main__":
     try:
-        main()
+        sys.exit(main())
     except KeyboardInterrupt:
         print("\n" + warn("[!] Audit interrupted by user."))
-        sys.exit(130) # Exit code 130 for SIGINT (Ctrl+C)
+        sys.exit(130)

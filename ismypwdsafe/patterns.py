@@ -1,5 +1,5 @@
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
-from typing import Optional
+from typing import Optional, NamedTuple
 
 
 _LEET_MAP = str.maketrans({
@@ -103,3 +103,40 @@ def check_patterns(password: str) -> Optional[str]:
             return "Excessive character repetition"
 
     return None
+
+
+class PatternResult(NamedTuple):
+    detected: bool
+    rule: Optional[str]   # "top150" | "qwerty_walk" | "common_year" | "repetition" | None
+    detail: Optional[str]  # human-readable warning, None when not detected
+
+
+def detect_pattern(password: str) -> PatternResult:
+    """Structured version of check_patterns. First matching rule wins."""
+    if not password:
+        return PatternResult(False, None, None)
+
+    normalized = normalize_leetspeak(password)
+    for item in get_top150_set():
+        if item in password.lower() or item in normalized:
+            return PatternResult(
+                True, "top150",
+                "Top 150 most used passwords list match ('{}')".format(item),
+            )
+
+    if check_keyboard_spatial(password):
+        return PatternResult(True, "qwerty_walk", "Keyboard spatial walk detected (QWERTY layout)")
+
+    for i in range(len(password) - 3):
+        chunk = password[i:i + 4]
+        if chunk.isdigit():
+            year = int(chunk)
+            if 1900 <= year <= 2050:
+                return PatternResult(True, "common_year", "Contains common year ({})".format(year))
+
+    pwd_lower = password.lower()
+    for i in range(len(pwd_lower) - 2):
+        if pwd_lower[i] == pwd_lower[i + 1] == pwd_lower[i + 2]:
+            return PatternResult(True, "repetition", "Excessive character repetition")
+
+    return PatternResult(False, None, None)
