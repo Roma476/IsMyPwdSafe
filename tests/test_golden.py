@@ -32,12 +32,16 @@ def test_golden_scores() -> None:
                 analyze_password(pwd, check_breach=False)
                 mismatches.append(f"'{pwd}': expected an error, but analysis succeeded.")
             except Exception:  # noqa: S110
-                pass # The error is still happening, which is expected
+                pass  # The error is still happening, which is expected
             continue
 
-        expected = case["expected"]
+        expected = case["expected"].copy()
         result = analyze_password(pwd, check_breach=False)
         actual = json.loads(render_json(result))
+
+        # Ignore tool_version because it changes on every release
+        expected.pop("tool_version", None)
+        actual.pop("tool_version", None)
 
         if actual != expected:
             diffs = []
