@@ -546,7 +546,7 @@ def strength(log10_value, pattern_warning):
 
 def print_output(password, charset, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=False, view="full"):
+                 mask_mode=False, view="full", offline=False):
     """
     Renders the audit report.
 
@@ -554,13 +554,17 @@ def print_output(password, charset, L, combinations, log10_value,
       - "full"    : banner, input metrics, search/hardware, darkweb, overall
       - "short"   : overall assessment only
       - "darkweb" : darkweb scanner only
+
+    offline=True skips the HaveIBeenPwned request and marks the DARKWEB
+    panel as intentionally skipped. The overall score is then computed
+    without the breach-history cap.
     """
     width = get_width()
     col_w = width // 2
 
-    # Always computed: the darkweb box needs pwned_count, the overall
-    # assessment needs pwned_count and pattern_warning.
-    pwned_count = check_pwned(password)
+    pwned_count = None
+    if not offline:
+        pwned_count = check_pwned(password)
     pattern_warning = check_patterns(password)
 
     show_full    = view == "full"
@@ -644,7 +648,10 @@ def print_output(password, charset, L, combinations, log10_value,
         print()
 
     if show_darkweb:
-        if isinstance(pwned_count, int):
+        if offline:
+            risk_status = warn("[!] OFFLINE MODE: BREACH CHECK SKIPPED")
+            risk_details = dim("Run without -o/--offline to check this password against the HIBP breach database.")
+        elif isinstance(pwned_count, int):
             if pwned_count > 0:
                 risk_status = colorize("[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!", C.BRIGHT_RED, C.BOLD)
                 risk_details = colorize(f"This exact password was found leaked {pwned_count:,} times online. Hackers already know it.", C.BRIGHT_RED)
@@ -717,7 +724,7 @@ def main():
     # Enforce standard POSIX/Unix CLI syntax formatting guidelines
     parser = argparse.ArgumentParser(
         description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
-        usage="imps [-M | --Mask] [-s | --short | -dw | --darkweb] <password>",
+        usage="imps [-M] [-o] [-s | -dw] <password>",
         add_help=True
     )
     
@@ -727,12 +734,19 @@ def main():
         action="store_true", 
         help="Completely mask the input password with asterisks in the summary screen box"
     )
+
+    # Offline mode: skip every outbound request (HIBP + GitHub)
+    parser.add_argument(
+        "-o", "--offline",
+        action="store_true",
+        help="Disable all network requests: skip the HaveIBeenPwned breach check and the GitHub update check"
+    )
     
     # Disable update checker (Optional, defined before the argument)
     parser.add_argument(
         "--no-update-check",
         action="store_true",
-        help="Disable the remote update check on startup"
+        help="Disable the remote update check on startup (implied by --offline)"
     )
 
     # View modes: mutually exclusive, each renders a single section of the report
@@ -778,9 +792,9 @@ def main():
             print(warn("[!] No password provided."))
             return
 
-    # Update Checker (timeouts after 1.5s)
-    # Skipped for non-full views so those modes stay scriptable.
-    if not args.no_update_check and view == "full":
+    # Update Checker (safe, silent, timeouts after 1.5s).
+    # Skipped for non-full views (scriptable output) and in offline mode.
+    if not args.no_update_check and not args.offline and view == "full":
         new_ver = check_for_updates(__version__)
         if new_ver:
             width = get_width()
@@ -800,7 +814,7 @@ def main():
     # Pass computed values to the output renderer
     print_output(password, C, L, combinations, log10_value,
                  has_low, has_upp, has_num, has_sym,
-                 mask_mode=args.Mask, view=view)
+                 mask_mode=args.Mask, view=view, offline=args.offline)
 
 
 if __name__ == "__main__":
