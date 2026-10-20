@@ -34,13 +34,13 @@ def test_qwerty_walk_via_detect_pattern():
 
 
 def test_common_year():
-    result = patterns.detect_pattern("abcd1990efgh")
+    result = patterns.detect_pattern("1990zz")
     assert result.detected is True
     assert result.rule == "common_year"
 
 
 def test_common_year_outside_range():
-    result = patterns.detect_pattern("abcd1234efgh")
+    result = patterns.detect_pattern("1800zz")
     assert result.rule != "common_year"
 
 
