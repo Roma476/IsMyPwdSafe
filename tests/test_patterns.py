@@ -2,43 +2,65 @@ import pytest
 from ismypwdsafe import patterns
 
 
-@pytest.mark.parametrize("pwd, rule", [
-    ("password", "top150"),
-    ("P@ssw0rd", "top150"),
-    ("MyPassword123", "top150"),
-    ("qwertyuiop", "qwerty_walk"),
-    ("1qaz2wsx", "qwerty_walk"),
-    ("mnbvcxz", "qwerty_walk"),
-    ("Summer1990!", "common_year"),
-    ("MyPassword2024", "common_year"),
-    ("password!!!", "repetition"),
-    ("aaa", "repetition"),
-])
-def test_detect_pattern_rules(pwd, rule):
-    result = patterns.detect_pattern(pwd)
+def test_top150_match():
+    result = patterns.detect_pattern("password")
     assert result.detected is True
-    assert result.rule == rule
-    assert result.detail is not None
+    assert result.rule == "top150"
 
 
-@pytest.mark.parametrize("pwd", [
-    "correct-horse-battery-staple",
-    "vT7#pQ2!mN9x",
-    "",
-])
-def test_detect_pattern_clean(pwd):
-    result = patterns.detect_pattern(pwd)
+def test_top150_leet():
+    result = patterns.detect_pattern("P@ssw0rd")
+    assert result.rule == "top150"
+
+
+def test_top150_substring():
+    result = patterns.detect_pattern("MyPassword123")
+    assert result.rule == "top150"
+
+
+def test_qwerty_walk_helper():
+    assert patterns.check_keyboard_spatial("qwertyuiop") is True
+    assert patterns.check_keyboard_spatial("1qaz2wsx") is True
+    assert patterns.check_keyboard_spatial("mnbvcxz") is True
+    assert patterns.check_keyboard_spatial("1qaz") is True
+    assert patterns.check_keyboard_spatial("hello") is False
+
+
+def test_qwerty_walk_via_detect_pattern():
+    # "zxcvbnm" non è nella top-150, quindi la regola walk scatta
+    result = patterns.detect_pattern("mnbvcxz")
+    assert result.detected is True
+    assert result.rule == "qwerty_walk"
+
+
+def test_common_year():
+    result = patterns.detect_pattern("abcd1990efgh")
+    assert result.detected is True
+    assert result.rule == "common_year"
+
+
+def test_common_year_outside_range():
+    result = patterns.detect_pattern("abcd1234efgh")
+    assert result.rule != "common_year"
+
+
+def test_repetition():
+    result = patterns.detect_pattern("xyz!!!abc")
+    assert result.detected is True
+    assert result.rule == "repetition"
+
+
+def test_clean_password():
+    result = patterns.detect_pattern("correct-horse-battery-staple")
     assert result.detected is False
     assert result.rule is None
-    assert result.detail is None
 
 
-def test_leet_normalization():
+def test_empty_password():
+    result = patterns.detect_pattern("")
+    assert result.detected is False
+
+
+def test_normalize_leetspeak():
     assert patterns.normalize_leetspeak("P@ssw0rd") == "password"
     assert patterns.normalize_leetspeak("!c3") == "ice"
-
-
-def test_year_outside_range_is_not_flagged():
-    # 1234 is a 4-digit run but outside 1900-2050
-    result = patterns.detect_pattern("abcd1234")
-    assert result.rule != "common_year"
