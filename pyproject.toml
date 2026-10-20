@@ -14,3 +14,16 @@ dependencies = [
 
 [project.scripts]
 imps = "ismypwdsafe.cli:entry"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = [
+    "error::DeprecationWarning:ismypwdsafe.*",
+]
