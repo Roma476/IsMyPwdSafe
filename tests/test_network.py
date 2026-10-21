@@ -1,5 +1,6 @@
-from ismypwdsafe import network
 import warnings
+
+from ismypwdsafe import network
 
 
 class _FakeResponse:

@@ -1,10 +1,10 @@
 """Outbound HTTP: HaveIBeenPwned range API and GitHub version check."""
-from dataclasses import dataclass
-from typing import NamedTuple, Optional, Union
-
 import hashlib
-import requests
 import warnings
+from dataclasses import dataclass
+from typing import Optional, Union
+
+import requests
 
 
 def _hash_password(password: str) -> str:
