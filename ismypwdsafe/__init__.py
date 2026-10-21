@@ -1,5 +1,5 @@
 """IsMyPwdSafe: a privacy-first password audit engine."""
-__version__ = "1.5.0r"
+__version__ = "1.5.2"
 
 from .core import SCHEMA_VERSION, AuditResult, analyze_password  # noqa: E402,F401
 

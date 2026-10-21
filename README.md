@@ -23,7 +23,7 @@
 
 **Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
 
-> **Project status - v1.5.0, actively developed.** This release is the last 1.x before the engine rewrite. It adds a machine-readable contract (--json + schema), offline-first privacy (update check is now opt-in), golden scores for regression testing, and a strict CI pipeline.
+> **Project status - v1.5.2, actively developed.** This release is the last 1.x before the engine rewrite. It adds a machine-readable contract (--json + schema), offline-first privacy (update check is now opt-in), golden scores for regression testing, and a strict CI pipeline.
 
 ---
 

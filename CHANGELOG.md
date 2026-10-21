@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.1] - 2026-10-21
 ### Fixed
+- Fixed version mismatch in `__init__.py` and `version.txt`.
+
+## [1.5.1] - 2026-10-21
+### Fixed
 - Fixed mypy strict typing errors in CI (added `types-requests`).
 - Fixed `--no-update-check` deprecation to avoid breaking existing scripts.
 - Fixed README network calls badge.
