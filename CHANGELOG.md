@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-10-21
+### Fixed
+- Fixed `UP007` Ruff linting error in `network.py`.
+- Added `__future__ import annotations` to ensure Python 3.8 compatibility.
+- Bumped version to 1.5.4 due to PyPI immutability on 1.5.3.
+
 ## [1.5.3] - 2026-10-21
 
 ### Fixed
