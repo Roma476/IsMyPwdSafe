@@ -1,11 +1,7 @@
-"""Core analysis engine: data model and orchestration.
+from __future__ import annotations
 
-Pure logic, no I/O except what network.py does. Importable as a library:
+"""Core analysis engine: data model and orchestration."""
 
-    from ismypwdsafe import analyze_password
-    result = analyze_password("hunter2", check_breach=False)
-    print(result.score.value, result.score.rating)
-"""
 import math
 from dataclasses import dataclass
 from typing import Optional, Tuple

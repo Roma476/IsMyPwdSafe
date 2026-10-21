@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Outbound HTTP: HaveIBeenPwned range API and GitHub version check."""
 import hashlib
 import warnings
