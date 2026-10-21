@@ -1,8 +1,10 @@
 """Outbound HTTP: HaveIBeenPwned range API and GitHub version check."""
-import hashlib
+from dataclasses import dataclass
 from typing import NamedTuple, Optional, Union
 
+import hashlib
 import requests
+import warnings
 
 
 def _hash_password(password: str) -> str:
@@ -52,17 +54,27 @@ def check_for_updates(current_version: str) -> Optional[str]:
         if response.status_code == 200:
             latest = response.text.strip()
             if _version_tuple(latest) > _version_tuple(current_version):
-                return latest
+                return str(latest)
     except Exception:  # noqa: S110
         pass
     return None
 
 
-class BreachResult(NamedTuple):
+@dataclass(frozen=True)
+class BreachResult:
     checked: bool
     pwned: Optional[bool]
     breach_count: Optional[int]
-    reason: Optional[str]   # "offline" | "disabled" | "api_error" | None
+    reason: Optional[str]
+
+    @property
+    def count(self) -> Optional[int]:
+        warnings.warn(
+            "BreachResult.count is deprecated, use breach_count instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.breach_count
 
 
 def check_breach(password: str) -> BreachResult:

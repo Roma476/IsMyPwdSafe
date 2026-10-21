@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ismypwdsafe"
-version = "1.5.0"
+version = "1.5.1"
 description = "The only password audit that doesn't spy on you."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -25,9 +25,13 @@ test = [
 dev = [
     "ruff>=0.3.0",
     "mypy>=1.8.0",
+    "types-requests>=2.31.0",
     "pip-audit>=2.0.0",
     "cyclonedx-bom>=4.0.0",
 ]
+
+[tool.setuptools]
+packages = ["ismypwdsafe"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -42,7 +46,7 @@ target-version = "py38"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "S"]
-ignore = ["S101"] # S101 è "assert" (ne abbiamo bisogno nei test)
+ignore = ["S101"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -53,6 +57,3 @@ warn_unused_configs = true
 [[tool.mypy.overrides]]
 module = ["ismypwdsafe.core", "ismypwdsafe.patterns"]
 strict = true
-
-[tool.setuptools]
-packages = ["ismypwdsafe"]

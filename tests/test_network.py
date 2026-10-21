@@ -1,4 +1,5 @@
 from ismypwdsafe import network
+import warnings
 
 
 class _FakeResponse:
@@ -67,3 +68,11 @@ def test_k_anonymity_only_prefix_sent(monkeypatch):
     prefix = seen_urls[0].rsplit("/", 1)[-1]
     assert len(prefix) == 5
     assert prefix.isupper()
+
+def test_count_deprecation():
+    res = network.BreachResult(checked=True, pwned=True, breach_count=10, reason=None)
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        assert res.count == 10
+        assert len(w) == 1
+        assert issubclass(w[-1].category, DeprecationWarning)

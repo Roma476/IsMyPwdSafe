@@ -21,4 +21,9 @@ If you discover a security issue, please **do not open a public issue**. Instead
 
 You will receive an acknowledgment of your report within 48 hours. If the vulnerability is confirmed, a patch will be developed and a public disclosure will be coordinated with you. 
 
+### Disclosure Policy
+- **Acknowledgment:** within 48 hours.
+- **Patch:** within 7 days for critical issues.
+- **Public Disclosure:** coordinated after a patch is released.
+
 Thank you for helping keep IsMyPwdSafe safe!

@@ -46,3 +46,8 @@ def test_exit_code_reflects_result(monkeypatch):
         cli.network, "check_for_updates", lambda v: None,
     )
     assert cli.main(["--no-breach-check", "password"]) == 0
+
+def test_no_update_check_deprecation(capsys):
+    cli.main(["--no-update-check", "password"])
+    captured = capsys.readouterr()
+    assert "deprecated" in captured.err

@@ -57,6 +57,12 @@ def _build_parser() -> argparse.ArgumentParser:
         nargs="?",
         help="The raw text password string to submit for auditing",
     )
+    # deprecated
+    parser.add_argument(
+        "--no-update-check",
+        action="store_true",
+        help=argparse.SUPPRESS, # Hides from help text, but still works for backwards compatibility
+    )
     return parser
 
 
@@ -64,6 +70,13 @@ def main(argv=None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
     password = args.password
+
+    if args.no_update_check:
+        print(
+            "Warning: --no-update-check is deprecated and is now the default behavior. "
+            "Use --check-updates to enable the check.",
+            file=sys.stderr
+        )
 
     if args.short:
         view = "short"

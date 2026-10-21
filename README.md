@@ -69,7 +69,7 @@ imps "correct-horse-battery-staple"
 
 <img alt="IsMyPwdSafe full audit output" title="IsMyPwdSafe" src="docs/screenshots/good.png">
 
-The engine computes the charset, the number of possible combinations, the estimated time to crack on four hardware profiles and the HaveIBeenPwned result. All in one pass, all locally apart from the two HTTP requests listed below.
+The engine computes the charset, the number of possible combinations, the estimated time to crack on four hardware profiles and the HaveIBeenPwned result. All in one pass, all locally apart from the single HIBP HTTP request (the GitHub update check is opt-in).
 
 ### 3. Run an audit on a known-weak password
 
@@ -107,7 +107,7 @@ The view modes are mutually exclusive: -s and -dw together are rejected by the p
 
 ### 6. Audit without touching the network
 
-If you do not want the 5-character SHA-1 prefix of your password to leave the machine - even though it is only a k-anonymity prefix - you have two granular switches and one shortcut:
+If you do not want the 5-character SHA-1 prefix of your password to leave the machine - even though it is only a k-anonymity prefix - you have a few options to control the network:
 
 ```bash
 imps --no-breach-check "password"    # HIBP skipped
