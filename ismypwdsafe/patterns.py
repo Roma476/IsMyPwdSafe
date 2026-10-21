@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import List, Optional

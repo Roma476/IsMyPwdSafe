@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 """Core analysis engine: data model and orchestration."""
+from __future__ import annotations
 
 import math
 from dataclasses import dataclass
