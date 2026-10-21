@@ -1,0 +1,72 @@
+name: 'IsMyPwdSafe Audit'
+description: 'A privacy-first password audit for CI/CD pipelines.'
+author: 'Roma476'
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  password:
+    description: 'The password to audit. Pass it using GitHub Secrets.'
+    required: true
+  offline:
+    description: 'Run in offline mode (skip HIBP check). Set to true to avoid network calls.'
+    required: false
+    default: 'false'
+
+outputs:
+  score:
+    description: 'The security score (0-100).'
+    value: ${{ steps.audit.outputs.score }}
+  rating:
+    description: 'The rating (weak, medium, strong).'
+    value: ${{ steps.audit.outputs.rating }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install IsMyPwdSafe
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install ismypwdsafe==2.0.0a1
+
+    - name: Run audit
+      id: audit
+      shell: bash
+      env:
+        PASSWORD_TO_AUDIT: ${{ inputs.password }}
+        OFFLINE_MODE: ${{ inputs.offline }}
+      run: |
+        FLAGS="--json"
+        if [ "$OFFLINE_MODE" = "true" ]; then
+          FLAGS="$FLAGS --offline"
+        fi
+        
+        # Capture JSON output (ignore exit code 1 or 3 to parse the JSON)
+        JSON_OUTPUT=$(imps $FLAGS "$PASSWORD_TO_AUDIT" || true)
+        
+        SCORE=$(echo "$JSON_OUTPUT" | python -c "import sys, json; print(json.load(sys.stdin)['score']['value'])")
+        RATING=$(echo "$JSON_OUTPUT" | python -c "import sys, json; print(json.load(sys.stdin)['score']['rating'])")
+        
+        echo "score=$SCORE" >> $GITHUB_OUTPUT
+        echo "rating=$RATING" >> $GITHUB_OUTPUT
+
+    - name: Check exit code
+      shell: bash
+      env:
+        PASSWORD_TO_AUDIT: ${{ inputs.password }}
+        OFFLINE_MODE: ${{ inputs.offline }}
+      run: |
+        FLAGS="-q"
+        if [ "$OFFLINE_MODE" = "true" ]; then
+          FLAGS="$FLAGS --offline"
+        fi
+        
+        # This step will fail with the correct exit code (0, 1, 3, etc.)
+        imps $FLAGS "$PASSWORD_TO_AUDIT"

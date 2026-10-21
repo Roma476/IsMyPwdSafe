@@ -1,0 +1,33 @@
+name: Test GitHub Action
+
+on:
+  push:
+    branches: [v2]
+  pull_request:
+    branches: [v2]
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test strong password (should pass)
+        uses: ./
+        with:
+          password: "correct-horse-battery-staple"
+          offline: "true"
+
+      - name: Test weak password (should fail)
+        id: weak_test
+        continue-on-error: true
+        uses: ./
+        with:
+          password: "password"
+          offline: "true"
+
+      - name: Verify weak test failed
+        if: steps.weak_test.outcome == 'success'
+        run: |
+          echo "Expected weak password to fail, but it succeeded!"
+          exit 1
