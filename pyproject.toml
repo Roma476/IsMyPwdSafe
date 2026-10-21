@@ -57,3 +57,6 @@ warn_unused_configs = true
 [[tool.mypy.overrides]]
 module = ["ismypwdsafe.core", "ismypwdsafe.patterns"]
 strict = true
+
+[tool.setuptools.dynamic]
+version = {file = "version.txt"}

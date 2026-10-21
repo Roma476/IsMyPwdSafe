@@ -1,4 +1,6 @@
 """JSON rendering for the machine contract."""
+from __future__ import annotations
+
 import json
 from dataclasses import asdict
 from typing import Any

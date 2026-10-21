@@ -1,5 +1,7 @@
 # ruff: noqa: E501
 """Terminal rendering: ANSI helpers, boxes, animation, print_output."""
+from __future__ import annotations
+
 import math
 import os
 import re

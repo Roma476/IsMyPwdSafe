@@ -1,4 +1,6 @@
 """Command-line interface: argparse, update check, exit code orchestration."""
+from __future__ import annotations
+
 import argparse
 import getpass
 import sys
