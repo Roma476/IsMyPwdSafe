@@ -2,8 +2,8 @@
   {
     "input": "123456",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -70,8 +70,8 @@
   {
     "input": "password",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -137,8 +137,8 @@
   {
     "input": "12345678",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -205,8 +205,8 @@
   {
     "input": "qwerty",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -273,8 +273,8 @@
   {
     "input": "123456789",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -341,8 +341,8 @@
   {
     "input": "12345",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -409,8 +409,8 @@
   {
     "input": "1234",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -477,8 +477,8 @@
   {
     "input": "111111",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -545,8 +545,8 @@
   {
     "input": "1234567",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -613,8 +613,8 @@
   {
     "input": "dragon",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -680,8 +680,8 @@
   {
     "input": "123123",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -747,8 +747,8 @@
   {
     "input": "baseball",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -812,8 +812,8 @@
   {
     "input": "abc123",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -879,8 +879,8 @@
   {
     "input": "football",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -946,8 +946,8 @@
   {
     "input": "monkey",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1013,8 +1013,8 @@
   {
     "input": "letmein",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1080,8 +1080,8 @@
   {
     "input": "696969",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1147,8 +1147,8 @@
   {
     "input": "shadow",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1214,8 +1214,8 @@
   {
     "input": "master",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1281,8 +1281,8 @@
   {
     "input": "666666",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1349,8 +1349,8 @@
   {
     "input": "qwertyuiop",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1417,8 +1417,8 @@
   {
     "input": "123321",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1484,8 +1484,8 @@
   {
     "input": "mustang",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1549,8 +1549,8 @@
   {
     "input": "1234567890",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1617,8 +1617,8 @@
   {
     "input": "michael",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1684,8 +1684,8 @@
   {
     "input": "654321",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1752,8 +1752,8 @@
   {
     "input": "superman",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1819,8 +1819,8 @@
   {
     "input": "1qaz2wsx",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1887,8 +1887,8 @@
   {
     "input": "7777777",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1955,8 +1955,8 @@
   {
     "input": "121212",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2023,8 +2023,8 @@
   {
     "input": "000000",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2091,8 +2091,8 @@
   {
     "input": "qazwsx",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2156,8 +2156,8 @@
   {
     "input": "123qwe",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2223,8 +2223,8 @@
   {
     "input": "killer",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2290,8 +2290,8 @@
   {
     "input": "trustno1",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2357,8 +2357,8 @@
   {
     "input": "jordan",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2424,8 +2424,8 @@
   {
     "input": "jennifer",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2491,8 +2491,8 @@
   {
     "input": "zxcvbnm",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2559,8 +2559,8 @@
   {
     "input": "asdfgh",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2626,8 +2626,8 @@
   {
     "input": "hunter",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2693,8 +2693,8 @@
   {
     "input": "buster",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2760,8 +2760,8 @@
   {
     "input": "soccer",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2827,8 +2827,8 @@
   {
     "input": "harley",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2894,8 +2894,8 @@
   {
     "input": "batman",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2961,8 +2961,8 @@
   {
     "input": "andrew",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3029,8 +3029,8 @@
   {
     "input": "tigger",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3096,8 +3096,8 @@
   {
     "input": "sunshine",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3163,8 +3163,8 @@
   {
     "input": "iloveyou",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3230,8 +3230,8 @@
   {
     "input": "2000",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3298,8 +3298,8 @@
   {
     "input": "charlie",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3365,8 +3365,8 @@
   {
     "input": "robert",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3430,8 +3430,8 @@
   {
     "input": "thomas",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3497,8 +3497,8 @@
   {
     "input": "hockey",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3564,8 +3564,8 @@
   {
     "input": "ranger",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3631,8 +3631,8 @@
   {
     "input": "daniel",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3698,8 +3698,8 @@
   {
     "input": "starwars",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3765,8 +3765,8 @@
   {
     "input": "klaster",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3830,8 +3830,8 @@
   {
     "input": "112233",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3897,8 +3897,8 @@
   {
     "input": "george",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3964,8 +3964,8 @@
   {
     "input": "computer",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4031,8 +4031,8 @@
   {
     "input": "michelle",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4096,8 +4096,8 @@
   {
     "input": "jessica",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4163,8 +4163,8 @@
   {
     "input": "pepper",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4230,8 +4230,8 @@
   {
     "input": "1111",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4297,8 +4297,8 @@
   {
     "input": "zxcvbn",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4364,8 +4364,8 @@
   {
     "input": "555555",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4431,8 +4431,8 @@
   {
     "input": "11111111",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4499,8 +4499,8 @@
   {
     "input": "131313",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4566,8 +4566,8 @@
   {
     "input": "freedom",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4631,8 +4631,8 @@
   {
     "input": "777777",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4699,8 +4699,8 @@
   {
     "input": "pass",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4766,8 +4766,8 @@
   {
     "input": "maggie",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4833,8 +4833,8 @@
   {
     "input": "159753",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4898,8 +4898,8 @@
   {
     "input": "aaaaaa",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4966,8 +4966,8 @@
   {
     "input": "ginger",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5033,8 +5033,8 @@
   {
     "input": "princess",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5100,8 +5100,8 @@
   {
     "input": "joshua",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5167,8 +5167,8 @@
   {
     "input": "cheese",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5234,8 +5234,8 @@
   {
     "input": "amanda",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5301,8 +5301,8 @@
   {
     "input": "summer",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5368,8 +5368,8 @@
   {
     "input": "love",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5435,8 +5435,8 @@
   {
     "input": "ashley",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5502,8 +5502,8 @@
   {
     "input": "6969",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5567,8 +5567,8 @@
   {
     "input": "nicole",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5634,8 +5634,8 @@
   {
     "input": "chelsea",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5701,8 +5701,8 @@
   {
     "input": "biteme",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5766,8 +5766,8 @@
   {
     "input": "matthew",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5833,8 +5833,8 @@
   {
     "input": "access",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5900,8 +5900,8 @@
   {
     "input": "yankees",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5967,8 +5967,8 @@
   {
     "input": "987654321",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6035,8 +6035,8 @@
   {
     "input": "dallas",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6100,8 +6100,8 @@
   {
     "input": "austin",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6165,8 +6165,8 @@
   {
     "input": "thunder",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6230,8 +6230,8 @@
   {
     "input": "taylor",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6297,8 +6297,8 @@
   {
     "input": "matrix",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6362,8 +6362,8 @@
   {
     "input": "mnbvcxz",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6429,8 +6429,8 @@
   {
     "input": "asdfghjkl",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6497,8 +6497,8 @@
   {
     "input": "poiuytr",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6564,8 +6564,8 @@
   {
     "input": "2010",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6631,8 +6631,8 @@
   {
     "input": "1990",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6698,8 +6698,8 @@
   {
     "input": "summer2024",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6766,8 +6766,8 @@
   {
     "input": "password2023",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6834,8 +6834,8 @@
   {
     "input": "abcd1990efgh",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6902,8 +6902,8 @@
   {
     "input": "password!!!",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6970,8 +6970,8 @@
   {
     "input": "aaa",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7037,8 +7037,8 @@
   {
     "input": "zzzzzz",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7104,8 +7104,8 @@
   {
     "input": "...",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7171,8 +7171,8 @@
   {
     "input": "1111111111",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7239,8 +7239,8 @@
   {
     "input": "P@ssw0rd",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7306,8 +7306,8 @@
   {
     "input": "Password123!",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7373,8 +7373,8 @@
   {
     "input": "Admin@123",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7440,8 +7440,8 @@
   {
     "input": "P@ssw0rd2024",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7508,8 +7508,8 @@
   {
     "input": "correct-horse-battery-staple",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7573,8 +7573,8 @@
   {
     "input": "vT7#pQ2!mN9x",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7638,8 +7638,8 @@
   {
     "input": "x9F$kL2@pW5z",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7703,8 +7703,8 @@
   {
     "input": "",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "No password provided",
       "input": null,
@@ -7718,8 +7718,8 @@
   {
     "input": " ",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7783,8 +7783,8 @@
   {
     "input": "a",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7848,8 +7848,8 @@
   {
     "input": "\u0000",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7913,8 +7913,8 @@
   {
     "input": "a\nb",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7978,8 +7978,8 @@
   {
     "input": "\u001b[31mred\u001b[0m",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8043,8 +8043,8 @@
   {
     "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8111,8 +8111,8 @@
   {
     "input": "🔒🔑",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "Could not determine charset",
       "input": null,
@@ -8126,8 +8126,8 @@
   {
     "input": "P@ssw0rd\u0000",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8193,8 +8193,8 @@
   {
     "input": "пароль",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8258,8 +8258,8 @@
   {
     "input": "密码",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "Could not determine charset",
       "input": null,
@@ -8273,8 +8273,8 @@
   {
     "input": "pässwörd",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8338,8 +8338,8 @@
   {
     "input": "аdmin",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8403,8 +8403,8 @@
   {
     "input": "pаssword",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8468,8 +8468,8 @@
   {
     "input": "аdm1n",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8533,8 +8533,8 @@
   {
     "input": "é",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8598,8 +8598,8 @@
   {
     "input": "pässword",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8663,8 +8663,8 @@
   {
     "input": "👨‍👩‍👧",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "Could not determine charset",
       "input": null,
@@ -8678,8 +8678,8 @@
   {
     "input": "🇮🇹",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "Could not determine charset",
       "input": null,
@@ -8693,8 +8693,8 @@
   {
     "input": "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8760,8 +8760,8 @@
   {
     "input": "Aa1!Aa1!Aa1!",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8825,8 +8825,8 @@
   {
     "input": "12345678901234567890",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8893,8 +8893,8 @@
   {
     "input": "correct horse battery staple",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8958,8 +8958,8 @@
   {
     "input": "a\tb",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -9023,8 +9023,8 @@
   {
     "input": "a\r\nb",
     "expected": {
-      "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "schema_version": "2.0",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {

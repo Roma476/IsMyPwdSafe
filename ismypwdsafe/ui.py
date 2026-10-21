@@ -266,6 +266,12 @@ def print_output(result: AuditResult, password: str,
         print(err("[!] " + result.error))
         return
 
+    assert result.input is not None
+    assert result.entropy is not None
+    assert result.pattern is not None
+    assert result.breach is not None
+    assert result.score is not None
+
     show_full    = view == "full"
     show_darkweb = view in ("full", "darkweb")
     show_overall = view in ("full", "short")
@@ -312,7 +318,7 @@ def print_output(result: AuditResult, password: str,
             f"Top 150 List : {status_top150}",
         ]
         if result.pattern.detected:
-            search_lines.append("Pattern Risk : " + warn("[!] " + result.pattern.detail))
+            search_lines.append("Pattern Risk : " + warn("[!] " + str(result.pattern.detail)))
         else:
             search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
 
