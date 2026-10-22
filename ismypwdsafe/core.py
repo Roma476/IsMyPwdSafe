@@ -141,6 +141,13 @@ def compute_hardware_estimates(log10_value: float) -> Tuple[HardwareEstimate, ..
         out.append(HardwareEstimate(key=key, label=label, attempts_per_second=aps, seconds=seconds))
     return tuple(out)
 
+def compute_exit_code(score: ScoreResult, breach: network.BreachResult) -> int:
+    """Compute the semantic exit code for CI/CD pipelines."""
+    if breach.checked and breach.pwned:
+        return 3
+    if score.value < 50:
+        return 1
+    return 0
 
 def analyze_password(
     password: str,
