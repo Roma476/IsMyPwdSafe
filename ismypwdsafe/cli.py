@@ -134,7 +134,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(render_json(result))
         else:
             print_output(result, password, mask_mode=args.Mask, view=view)
-            
+
+    assert result.score is not None
+    assert result.breach is not None
     return compute_exit_code(result.score, result.breach)
 
 
