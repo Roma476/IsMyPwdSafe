@@ -30,33 +30,34 @@ def test_calc_combinations_large_uses_log():
 
 
 def test_score_clean_strong(clean_breach):
-    pattern = PatternResult(False, None, None)
-    score = core.calculate_score(25.0, pattern, clean_breach)
+    pattern = PatternResult(False, None, None, [])
+    score = core.calculate_score(25.0, pattern, clean_breach, 20)
     assert score.value == 100
     assert score.rating == "strong"
     assert score.capped_by is None
 
 
 def test_score_pattern_capped(clean_breach):
-    pattern = PatternResult(True, "top150", "x")
-    score = core.calculate_score(25.0, pattern, clean_breach)
-    assert score.value == 30
+    pattern = PatternResult(True, "top150", "x", ["top150"])
+    score = core.calculate_score(25.0, pattern, clean_breach, 20)
+    assert score.value == 5
     assert score.capped_by == "pattern"
+    assert score.capped_by_rule == "top150"
 
 
-def test_score_pwned_capped(pattern=None):
+def test_score_pwned_capped():
     breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
-    pattern = PatternResult(False, None, None)
-    score = core.calculate_score(25.0, pattern, breach)
-    assert score.value == 10
+    pattern = PatternResult(False, None, None, [])
+    score = core.calculate_score(25.0, pattern, breach, 20)
+    assert score.value == 5
     assert score.capped_by == "breach"
 
 
 def test_score_pattern_and_pwned_breach_wins():
-    pattern = PatternResult(True, "top150", "x")
+    pattern = PatternResult(True, "top150", "x", ["top150"])
     breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
-    score = core.calculate_score(25.0, pattern, breach)
-    assert score.value == 10
+    score = core.calculate_score(25.0, pattern, breach, 20)
+    assert score.value == 5
     assert score.capped_by == "breach"
 
 
