@@ -1,6 +1,7 @@
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
 from __future__ import annotations
 
+import unicodedata
 from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -90,6 +91,9 @@ def detect_pattern(password: str) -> PatternResult:
     """Structured version of check_patterns. Evaluates all rules."""
     if not password:
         return PatternResult(False, None, None, [])
+        
+    # Normalize to NFC to handle combining characters (e.g. "e" + combining acute)
+    password = unicodedata.normalize("NFC", password)
 
     normalized = normalize_leetspeak(password)
     rules_fired: List[str] = []

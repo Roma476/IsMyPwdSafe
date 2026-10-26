@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import unicodedata
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
@@ -25,6 +26,7 @@ class InputInfo:
     has_uppercase: bool
     has_digits: bool
     has_symbols: bool
+    has_non_ascii: bool
 
 
 @dataclass(frozen=True)
@@ -36,9 +38,10 @@ class EntropyInfo:
 @dataclass(frozen=True)
 class ScoreResult:
     value: int
-    rating: str                 # "weak" | "medium" | "strong"
-    base: int                   # entropy-only score before caps
-    capped_by: Optional[str]    # None | "pattern" | "breach"
+    rating: str
+    base: int
+    capped_by: Optional[str]
+    capped_by_rule: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -79,10 +82,31 @@ def must_use_log(charset_size: int, length: int) -> bool:
     return length >= 4
 
 
-def calc_charset(password: str) -> tuple[int, bool, bool, bool, bool]:
+SCRIPT_CHARSETS = {
+    "CYRILLIC": 33,
+    "GREEK": 24,
+    "ARABIC": 28,
+    "HEBREW": 22,
+    "CJK": 5000,
+    "EMOJI": 1000,
+    "LATIN": 200,
+    "OTHER": 500,
+}
+
+def calc_charset(password: str) -> tuple[int, bool, bool, bool, bool, bool]:
     number = lower = upper = symbol = False
+    has_non_ascii = False
     total = 0
+    
+    # Track non-ASCII script counts
+    non_ascii_chars = []
+    
     for char in password:
+        if ord(char) > 127:
+            has_non_ascii = True
+            non_ascii_chars.append(char)
+            continue
+            
         if char.isdigit() and not number:
             number = True
             total += 10
@@ -92,10 +116,40 @@ def calc_charset(password: str) -> tuple[int, bool, bool, bool, bool]:
         elif char.isupper() and not upper:
             upper = True
             total += 26
-        elif not char.isalnum() and ord(char) < 128 and not symbol:
+        elif not char.isalnum() and not symbol:
             symbol = True
             total += 33
-    return total, lower, upper, number, symbol
+
+    if has_non_ascii:
+        # Identify dominant script
+        scripts = set()
+        for char in non_ascii_chars:
+            cp = ord(char)
+            # Check if it's an emoji by code point ranges
+            if (
+                (0x1F300 <= cp <= 0x1FAFF)
+                or (0x2600 <= cp <= 0x27BF)
+                or (0x1F1E6 <= cp <= 0x1F1FF)
+                or (0x1F3FB <= cp <= 0x1F3FF)
+            ):
+                scripts.add("EMOJI")
+            else:
+                try:
+                    name = unicodedata.name(char)
+                    script = name.split()[0]
+                    if script in SCRIPT_CHARSETS:
+                        scripts.add(script)
+                    else:
+                        scripts.add("OTHER")
+                except ValueError:
+                    scripts.add("OTHER")
+        
+        # Add the charset of the largest non-ASCII script
+        if scripts:
+            max_script = max(scripts, key=lambda s: SCRIPT_CHARSETS.get(s, 500))
+            total += SCRIPT_CHARSETS.get(max_script, 500)
+
+    return total, lower, upper, number, symbol, has_non_ascii
 
 
 def calc_combinations(charset_size: int, length: int) -> tuple[Optional[int], float]:
@@ -105,31 +159,75 @@ def calc_combinations(charset_size: int, length: int) -> tuple[Optional[int], fl
     return charset_size ** length, log10_value
 
 
+PATTERN_PENALTIES = {
+    "top150":      1.0,
+    "repetition":  2.0,
+    "qwerty_walk": 3.0,
+    "common_year": 4.0,
+}
+WHOLE_INPUT_ONLY = {"common_year"}
+
 def calculate_score(
     log10_value: float,
     pattern: patterns.PatternResult,
     breach: network.BreachResult,
+    password_length: int,
+    has_non_ascii: bool = False,
 ) -> ScoreResult:
-    raw_base = int(min(100, max(0, log10_value * 5)))
-    value = raw_base
+    """
+    Weighted scoring based on estimated guesses (zxcvbn-like).
+    The weakest link dictates the score.
+    """
+    guesses_log10 = log10_value
     capped_by = None
+    capped_by_rule = None
 
     if pattern.detected:
-        value = min(value, 30)
-        capped_by = "pattern"
-    if breach.checked and breach.pwned:
-        value = min(value, 10)
-        capped_by = "breach"
+        penalties = []
+        for rule in pattern.rules_fired:
+            if rule not in PATTERN_PENALTIES:
+                continue
+            if rule in WHOLE_INPUT_ONLY and password_length != 4:
+                continue  # not the whole input, skip the cap
+            penalties.append((rule, PATTERN_PENALTIES[rule]))
 
-    if pattern.detected or log10_value < 10:
+        if penalties:
+            worst_rule, worst_penalty = min(penalties, key=lambda x: x[1])
+            if worst_penalty < guesses_log10:
+                guesses_log10 = worst_penalty
+                capped_by = "pattern"
+                capped_by_rule = worst_rule
+
+    elif has_non_ascii:
+        # Dictionary miss: non-ASCII password with no pattern matched.
+        # Cap it at 50 (guesses_log10 = 10.0) until we ship multilingual dictionaries.
+        guesses_log10 = min(guesses_log10, 10.0)
+        capped_by = "unicode_miss"
+        capped_by_rule = None
+
+    if breach.checked and breach.breach_count is not None and breach.breach_count > 0:
+        guesses_log10 = 1.0  # 10 guesses (preserve 1.x behavior)
+        capped_by = "breach"
+        capped_by_rule = None
+
+    # Use * 5 to keep the scale consistent with 1.5.x
+    value = int(round(min(100.0, max(0.0, guesses_log10 * 5))))
+    base  = int(round(min(100.0, max(0.0, log10_value * 5))))
+
+    if guesses_log10 < 5:
         rating = "weak"
-    elif log10_value < 14:
+    elif guesses_log10 < 10:
         rating = "medium"
     else:
         rating = "strong"
 
-    return ScoreResult(value=value, rating=rating, base=raw_base, capped_by=capped_by)
-
+    return ScoreResult(
+        value=value,
+        rating=rating,
+        base=base,
+        capped_by=capped_by,
+        capped_by_rule=capped_by_rule,
+    )
 
 def compute_hardware_estimates(log10_value: float) -> Tuple[HardwareEstimate, ...]:
     out: list[HardwareEstimate] = []
@@ -177,7 +275,7 @@ def analyze_password(
             score=None, hardware=(),
         )
 
-    charset, has_low, has_upp, has_num, has_sym = calc_charset(password)
+    charset, has_low, has_upp, has_num, has_sym, has_unicode = calc_charset(password)
     if charset == 0:
         return AuditResult(
             schema_version=SCHEMA_VERSION,
@@ -200,7 +298,7 @@ def analyze_password(
             checked=False, pwned=None, breach_count=None, reason=breach_skip_reason,
         )
 
-    score = calculate_score(log10_value, pattern_result, breach_result)
+    score = calculate_score(log10_value, pattern_result, breach_result, length, has_unicode)
     hardware = compute_hardware_estimates(log10_value)
 
     return AuditResult(
@@ -215,6 +313,7 @@ def analyze_password(
             has_uppercase=has_upp,
             has_digits=has_num,
             has_symbols=has_sym,
+            has_non_ascii=has_unicode,
         ),
         entropy=EntropyInfo(log10_value=log10_value, combinations=combinations),
         pattern=pattern_result,

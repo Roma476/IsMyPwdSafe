@@ -12,7 +12,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -34,10 +35,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -80,7 +82,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -101,10 +104,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -147,7 +151,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.0,
@@ -169,10 +174,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 40,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -215,7 +221,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -237,10 +244,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -283,7 +291,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.0,
@@ -305,10 +314,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 45,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -351,7 +361,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 5.0,
@@ -373,10 +384,11 @@
         "reason": null
       },
       "score": {
-        "value": 25,
+        "value": 5,
         "rating": "weak",
         "base": 25,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -419,7 +431,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -441,10 +454,11 @@
         "reason": null
       },
       "score": {
-        "value": 20,
+        "value": 5,
         "rating": "weak",
         "base": 20,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -487,7 +501,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -509,10 +524,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -555,7 +571,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 7.0,
@@ -577,10 +594,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 35,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -623,7 +641,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -644,10 +663,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -690,7 +710,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -711,10 +732,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -757,7 +779,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -776,10 +799,11 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
-        "capped_by": null
+        "value": 57,
+        "rating": "strong",
+        "base": 57,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -822,7 +846,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.337815004603723,
@@ -843,10 +868,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 46,
-        "capped_by": "pattern"
+        "base": 47,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -889,7 +915,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -910,10 +937,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -956,7 +984,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -977,10 +1006,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1023,7 +1053,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -1044,10 +1075,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1090,7 +1122,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -1111,10 +1144,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1157,7 +1191,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -1178,10 +1213,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1224,7 +1260,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -1245,10 +1282,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1291,7 +1329,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -1313,10 +1352,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1359,7 +1399,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 14.14973347970818,
@@ -1381,10 +1422,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 70,
-        "capped_by": "pattern"
+        "base": 71,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1427,7 +1469,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -1448,10 +1491,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1494,7 +1538,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -1513,10 +1558,11 @@
         "reason": null
       },
       "score": {
-        "value": 49,
-        "rating": "weak",
-        "base": 49,
-        "capped_by": null
+        "value": 50,
+        "rating": "medium",
+        "base": 50,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -1559,7 +1605,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 10.0,
@@ -1581,10 +1628,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 50,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1627,7 +1675,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -1648,10 +1697,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1694,7 +1744,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -1716,10 +1767,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1762,7 +1814,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -1783,10 +1836,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1829,7 +1883,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 12.450420006138298,
@@ -1851,10 +1906,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 62,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1897,7 +1953,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 7.0,
@@ -1919,10 +1976,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 35,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -1965,7 +2023,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -1987,10 +2046,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2033,7 +2093,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -2055,10 +2116,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2101,7 +2163,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2121,9 +2184,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -2166,7 +2230,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.337815004603723,
@@ -2187,10 +2252,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 46,
-        "capped_by": "pattern"
+        "base": 47,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2233,7 +2299,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2254,10 +2321,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2300,7 +2368,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 12.450420006138298,
@@ -2321,10 +2390,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 62,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2367,7 +2437,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2388,10 +2459,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2434,7 +2506,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -2455,10 +2528,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2501,7 +2575,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -2523,10 +2598,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2569,7 +2645,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2590,10 +2667,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 15,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "qwerty_walk"
       },
       "hardware": [
         {
@@ -2636,7 +2714,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2657,10 +2736,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2703,7 +2783,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2724,10 +2805,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2770,7 +2852,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2791,10 +2874,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2837,7 +2921,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2858,10 +2943,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2904,7 +2990,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2925,10 +3012,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -2971,7 +3059,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -2993,10 +3082,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3039,7 +3129,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3060,10 +3151,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3106,7 +3198,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -3127,10 +3220,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3173,7 +3267,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -3194,10 +3289,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3240,7 +3336,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -3262,10 +3359,11 @@
         "reason": null
       },
       "score": {
-        "value": 20,
+        "value": 10,
         "rating": "weak",
         "base": 20,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -3308,7 +3406,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -3329,10 +3428,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3375,7 +3475,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3395,9 +3496,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -3440,7 +3542,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3461,10 +3564,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3507,7 +3611,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3528,10 +3633,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3574,7 +3680,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3595,10 +3702,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3641,7 +3749,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3662,10 +3771,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3708,7 +3818,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -3729,10 +3840,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3775,7 +3887,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -3794,10 +3907,11 @@
         "reason": null
       },
       "score": {
-        "value": 49,
-        "rating": "weak",
-        "base": 49,
-        "capped_by": null
+        "value": 50,
+        "rating": "medium",
+        "base": 50,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -3840,7 +3954,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -3861,10 +3976,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3907,7 +4023,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -3928,10 +4045,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -3974,7 +4092,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -3995,10 +4114,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4041,7 +4161,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -4060,10 +4181,11 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
-        "capped_by": null
+        "value": 57,
+        "rating": "strong",
+        "base": 57,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -4106,7 +4228,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -4127,10 +4250,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4173,7 +4297,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -4194,10 +4319,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4240,7 +4366,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -4261,10 +4388,11 @@
         "reason": null
       },
       "score": {
-        "value": 20,
+        "value": 10,
         "rating": "weak",
         "base": 20,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -4307,7 +4435,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -4328,10 +4457,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 15,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "qwerty_walk"
       },
       "hardware": [
         {
@@ -4374,7 +4504,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -4395,10 +4526,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 10,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -4441,7 +4573,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.0,
@@ -4463,10 +4596,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 40,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4509,7 +4643,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -4530,10 +4665,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4576,7 +4712,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -4595,10 +4732,11 @@
         "reason": null
       },
       "score": {
-        "value": 49,
-        "rating": "weak",
-        "base": 49,
-        "capped_by": null
+        "value": 50,
+        "rating": "medium",
+        "base": 50,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -4641,7 +4779,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -4663,10 +4802,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 30,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4709,7 +4849,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 5.659893391883272,
@@ -4730,10 +4871,11 @@
         "reason": null
       },
       "score": {
-        "value": 28,
+        "value": 5,
         "rating": "weak",
         "base": 28,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4776,7 +4918,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -4797,10 +4940,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4843,7 +4987,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 6.0,
@@ -4863,9 +5008,10 @@
       },
       "score": {
         "value": 30,
-        "rating": "weak",
+        "rating": "medium",
         "base": 30,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -4908,7 +5054,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -4930,10 +5077,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -4976,7 +5124,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -4997,10 +5146,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5043,7 +5193,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 11.319786783766544,
@@ -5064,10 +5215,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 56,
-        "capped_by": "pattern"
+        "base": 57,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5110,7 +5262,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5131,10 +5284,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5177,7 +5331,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5198,10 +5353,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5244,7 +5400,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5265,10 +5422,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5311,7 +5469,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5332,10 +5491,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5378,7 +5538,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 5.659893391883272,
@@ -5399,10 +5560,11 @@
         "reason": null
       },
       "score": {
-        "value": 28,
+        "value": 5,
         "rating": "weak",
         "base": 28,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5445,7 +5607,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5466,10 +5629,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5512,7 +5676,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -5534,7 +5699,8 @@
         "value": 20,
         "rating": "weak",
         "base": 20,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -5577,7 +5743,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5598,10 +5765,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5644,7 +5812,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -5665,10 +5834,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5711,7 +5881,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5731,9 +5902,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -5776,7 +5948,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -5797,10 +5970,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5843,7 +6017,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -5864,10 +6039,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5910,7 +6086,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -5931,10 +6108,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -5977,7 +6155,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.0,
@@ -5999,10 +6178,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 45,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6045,7 +6225,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -6065,9 +6246,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6110,7 +6292,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -6130,9 +6313,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6175,7 +6359,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -6194,10 +6379,11 @@
         "reason": null
       },
       "score": {
-        "value": 49,
-        "rating": "weak",
-        "base": 49,
-        "capped_by": null
+        "value": 50,
+        "rating": "medium",
+        "base": 50,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6240,7 +6426,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -6261,10 +6448,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6307,7 +6495,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -6327,9 +6516,10 @@
       },
       "score": {
         "value": 42,
-        "rating": "weak",
+        "rating": "medium",
         "base": 42,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6372,7 +6562,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -6393,10 +6584,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 15,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "qwerty_walk"
       },
       "hardware": [
         {
@@ -6439,7 +6631,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 12.734760131737362,
@@ -6461,10 +6654,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 63,
-        "capped_by": "pattern"
+        "base": 64,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6507,7 +6701,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 9.904813435795726,
@@ -6528,10 +6723,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 15,
         "rating": "weak",
-        "base": 49,
-        "capped_by": "pattern"
+        "base": 50,
+        "capped_by": "pattern",
+        "capped_by_rule": "qwerty_walk"
       },
       "hardware": [
         {
@@ -6574,7 +6770,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -6598,7 +6795,8 @@
         "value": 20,
         "rating": "weak",
         "base": 20,
-        "capped_by": "pattern"
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6641,7 +6839,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.0,
@@ -6665,7 +6864,8 @@
         "value": 20,
         "rating": "weak",
         "base": 20,
-        "capped_by": "pattern"
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -6708,7 +6908,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 15.563025007672874,
@@ -6730,10 +6931,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 77,
-        "capped_by": "pattern"
+        "base": 78,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6776,7 +6978,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 18.675630009207445,
@@ -6798,10 +7001,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 93,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6844,7 +7048,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 18.675630009207445,
@@ -6866,10 +7071,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 15,
         "rating": "weak",
         "base": 93,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "qwerty_walk"
       },
       "hardware": [
         {
@@ -6912,7 +7118,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 19.479372128063588,
@@ -6934,10 +7141,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 97,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -6980,7 +7188,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.244920043912454,
@@ -7001,10 +7210,11 @@
         "reason": null
       },
       "score": {
-        "value": 21,
+        "value": 10,
         "rating": "weak",
         "base": 21,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -7047,7 +7257,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 8.489840087824907,
@@ -7068,10 +7279,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 10,
         "rating": "weak",
         "base": 42,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -7114,7 +7326,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 4.555541819633662,
@@ -7135,10 +7348,11 @@
         "reason": null
       },
       "score": {
-        "value": 22,
+        "value": 10,
         "rating": "weak",
-        "base": 22,
-        "capped_by": "pattern"
+        "base": 23,
+        "capped_by": "pattern",
+        "capped_by_rule": "repetition"
       },
       "hardware": [
         {
@@ -7181,7 +7395,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 10.0,
@@ -7203,10 +7418,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 50,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -7249,7 +7465,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 15.821788842310783,
@@ -7270,10 +7487,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 79,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -7316,7 +7534,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 23.732683263466175,
@@ -7337,10 +7556,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 100,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -7383,7 +7603,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 17.799512447599632,
@@ -7404,10 +7625,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 88,
-        "capped_by": "pattern"
+        "base": 89,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -7450,7 +7672,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 23.732683263466175,
@@ -7472,10 +7695,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 100,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -7518,7 +7742,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 49.58385632598004,
@@ -7540,7 +7765,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7583,7 +7809,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 23.732683263466175,
@@ -7605,7 +7832,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7648,7 +7876,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 23.732683263466175,
@@ -7670,7 +7899,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7728,7 +7958,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 1.5185139398778875,
@@ -7747,10 +7978,11 @@
         "reason": null
       },
       "score": {
-        "value": 7,
+        "value": 8,
         "rating": "weak",
-        "base": 7,
-        "capped_by": null
+        "base": 8,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7793,7 +8025,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 1.414973347970818,
@@ -7815,7 +8048,8 @@
         "value": 7,
         "rating": "weak",
         "base": 7,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7858,7 +8092,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 1.5185139398778875,
@@ -7877,10 +8112,11 @@
         "reason": null
       },
       "score": {
-        "value": 7,
+        "value": 8,
         "rating": "weak",
-        "base": 7,
-        "capped_by": null
+        "base": 8,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7923,7 +8159,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 5.312556034926432,
@@ -7942,10 +8179,11 @@
         "reason": null
       },
       "score": {
-        "value": 26,
-        "rating": "weak",
-        "base": 26,
-        "capped_by": null
+        "value": 27,
+        "rating": "medium",
+        "base": 27,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -7988,7 +8226,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 22.06618908884706,
@@ -8010,7 +8249,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -8053,7 +8293,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 14149.73347970818,
@@ -8075,10 +8316,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 100,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -8113,14 +8355,66 @@
     "expected": {
       "schema_version": "2.0",
       "tool_version": "1.5.4",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false,
+        "has_non_ascii": true
+      },
+      "entropy": {
+        "log10_value": 6.0,
+        "combinations": 1000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 30,
+        "rating": "medium",
+        "base": 30,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.001
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1e-06
+        }
+      ]
     }
   },
   {
@@ -8136,7 +8430,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 17.799512447599632,
@@ -8157,10 +8452,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
-        "base": 88,
-        "capped_by": "pattern"
+        "base": 89,
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -8199,14 +8495,15 @@
       "error": null,
       "input": {
         "length": 6,
-        "charset_size": 26,
-        "has_lowercase": true,
+        "charset_size": 33,
+        "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 8.489840087824907,
+        "log10_value": 9.111083639267324,
         "combinations": null
       },
       "pattern": {
@@ -8222,35 +8519,36 @@
         "reason": null
       },
       "score": {
-        "value": 42,
-        "rating": "weak",
-        "base": 42,
-        "capped_by": null
+        "value": 46,
+        "rating": "medium",
+        "base": 46,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 308915.7759999997
+          "seconds": 1291467.9689999982
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 308.9157759999997
+          "seconds": 1291.467968999998
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.3089157759999997
+          "seconds": 1.2914679689999982
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.0003089157759999997
+          "seconds": 0.001291467968999998
         }
       ]
     }
@@ -8260,14 +8558,66 @@
     "expected": {
       "schema_version": "2.0",
       "tool_version": "1.5.4",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 5000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false,
+        "has_non_ascii": true
+      },
+      "entropy": {
+        "log10_value": 7.3979400086720375,
+        "combinations": 25000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 37,
+        "rating": "medium",
+        "base": 37,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 24999.999999999993
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 24.999999999999993
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.02499999999999999
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 2.499999999999999e-05
+        }
+      ]
     }
   },
   {
@@ -8279,14 +8629,15 @@
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 226,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 18.832867513179206,
         "combinations": null
       },
       "pattern": {
@@ -8302,35 +8653,36 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
-        "capped_by": null
+        "value": 50,
+        "rating": "strong",
+        "base": 94,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 6805617133840445.0
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 6805617133840.445
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 6805617133.8404455
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 6805617.133840445
         }
       ]
     }
@@ -8344,14 +8696,15 @@
       "error": null,
       "input": {
         "length": 5,
-        "charset_size": 26,
+        "charset_size": 59,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 7.07486673985409,
+        "log10_value": 8.854260058210722,
         "combinations": null
       },
       "pattern": {
@@ -8367,35 +8720,36 @@
         "reason": null
       },
       "score": {
-        "value": 35,
-        "rating": "weak",
-        "base": 35,
-        "capped_by": null
+        "value": 44,
+        "rating": "medium",
+        "base": 44,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 11881.376000000007
+          "seconds": 714924.299000001
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 11.881376000000007
+          "seconds": 714.924299000001
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.011881376000000008
+          "seconds": 0.7149242990000011
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 1.1881376000000007e-05
+          "seconds": 0.0007149242990000011
         }
       ]
     }
@@ -8409,14 +8763,15 @@
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 59,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 14.166816093137154,
         "combinations": null
       },
       "pattern": {
@@ -8432,35 +8787,36 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
-        "capped_by": null
+        "value": 50,
+        "rating": "strong",
+        "base": 71,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 146830437604.3211
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 146830437.6043211
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 146830.43760432108
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 146.8304376043211
         }
       ]
     }
@@ -8474,14 +8830,15 @@
       "error": null,
       "input": {
         "length": 5,
-        "charset_size": 36,
+        "charset_size": 69,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 7.781512503836437,
+        "log10_value": 9.194245453686277,
         "combinations": null
       },
       "pattern": {
@@ -8497,35 +8854,36 @@
         "reason": null
       },
       "score": {
-        "value": 38,
-        "rating": "weak",
-        "base": 38,
-        "capped_by": null
+        "value": 46,
+        "rating": "medium",
+        "base": 46,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 60466.17600000006
+          "seconds": 1564031.349
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 60.46617600000006
+          "seconds": 1564.031349
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.06046617600000006
+          "seconds": 1.564031349
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 6.046617600000006e-05
+          "seconds": 0.001564031349
         }
       ]
     }
@@ -8539,15 +8897,16 @@
       "error": null,
       "input": {
         "length": 2,
-        "charset_size": 26,
+        "charset_size": 526,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 2.829946695941636,
-        "combinations": 676
+        "log10_value": 5.441971488307479,
+        "combinations": 276676
       },
       "pattern": {
         "detected": false,
@@ -8562,35 +8921,36 @@
         "reason": null
       },
       "score": {
-        "value": 14,
-        "rating": "weak",
-        "base": 14,
-        "capped_by": null
+        "value": 27,
+        "rating": "medium",
+        "base": 27,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 0.676
+          "seconds": 276.6760000000003
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 0.000676
+          "seconds": 0.2766760000000003
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 6.76e-07
+          "seconds": 0.0002766760000000003
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 6.76e-10
+          "seconds": 2.7667600000000027e-07
         }
       ]
     }
@@ -8604,14 +8964,15 @@
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 226,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": true
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 18.832867513179206,
         "combinations": null
       },
       "pattern": {
@@ -8627,35 +8988,36 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
-        "capped_by": null
+        "value": 50,
+        "rating": "strong",
+        "base": 94,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
       },
       "hardware": [
         {
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 6805617133840445.0
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 6805617133840.445
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 6805617133.8404455
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 6805617.133840445
         }
       ]
     }
@@ -8665,14 +9027,66 @@
     "expected": {
       "schema_version": "2.0",
       "tool_version": "1.5.4",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 5,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false,
+        "has_non_ascii": true
+      },
+      "entropy": {
+        "log10_value": 15.0,
+        "combinations": null
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 50,
+        "rating": "strong",
+        "base": 75,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000000000000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1000000000.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 1000000.0
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1000.0
+        }
+      ]
     }
   },
   {
@@ -8680,14 +9094,66 @@
     "expected": {
       "schema_version": "2.0",
       "tool_version": "1.5.4",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false,
+        "has_non_ascii": true
+      },
+      "entropy": {
+        "log10_value": 6.0,
+        "combinations": 1000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 30,
+        "rating": "medium",
+        "base": 30,
+        "capped_by": "unicode_miss",
+        "capped_by_rule": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.001
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1e-06
+        }
+      ]
     }
   },
   {
@@ -8703,7 +9169,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 1131.9786783766544,
@@ -8724,10 +9191,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 100,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -8770,7 +9238,8 @@
         "has_lowercase": true,
         "has_uppercase": true,
         "has_digits": true,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 23.732683263466175,
@@ -8792,7 +9261,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -8835,7 +9305,8 @@
         "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": true,
-        "has_symbols": false
+        "has_symbols": false,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 20.0,
@@ -8857,10 +9328,11 @@
         "reason": null
       },
       "score": {
-        "value": 30,
+        "value": 5,
         "rating": "weak",
         "base": 100,
-        "capped_by": "pattern"
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -8903,7 +9375,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 49.58385632598004,
@@ -8925,7 +9398,8 @@
         "value": 100,
         "rating": "strong",
         "base": 100,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -8968,7 +9442,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 5.312556034926432,
@@ -8987,10 +9462,11 @@
         "reason": null
       },
       "score": {
-        "value": 26,
-        "rating": "weak",
-        "base": 26,
-        "capped_by": null
+        "value": 27,
+        "rating": "medium",
+        "base": 27,
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {
@@ -9033,7 +9509,8 @@
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
-        "has_symbols": true
+        "has_symbols": true,
+        "has_non_ascii": false
       },
       "entropy": {
         "log10_value": 7.083408046568577,
@@ -9053,9 +9530,10 @@
       },
       "score": {
         "value": 35,
-        "rating": "weak",
+        "rating": "medium",
         "base": 35,
-        "capped_by": null
+        "capped_by": null,
+        "capped_by_rule": null
       },
       "hardware": [
         {

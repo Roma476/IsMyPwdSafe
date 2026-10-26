@@ -5,16 +5,20 @@ from ismypwdsafe.network import BreachResult
 from ismypwdsafe.patterns import PatternResult
 
 
-@pytest.mark.parametrize("pwd, expected_charset", [
-    ("abc", 26),
-    ("abcABC", 52),
-    ("abcABC123", 62),
-    ("abcABC123!", 95),
-    ("", 0),
+@pytest.mark.parametrize("pwd, expected_charset, expected_unicode", [
+    ("abc", 26, False),
+    ("abcABC", 52, False),
+    ("abcABC123", 62, False),
+    ("abcABC123!", 95, False),
+    ("", 0, False),
+    ("пароль", 33, True),
+    ("🔒🔑", 1000, True),
+    ("abc🔒", 1026, True), # 26 (lower) + 1000 (emoji)
 ])
-def test_calc_charset(pwd, expected_charset):
-    charset, *_ = core.calc_charset(pwd)
+def test_calc_charset(pwd, expected_charset, expected_unicode):
+    charset, _, _, _, _, has_non_ascii = core.calc_charset(pwd)
     assert charset == expected_charset
+    assert has_non_ascii == expected_unicode
 
 
 def test_calc_combinations_small():
@@ -31,7 +35,7 @@ def test_calc_combinations_large_uses_log():
 
 def test_score_clean_strong(clean_breach):
     pattern = PatternResult(False, None, None, [])
-    score = core.calculate_score(25.0, pattern, clean_breach, 20)
+    score = core.calculate_score(25.0, pattern, clean_breach, 20, False)
     assert score.value == 100
     assert score.rating == "strong"
     assert score.capped_by is None
@@ -39,7 +43,7 @@ def test_score_clean_strong(clean_breach):
 
 def test_score_pattern_capped(clean_breach):
     pattern = PatternResult(True, "top150", "x", ["top150"])
-    score = core.calculate_score(25.0, pattern, clean_breach, 20)
+    score = core.calculate_score(25.0, pattern, clean_breach, 20, False)
     assert score.value == 5
     assert score.capped_by == "pattern"
     assert score.capped_by_rule == "top150"
@@ -48,7 +52,7 @@ def test_score_pattern_capped(clean_breach):
 def test_score_pwned_capped():
     breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
     pattern = PatternResult(False, None, None, [])
-    score = core.calculate_score(25.0, pattern, breach, 20)
+    score = core.calculate_score(25.0, pattern, breach, 20, False)
     assert score.value == 5
     assert score.capped_by == "breach"
 
@@ -56,7 +60,7 @@ def test_score_pwned_capped():
 def test_score_pattern_and_pwned_breach_wins():
     pattern = PatternResult(True, "top150", "x", ["top150"])
     breach = BreachResult(checked=True, pwned=True, breach_count=100, reason=None)
-    score = core.calculate_score(25.0, pattern, breach, 20)
+    score = core.calculate_score(25.0, pattern, breach, 20, False)
     assert score.value == 5
     assert score.capped_by == "breach"
 
@@ -92,3 +96,11 @@ def test_analyze_password_weak():
     assert result.pattern.detected is True
     assert result.score.value <= 30
     assert result.score.rating == "weak"
+
+def test_score_unicode_miss():
+    pattern = PatternResult(False, None, None, [])
+    breach = BreachResult(checked=True, pwned=False, breach_count=0, reason=None)
+    # High entropy (log10=15) but unicode_miss caps at 10.0 (score 50)
+    score = core.calculate_score(15.0, pattern, breach, 6, True)
+    assert score.value == 50
+    assert score.capped_by == "unicode_miss"
