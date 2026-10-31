@@ -7,7 +7,7 @@ import sys
 from typing import Optional
 
 from . import __version__, network
-from .core import analyze_password
+from .core import analyze_password, compute_exit_code
 from .render import render_json
 from .ui import dim, err, get_width, print_output, warn
 
@@ -141,7 +141,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         else:
             print_output(result, password, mask_mode=args.Mask, view=view)
             
-    return result.exit_code
+    assert result.score is not None
+    assert result.breach is not None
+    return compute_exit_code(result.score, result.breach)
 
 
 def entry() -> int:

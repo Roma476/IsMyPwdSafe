@@ -6,11 +6,15 @@
     "tool_version": {"type": "string"},
     "exit_code": {"type": "integer"},
     "error": {"type": ["string", "null"]},
+    "engine_used": {"type": "string"},
+    "zxcvbn_score": {"type": ["integer", "null"]},
     "score": {
       "type": ["object", "null"],
       "properties": {
         "value": {"type": "integer"},
-        "rating": {"type": "string"}
+        "rating": {"type": "string"},
+        "base": {"type": "integer"},
+        "capped_by": {"type": ["string", "null"]}
       },
       "required": ["value", "rating"]
     },
@@ -23,5 +27,5 @@
       "required": ["detected", "rules_fired"]
     }
   },
-  "required": ["schema_version", "tool_version", "exit_code"]
+  "required": ["schema_version", "tool_version", "exit_code", "engine_used"]
 }

@@ -8,7 +8,7 @@ from . import network, patterns
 from .engines import EngineBackend, NativeEngine, PythonZxcvbnEngine, ZxcvbnTsEngine
 from .metrics import calc_charset, calc_combinations
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 # Exit codes. In 1.3.0 only 0 and 64/65/70 are returned; 1 and 3 are
 # reserved for 1.5.0 when the semantic exit code contract lands.
@@ -62,6 +62,8 @@ class AuditResult:
     breach: Optional[network.BreachResult]
     score: Optional[ScoreResult]
     hardware: Tuple[HardwareEstimate, ...]
+    engine_used: str = "native"
+    zxcvbn_score: Optional[int] = None
 
 
 _HARDWARE_PROFILES = (
@@ -136,6 +138,8 @@ def analyze_password(
             error="No password provided",
             input=None, entropy=None, pattern=None, breach=None,
             score=None, hardware=(),
+            engine_used=engine_name,
+            zxcvbn_score=None,
         )
 
     charset, has_low, has_upp, has_num, has_sym, _ = calc_charset(password)
@@ -147,8 +151,9 @@ def analyze_password(
             error="Could not determine charset",
             input=None, entropy=None, pattern=None, breach=None,
             score=None, hardware=(),
+            engine_used=engine_name,
+            zxcvbn_score=None,
         )
-
     length = len(password)
     combinations, log10_value = calc_combinations(charset, length)
 
@@ -210,3 +215,11 @@ def analyze_password(
         score=score,
         hardware=hardware,
     )
+
+def compute_exit_code(score: ScoreResult, breach: network.BreachResult) -> int:
+    """Compute the semantic exit code for CI/CD pipelines."""
+    if breach.checked and breach.pwned:
+        return 3
+    if score.value < 50:
+        return 1
+    return 0

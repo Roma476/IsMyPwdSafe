@@ -40,12 +40,13 @@ def test_check_updates_flag(monkeypatch):
     assert called["update"] is True
 
 
-def test_exit_code_reflects_result(monkeypatch):
-    # Only 0 is possible until 1.5 adds semantic exit codes
-    monkeypatch.setattr(
-        cli.network, "check_for_updates", lambda v: None,
-    )
-    assert cli.main(["--no-breach-check", "password"]) == 0
+def test_exit_code_strong(monkeypatch):
+    monkeypatch.setattr(cli.network, "check_for_updates", lambda v: None)
+    assert cli.main(["--no-breach-check", "correct-horse-battery-staple"]) == 0
+
+def test_exit_code_weak(monkeypatch):
+    monkeypatch.setattr(cli.network, "check_for_updates", lambda v: None)
+    assert cli.main(["--no-breach-check", "password"]) == 1
 
 def test_no_update_check_deprecation(capsys):
     cli.main(["--no-update-check", "password"])

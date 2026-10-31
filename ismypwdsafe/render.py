@@ -21,5 +21,5 @@ def _to_dict(obj: Any) -> Any:
 def render_json(result: AuditResult) -> str:
     """Serialize an AuditResult to a JSON string with schema versioning."""
     data = _to_dict(result)
-    data["schema_version"] = "1.0"
+    data["schema_version"] = "2.0"
     return json.dumps(data, indent=2)
