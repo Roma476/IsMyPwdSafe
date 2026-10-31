@@ -19,7 +19,8 @@ def test_edge_cases_do_not_crash(pwd):
     
     assert result is not None
     
-    if not pwd or pwd == "🔒🔑":  # noqa: S105
+    # Empty string should return an error
+    if not pwd:
         assert result.error is not None
         assert result.exit_code != 0
     else:

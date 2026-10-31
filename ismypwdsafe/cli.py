@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import getpass
 import sys
+from typing import Optional
 
 from . import __version__, network
 from .core import analyze_password
@@ -68,7 +69,7 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv=None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
     password = args.password

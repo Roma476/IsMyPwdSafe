@@ -1,6 +1,7 @@
 """IsMyPwdSafe: a privacy-first password audit engine."""
-from importlib.metadata import version, PackageNotFoundError
-from .core import analyze_password, AuditResult, SCHEMA_VERSION  # noqa: E402,F401
+from importlib.metadata import PackageNotFoundError, version
+
+from .core import SCHEMA_VERSION, AuditResult, analyze_password  # noqa: E402,F401
 
 try:
     __version__ = version("ismypwdsafe")

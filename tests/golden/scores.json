@@ -3,7 +3,7 @@
     "input": "123456",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -71,7 +71,7 @@
     "input": "password",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -138,7 +138,7 @@
     "input": "12345678",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -206,7 +206,7 @@
     "input": "qwerty",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -274,7 +274,7 @@
     "input": "123456789",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -342,7 +342,7 @@
     "input": "12345",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -410,7 +410,7 @@
     "input": "1234",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -478,7 +478,7 @@
     "input": "111111",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -546,7 +546,7 @@
     "input": "1234567",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -614,7 +614,7 @@
     "input": "dragon",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -681,7 +681,7 @@
     "input": "123123",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -748,7 +748,7 @@
     "input": "baseball",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -813,7 +813,7 @@
     "input": "abc123",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -880,7 +880,7 @@
     "input": "football",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -947,7 +947,7 @@
     "input": "monkey",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1014,7 +1014,7 @@
     "input": "letmein",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1081,7 +1081,7 @@
     "input": "696969",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1148,7 +1148,7 @@
     "input": "shadow",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1215,7 +1215,7 @@
     "input": "master",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1282,7 +1282,7 @@
     "input": "666666",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1350,7 +1350,7 @@
     "input": "qwertyuiop",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1418,7 +1418,7 @@
     "input": "123321",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1485,7 +1485,7 @@
     "input": "mustang",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1550,7 +1550,7 @@
     "input": "1234567890",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1618,7 +1618,7 @@
     "input": "michael",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1685,7 +1685,7 @@
     "input": "654321",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1753,7 +1753,7 @@
     "input": "superman",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1820,7 +1820,7 @@
     "input": "1qaz2wsx",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1888,7 +1888,7 @@
     "input": "7777777",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -1956,7 +1956,7 @@
     "input": "121212",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2024,7 +2024,7 @@
     "input": "000000",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2092,7 +2092,7 @@
     "input": "qazwsx",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2157,7 +2157,7 @@
     "input": "123qwe",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2224,7 +2224,7 @@
     "input": "killer",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2291,7 +2291,7 @@
     "input": "trustno1",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2358,7 +2358,7 @@
     "input": "jordan",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2425,7 +2425,7 @@
     "input": "jennifer",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2492,7 +2492,7 @@
     "input": "zxcvbnm",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2560,7 +2560,7 @@
     "input": "asdfgh",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2627,7 +2627,7 @@
     "input": "hunter",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2694,7 +2694,7 @@
     "input": "buster",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2761,7 +2761,7 @@
     "input": "soccer",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2828,7 +2828,7 @@
     "input": "harley",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2895,7 +2895,7 @@
     "input": "batman",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -2962,7 +2962,7 @@
     "input": "andrew",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3030,7 +3030,7 @@
     "input": "tigger",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3097,7 +3097,7 @@
     "input": "sunshine",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3164,7 +3164,7 @@
     "input": "iloveyou",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3231,7 +3231,7 @@
     "input": "2000",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3299,7 +3299,7 @@
     "input": "charlie",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3366,7 +3366,7 @@
     "input": "robert",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3431,7 +3431,7 @@
     "input": "thomas",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3498,7 +3498,7 @@
     "input": "hockey",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3565,7 +3565,7 @@
     "input": "ranger",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3632,7 +3632,7 @@
     "input": "daniel",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3699,7 +3699,7 @@
     "input": "starwars",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3766,7 +3766,7 @@
     "input": "klaster",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3831,7 +3831,7 @@
     "input": "112233",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3898,7 +3898,7 @@
     "input": "george",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -3965,7 +3965,7 @@
     "input": "computer",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4032,7 +4032,7 @@
     "input": "michelle",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4097,7 +4097,7 @@
     "input": "jessica",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4164,7 +4164,7 @@
     "input": "pepper",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4231,7 +4231,7 @@
     "input": "1111",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4298,7 +4298,7 @@
     "input": "zxcvbn",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4365,7 +4365,7 @@
     "input": "555555",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4432,7 +4432,7 @@
     "input": "11111111",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4500,7 +4500,7 @@
     "input": "131313",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4567,7 +4567,7 @@
     "input": "freedom",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4632,7 +4632,7 @@
     "input": "777777",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4700,7 +4700,7 @@
     "input": "pass",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4767,7 +4767,7 @@
     "input": "maggie",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4834,7 +4834,7 @@
     "input": "159753",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4899,7 +4899,7 @@
     "input": "aaaaaa",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -4967,7 +4967,7 @@
     "input": "ginger",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5034,7 +5034,7 @@
     "input": "princess",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5101,7 +5101,7 @@
     "input": "joshua",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5168,7 +5168,7 @@
     "input": "cheese",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5235,7 +5235,7 @@
     "input": "amanda",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5302,7 +5302,7 @@
     "input": "summer",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5369,7 +5369,7 @@
     "input": "love",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5436,7 +5436,7 @@
     "input": "ashley",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5503,7 +5503,7 @@
     "input": "6969",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5568,7 +5568,7 @@
     "input": "nicole",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5635,7 +5635,7 @@
     "input": "chelsea",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5702,7 +5702,7 @@
     "input": "biteme",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5767,7 +5767,7 @@
     "input": "matthew",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5834,7 +5834,7 @@
     "input": "access",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5901,7 +5901,7 @@
     "input": "yankees",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -5968,7 +5968,7 @@
     "input": "987654321",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6036,7 +6036,7 @@
     "input": "dallas",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6101,7 +6101,7 @@
     "input": "austin",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6166,7 +6166,7 @@
     "input": "thunder",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6231,7 +6231,7 @@
     "input": "taylor",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6298,7 +6298,7 @@
     "input": "matrix",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6363,7 +6363,7 @@
     "input": "mnbvcxz",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6430,7 +6430,7 @@
     "input": "asdfghjkl",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6498,7 +6498,7 @@
     "input": "poiuytr",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6565,7 +6565,7 @@
     "input": "2010",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6632,7 +6632,7 @@
     "input": "1990",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6699,7 +6699,7 @@
     "input": "summer2024",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6767,7 +6767,7 @@
     "input": "password2023",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6835,7 +6835,7 @@
     "input": "abcd1990efgh",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6903,7 +6903,7 @@
     "input": "password!!!",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -6971,7 +6971,7 @@
     "input": "aaa",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7038,7 +7038,7 @@
     "input": "zzzzzz",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7105,7 +7105,7 @@
     "input": "...",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7172,7 +7172,7 @@
     "input": "1111111111",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7240,7 +7240,7 @@
     "input": "P@ssw0rd",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7307,7 +7307,7 @@
     "input": "Password123!",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7374,7 +7374,7 @@
     "input": "Admin@123",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7441,7 +7441,7 @@
     "input": "P@ssw0rd2024",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7509,7 +7509,7 @@
     "input": "correct-horse-battery-staple",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7574,7 +7574,7 @@
     "input": "vT7#pQ2!mN9x",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7639,7 +7639,7 @@
     "input": "x9F$kL2@pW5z",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7704,7 +7704,7 @@
     "input": "",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 65,
       "error": "No password provided",
       "input": null,
@@ -7719,7 +7719,7 @@
     "input": " ",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7784,7 +7784,7 @@
     "input": "a",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7849,7 +7849,7 @@
     "input": "\u0000",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7914,7 +7914,7 @@
     "input": "a\nb",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -7979,7 +7979,7 @@
     "input": "\u001b[31mred\u001b[0m",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8044,7 +8044,7 @@
     "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8112,22 +8112,72 @@
     "input": "🔒🔑",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "tool_version": "1.5.4",
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false
+      },
+      "entropy": {
+        "log10_value": 6.0,
+        "combinations": 1000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 30,
+        "rating": "weak",
+        "base": 30,
+        "capped_by": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.001
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1e-06
+        }
+      ]
     }
   },
   {
     "input": "P@ssw0rd\u0000",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8194,19 +8244,19 @@
     "input": "пароль",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 6,
-        "charset_size": 26,
-        "has_lowercase": true,
+        "charset_size": 33,
+        "has_lowercase": false,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 8.489840087824907,
+        "log10_value": 9.111083639267324,
         "combinations": null
       },
       "pattern": {
@@ -8222,9 +8272,9 @@
         "reason": null
       },
       "score": {
-        "value": 42,
+        "value": 45,
         "rating": "weak",
-        "base": 42,
+        "base": 45,
         "capped_by": null
       },
       "hardware": [
@@ -8232,25 +8282,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 308915.7759999997
+          "seconds": 1291467.9689999982
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 308.9157759999997
+          "seconds": 1291.467968999998
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.3089157759999997
+          "seconds": 1.2914679689999982
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.0003089157759999997
+          "seconds": 0.001291467968999998
         }
       ]
     }
@@ -8259,34 +8309,84 @@
     "input": "密码",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "tool_version": "1.5.4",
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 5000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false
+      },
+      "entropy": {
+        "log10_value": 7.3979400086720375,
+        "combinations": 25000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 36,
+        "rating": "weak",
+        "base": 36,
+        "capped_by": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 24999.999999999993
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 24.999999999999993
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.02499999999999999
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 2.499999999999999e-05
+        }
+      ]
     }
   },
   {
     "input": "pässwörd",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 226,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 18.832867513179206,
         "combinations": null
       },
       "pattern": {
@@ -8302,9 +8402,9 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
+        "value": 94,
+        "rating": "strong",
+        "base": 94,
         "capped_by": null
       },
       "hardware": [
@@ -8312,25 +8412,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 6805617133840445.0
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 6805617133840.445
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 6805617133.8404455
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 6805617.133840445
         }
       ]
     }
@@ -8339,19 +8439,19 @@
     "input": "аdmin",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 5,
-        "charset_size": 26,
+        "charset_size": 59,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 7.07486673985409,
+        "log10_value": 8.854260058210722,
         "combinations": null
       },
       "pattern": {
@@ -8367,9 +8467,9 @@
         "reason": null
       },
       "score": {
-        "value": 35,
+        "value": 44,
         "rating": "weak",
-        "base": 35,
+        "base": 44,
         "capped_by": null
       },
       "hardware": [
@@ -8377,25 +8477,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 11881.376000000007
+          "seconds": 714924.299000001
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 11.881376000000007
+          "seconds": 714.924299000001
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.011881376000000008
+          "seconds": 0.7149242990000011
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 1.1881376000000007e-05
+          "seconds": 0.0007149242990000011
         }
       ]
     }
@@ -8404,19 +8504,19 @@
     "input": "pаssword",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 59,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 14.166816093137154,
         "combinations": null
       },
       "pattern": {
@@ -8432,9 +8532,9 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
+        "value": 70,
+        "rating": "strong",
+        "base": 70,
         "capped_by": null
       },
       "hardware": [
@@ -8442,25 +8542,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 146830437604.3211
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 146830437.6043211
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 146830.43760432108
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 146.8304376043211
         }
       ]
     }
@@ -8469,19 +8569,19 @@
     "input": "аdm1n",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 5,
-        "charset_size": 36,
+        "charset_size": 69,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": true,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 7.781512503836437,
+        "log10_value": 9.194245453686277,
         "combinations": null
       },
       "pattern": {
@@ -8497,9 +8597,9 @@
         "reason": null
       },
       "score": {
-        "value": 38,
+        "value": 45,
         "rating": "weak",
-        "base": 38,
+        "base": 45,
         "capped_by": null
       },
       "hardware": [
@@ -8507,25 +8607,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 60466.17600000006
+          "seconds": 1564031.349
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 60.46617600000006
+          "seconds": 1564.031349
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 0.06046617600000006
+          "seconds": 1.564031349
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 6.046617600000006e-05
+          "seconds": 0.001564031349
         }
       ]
     }
@@ -8534,20 +8634,20 @@
     "input": "é",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 2,
-        "charset_size": 26,
+        "charset_size": 526,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 2.829946695941636,
-        "combinations": 676
+        "log10_value": 5.441971488307479,
+        "combinations": 276676
       },
       "pattern": {
         "detected": false,
@@ -8562,9 +8662,9 @@
         "reason": null
       },
       "score": {
-        "value": 14,
+        "value": 27,
         "rating": "weak",
-        "base": 14,
+        "base": 27,
         "capped_by": null
       },
       "hardware": [
@@ -8572,25 +8672,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 0.676
+          "seconds": 276.6760000000003
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 0.000676
+          "seconds": 0.2766760000000003
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 6.76e-07
+          "seconds": 0.0002766760000000003
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 6.76e-10
+          "seconds": 2.7667600000000027e-07
         }
       ]
     }
@@ -8599,19 +8699,19 @@
     "input": "pässword",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
         "length": 8,
-        "charset_size": 26,
+        "charset_size": 226,
         "has_lowercase": true,
         "has_uppercase": false,
         "has_digits": false,
         "has_symbols": false
       },
       "entropy": {
-        "log10_value": 11.319786783766544,
+        "log10_value": 18.832867513179206,
         "combinations": null
       },
       "pattern": {
@@ -8627,9 +8727,9 @@
         "reason": null
       },
       "score": {
-        "value": 56,
-        "rating": "medium",
-        "base": 56,
+        "value": 94,
+        "rating": "strong",
+        "base": 94,
         "capped_by": null
       },
       "hardware": [
@@ -8637,25 +8737,25 @@
           "key": "pc_1k",
           "label": "PC (1K/s)",
           "attempts_per_second": 1000.0,
-          "seconds": 208827064.57600003
+          "seconds": 6805617133840445.0
         },
         {
           "key": "server_1m",
           "label": "Server (1M/s)",
           "attempts_per_second": 1000000.0,
-          "seconds": 208827.06457600003
+          "seconds": 6805617133840.445
         },
         {
           "key": "gpu_1b",
           "label": "GPU Rig (1B/s)",
           "attempts_per_second": 1000000000.0,
-          "seconds": 208.82706457600003
+          "seconds": 6805617133.8404455
         },
         {
           "key": "cluster_1t",
           "label": "Cluster (1T/s)",
           "attempts_per_second": 1000000000000.0,
-          "seconds": 0.20882706457600003
+          "seconds": 6805617.133840445
         }
       ]
     }
@@ -8664,37 +8764,137 @@
     "input": "👨‍👩‍👧",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "tool_version": "1.5.4",
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 5,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false
+      },
+      "entropy": {
+        "log10_value": 15.0,
+        "combinations": null
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 75,
+        "rating": "strong",
+        "base": 75,
+        "capped_by": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000000000000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1000000000.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 1000000.0
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1000.0
+        }
+      ]
     }
   },
   {
     "input": "🇮🇹",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
-      "exit_code": 65,
-      "error": "Could not determine charset",
-      "input": null,
-      "entropy": null,
-      "pattern": null,
-      "breach": null,
-      "score": null,
-      "hardware": []
+      "tool_version": "1.5.4",
+      "exit_code": 0,
+      "error": null,
+      "input": {
+        "length": 2,
+        "charset_size": 1000,
+        "has_lowercase": false,
+        "has_uppercase": false,
+        "has_digits": false,
+        "has_symbols": false
+      },
+      "entropy": {
+        "log10_value": 6.0,
+        "combinations": 1000000
+      },
+      "pattern": {
+        "detected": false,
+        "rule": null,
+        "detail": null,
+        "rules_fired": []
+      },
+      "breach": {
+        "checked": false,
+        "pwned": null,
+        "breach_count": null,
+        "reason": null
+      },
+      "score": {
+        "value": 30,
+        "rating": "weak",
+        "base": 30,
+        "capped_by": null
+      },
+      "hardware": [
+        {
+          "key": "pc_1k",
+          "label": "PC (1K/s)",
+          "attempts_per_second": 1000.0,
+          "seconds": 1000.0
+        },
+        {
+          "key": "server_1m",
+          "label": "Server (1M/s)",
+          "attempts_per_second": 1000000.0,
+          "seconds": 1.0
+        },
+        {
+          "key": "gpu_1b",
+          "label": "GPU Rig (1B/s)",
+          "attempts_per_second": 1000000000.0,
+          "seconds": 0.001
+        },
+        {
+          "key": "cluster_1t",
+          "label": "Cluster (1T/s)",
+          "attempts_per_second": 1000000000000.0,
+          "seconds": 1e-06
+        }
+      ]
     }
   },
   {
     "input": "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8761,7 +8961,7 @@
     "input": "Aa1!Aa1!Aa1!",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8826,7 +9026,7 @@
     "input": "12345678901234567890",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8894,7 +9094,7 @@
     "input": "correct horse battery staple",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -8959,7 +9159,7 @@
     "input": "a\tb",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
@@ -9024,7 +9224,7 @@
     "input": "a\r\nb",
     "expected": {
       "schema_version": "1.0",
-      "tool_version": "1.4.1",
+      "tool_version": "1.5.4",
       "exit_code": 0,
       "error": null,
       "input": {
