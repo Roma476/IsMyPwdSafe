@@ -1,3 +1,5 @@
+import pytest
+
 from ismypwdsafe import patterns
 
 
@@ -62,3 +64,8 @@ def test_empty_password():
 def test_normalize_leetspeak():
     assert patterns.normalize_leetspeak("P@ssw0rd") == "password"
     assert patterns.normalize_leetspeak("!c3") == "ice"
+
+@pytest.mark.parametrize("pwd", ["console", "amortization", "clamor", "glove", "clover"])
+def test_multilingual_no_false_positive(pwd):
+    result = patterns.detect_pattern(pwd)
+    assert "Multilingual dictionary" not in (result.detail or "")

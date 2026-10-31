@@ -1,9 +1,14 @@
 """Pattern detection: top-150 dictionary, QWERTY walks, years, repetition."""
 from __future__ import annotations
 
+import re
 import unicodedata
 from dataclasses import dataclass, field
 from typing import List, Optional
+
+_DATE_PATTERN = re.compile(
+    r'(?:19|20)\d{2}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}'
+)
 
 _LEET_MAP = str.maketrans({
     '@': 'a', '4': 'a', '3': 'e', '0': 'o', '1': 'i',
@@ -42,6 +47,27 @@ def get_top150_set() -> set[str]:
         "internet", "louvre", "diamond", "killer", "yankees", "lakers"
     }
 
+def get_multilingual_set() -> set[str]:
+    return {
+        # French
+        "motdepasse", "bonjour", "soleil",
+        # Spanish
+        "contraseña", "hola", "futbol",
+        # German
+        "passwort", "schatz", "hallo", "liebe", "sommer",
+        # Italian
+        "parola", "ciao", "estate",
+        # Russian
+        "пароль", "привет", "любовь", "лето",
+        # Chinese/Japanese
+        "密码", "パスワード", "你好", "こんにちは",
+        # Portuguese
+        "senha", "obrigado",
+        # Dutch
+        "wachtwoord",
+        # Polish
+        "hasło",
+    }
 
 _KEYBOARD = {
     '1': (0, 0), '2': (0, 1), '3': (0, 2), '4': (0, 3), '5': (0, 4),
@@ -56,23 +82,28 @@ _KEYBOARD = {
 
 
 def check_keyboard_spatial(password: str) -> bool:
-    """Real QWERTY coordinate model. True if 4+ keys move in one direction."""
+    """Keyboard model. True if 4+ adjacent keys form a walk."""
     coords = [_KEYBOARD[c] for c in password.lower() if c in _KEYBOARD]
-    if len(coords) < 3:
+    if len(coords) < 4:
         return False
-    straight_walks = 0
+        
+    current_run = 0
+    max_run = 0
+    
     for i in range(len(coords) - 1):
         r1, c1 = coords[i]
         r2, c2 = coords[i + 1]
         dr = abs(r2 - r1)
         dc = abs(c2 - c1)
-        if (dr == 0 and dc == 1) or (dr == 1 and dc == 0) or (dr == 1 and dc == 1):
-            straight_walks += 1
+        
+        # Adjacent keys (horizontal, vertical, diagonal)
+        if (dr <= 1 and dc <= 1) and not (dr == 0 and dc == 0):
+            current_run += 1
+            max_run = max(max_run, current_run)
         else:
-            straight_walks = 0
-        if straight_walks >= 3:
-            return True
-    return False
+            current_run = 0
+            
+    return max_run >= 3
 
 
 def check_patterns(password: str) -> Optional[str]:
@@ -100,7 +131,7 @@ def detect_pattern(password: str) -> PatternResult:
     detail = None
     primary_rule = None
 
-    # Sort by length descending so longer matches (e.g. "123456") take precedence
+    # 1. Top 150 dictionary (sorted by length descending)
     for item in sorted(get_top150_set(), key=len, reverse=True):
         if item in password.lower() or item in normalized:
             rules_fired.append("top150")
@@ -109,12 +140,38 @@ def detect_pattern(password: str) -> PatternResult:
                 detail = f"Top 150 most used passwords list match ('{item}')"
             break
 
+    # 2. Multilingual dictionary (sorted by length descending, deterministic)
+    pwd_lower = password.lower()
+    for item in sorted(get_multilingual_set(), key=len, reverse=True):
+        if len(item) < 6:
+            matched = (pwd_lower == item)              # exact only for short words
+        else:
+            matched = (item in pwd_lower)              # substring for long words
+            
+        if matched:
+            if "top150" not in rules_fired:
+                rules_fired.append("top150")
+            if primary_rule is None:
+                primary_rule = "top150"
+                detail = f"Multilingual dictionary match ('{item}')"
+            break
+
+    # 3. Structured Dates
+    if _DATE_PATTERN.search(password):
+        if "common_year" not in rules_fired:
+            rules_fired.append("common_year")
+        if primary_rule is None:
+            primary_rule = "common_year"
+        detail = "Contains a structured date"
+
+    # 4. Keyboard Walk / Zig-Zag
     if check_keyboard_spatial(password):
         rules_fired.append("qwerty_walk")
         if primary_rule is None:
             primary_rule = "qwerty_walk"
             detail = "Keyboard spatial walk detected (QWERTY layout)"
 
+    # 5. Common Year (e.g. 1990)
     for i in range(len(password) - 3):
         chunk = password[i:i + 4]
         if chunk.isdigit():
@@ -127,7 +184,7 @@ def detect_pattern(password: str) -> PatternResult:
                     detail = f"Contains common year ({year})"
                 break
 
-    pwd_lower = password.lower()
+    # 6. Character Repetition (e.g. aaa, 111)
     for i in range(len(pwd_lower) - 2):
         if pwd_lower[i] == pwd_lower[i + 1] == pwd_lower[i + 2]:
             if "repetition" not in rules_fired:

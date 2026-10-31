@@ -8507,10 +8507,12 @@
         "combinations": null
       },
       "pattern": {
-        "detected": false,
-        "rule": null,
-        "detail": null,
-        "rules_fired": []
+        "detected": true,
+        "rule": "top150",
+        "detail": "Multilingual dictionary match ('пароль')",
+        "rules_fired": [
+          "top150"
+        ]
       },
       "breach": {
         "checked": false,
@@ -8519,11 +8521,11 @@
         "reason": null
       },
       "score": {
-        "value": 46,
-        "rating": "medium",
+        "value": 5,
+        "rating": "weak",
         "base": 46,
-        "capped_by": "unicode_miss",
-        "capped_by_rule": null
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
@@ -8574,10 +8576,12 @@
         "combinations": 25000000
       },
       "pattern": {
-        "detected": false,
-        "rule": null,
-        "detail": null,
-        "rules_fired": []
+        "detected": true,
+        "rule": "top150",
+        "detail": "Multilingual dictionary match ('密码')",
+        "rules_fired": [
+          "top150"
+        ]
       },
       "breach": {
         "checked": false,
@@ -8586,11 +8590,11 @@
         "reason": null
       },
       "score": {
-        "value": 37,
-        "rating": "medium",
+        "value": 5,
+        "rating": "weak",
         "base": 37,
-        "capped_by": "unicode_miss",
-        "capped_by_rule": null
+        "capped_by": "pattern",
+        "capped_by_rule": "top150"
       },
       "hardware": [
         {
