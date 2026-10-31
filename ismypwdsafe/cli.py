@@ -19,6 +19,11 @@ def _build_parser() -> argparse.ArgumentParser:
         add_help=True,
     )
     parser.add_argument(
+        "--engine", choices=["ts", "python", "native"], default="ts",
+        help="Scoring engine: ts (zxcvbn-ts, requires Node 18+), "
+             "python (zxcvbn-python, zero deps), native (built-in). Default: ts.",
+    )
+    parser.add_argument(
         "-M", "--Mask",
         action="store_true",
         help="Completely mask the input password with asterisks in the summary screen box",
@@ -122,6 +127,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         check_breach=not skip_breach,
         breach_skip_reason=breach_reason,
         tool_version=__version__,
+        engine_name=args.engine,
     )
 
     if args.json:

@@ -248,7 +248,12 @@ def format_time(time_seconds: float) -> str:
         return f"{time_seconds / 60:.1f} min"
     if time_seconds < 86400:
         return f"{time_seconds / 3600:.1f} hrs"
-    years = time_seconds / 31536000
+    
+    days = time_seconds / 86400
+    if days < 365:
+        return f"{days:.1f} days"
+        
+    years = days / 365
     if years < 1000:
         return f"{years:.1f} y"
     return "1000+ y"

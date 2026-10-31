@@ -1,12 +1,12 @@
 """Core analysis engine: data model and orchestration."""
 from __future__ import annotations
 
-import math
-import unicodedata
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
-from . import network, patterns
+from .engines import NativeEngine, PythonZxcvbnEngine, ZxcvbnTsEngine
+from . import patterns, network
+from .metrics import calc_charset, calc_combinations
 
 SCHEMA_VERSION = 1
 
@@ -71,88 +71,6 @@ _HARDWARE_PROFILES = (
     ("cluster_1t", "Cluster (1T/s)", 1e12),
 )
 
-SCRIPT_CHARSETS = {
-    "CYRILLIC": 33,
-    "GREEK": 24,
-    "ARABIC": 28,
-    "HEBREW": 22,
-    "CJK": 5000,
-    "EMOJI": 1000,
-    "LATIN": 200,
-    "OTHER": 500,
-}
-
-
-def must_use_log(charset_size: int, length: int) -> bool:
-    if charset_size > 95:
-        return length >= 3
-    if charset_size in (62, 63):
-        return length >= 5
-    return length >= 4
-
-
-def calc_charset(password: str) -> tuple[int, bool, bool, bool, bool, bool]:
-    number = lower = upper = symbol = False
-    has_non_ascii = False
-    total = 0
-    
-    non_ascii_chars = []
-    
-    for char in password:
-        if ord(char) > 127:
-            has_non_ascii = True
-            non_ascii_chars.append(char)
-            continue
-            
-        if char.isdigit() and not number:
-            number = True
-            total += 10
-        elif char.islower() and not lower:
-            lower = True
-            total += 26
-        elif char.isupper() and not upper:
-            upper = True
-            total += 26
-        elif not char.isalnum() and not symbol:
-            symbol = True
-            total += 33
-
-    if has_non_ascii:
-        scripts = set()
-        for char in non_ascii_chars:
-            cp = ord(char)
-            # Check for emoji code point ranges
-            if (
-                (0x1F300 <= cp <= 0x1FAFF)
-                or (0x2600 <= cp <= 0x27BF)
-                or (0x1F1E6 <= cp <= 0x1F1FF)
-                or (0x1F3FB <= cp <= 0x1F3FF)
-            ):
-                scripts.add("EMOJI")
-            else:
-                try:
-                    name = unicodedata.name(char)
-                    script = name.split()[0]
-                    if script in SCRIPT_CHARSETS:
-                        scripts.add(script)
-                    else:
-                        scripts.add("OTHER")
-                except ValueError:
-                    scripts.add("OTHER")
-        
-        if scripts:
-            max_script = max(scripts, key=lambda s: SCRIPT_CHARSETS.get(s, 500))
-            total += SCRIPT_CHARSETS.get(max_script, 500)
-
-    return total, lower, upper, number, symbol, has_non_ascii
-
-
-def calc_combinations(charset_size: int, length: int) -> tuple[Optional[int], float]:
-    log10_value = length * math.log10(charset_size) if charset_size > 0 else 0
-    if must_use_log(charset_size, length):
-        return None, log10_value
-    return charset_size ** length, log10_value
-
 
 def calculate_score(
     log10_value: float,
@@ -197,6 +115,7 @@ def analyze_password(
     check_breach: bool = True,
     breach_skip_reason: Optional[str] = None,
     tool_version: Optional[str] = None,
+    engine_name: str = "native"
 ) -> AuditResult:
     """
     Run the full audit on a password and return a structured result.
@@ -242,7 +161,24 @@ def analyze_password(
             checked=False, pwned=None, breach_count=None, reason=breach_skip_reason,
         )
 
-    score = calculate_score(log10_value, pattern_result, breach_result)
+    engines = {
+        "native": NativeEngine,
+        "python": PythonZxcvbnEngine,
+        "ts": ZxcvbnTsEngine
+    }
+    
+    engine_cls = engines.get(engine_name, NativeEngine)
+    engine = engine_cls()
+    
+    engine_result = engine.score(password)
+    
+    # Map EngineScore back to ScoreResult for backwards compatibility
+    score = ScoreResult(
+        value=engine_result.value,
+        rating=engine_result.rating,
+        base=int(min(100, max(0, log10_value * 5))),
+        capped_by="engine" if engine_result.value < int(min(100, max(0, log10_value * 5))) else None
+    )  
     hardware = compute_hardware_estimates(log10_value)
 
     return AuditResult(

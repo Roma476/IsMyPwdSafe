@@ -1,0 +1,13 @@
+{
+  "name": "ismypwdsafe-js",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@zxcvbn-ts/core": "^3.0.0",
+    "@zxcvbn-ts/language-common": "^3.0.0",
+    "@zxcvbn-ts/language-en": "^3.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}
