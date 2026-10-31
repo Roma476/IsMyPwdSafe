@@ -31,3 +31,18 @@ jobs:
         run: |
           echo "Expected weak password to fail, but it succeeded!"
           exit 1
+        
+      - name: Test min-score failure
+        id: minscore_test
+        continue-on-error: true
+        uses: ./
+        with:
+          password: "password123" # score 30
+          min-score: "50"
+          offline: "true"
+          
+      - name: Verify min-score failed
+        if: steps.minscore_test.outcome == 'success'
+        run: |
+          echo "Expected min-score to fail, but it succeeded!"
+          exit 1

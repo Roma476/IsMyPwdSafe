@@ -1,5 +1,5 @@
-name: 'IsMyPwdSafe Audit'
-description: 'A privacy-first password audit for CI/CD pipelines.'
+name: 'IsMyPwdSafe'
+description: 'Fail the job if a password is weak or pwned'
 author: 'Roma476'
 branding:
   icon: 'shield'
@@ -9,10 +9,18 @@ inputs:
   password:
     description: 'The password to audit. Pass it using GitHub Secrets.'
     required: true
+  engine:
+    description: 'ts (zxcvbn-ts, requires Node) | python | native'
+    default: 'ts'
+  node-version:
+    description: 'Node.js version to use if engine is ts'
+    default: '20'
   offline:
     description: 'Run in offline mode (skip HIBP check). Set to true to avoid network calls.'
-    required: false
     default: 'false'
+  min-score:
+    description: 'Fail if the password score is below this value (0-100).'
+    default: '70'
 
 outputs:
   score:
@@ -25,6 +33,12 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set up Node.js
+      if: inputs.engine == 'ts'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -34,7 +48,7 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install .
+        pip install "ismypwdsafe[python]==2.0.0a5"
 
     - name: Run audit
       id: audit
@@ -42,12 +56,14 @@ runs:
       env:
         PASSWORD_TO_AUDIT: ${{ inputs.password }}
         OFFLINE_MODE: ${{ inputs.offline }}
+        ENGINE: ${{ inputs.engine }}
       run: |
-        FLAGS="--json"
+        FLAGS="--json --engine=$ENGINE"
         if [ "$OFFLINE_MODE" = "true" ]; then
           FLAGS="$FLAGS --offline"
         fi
         
+        # Capture JSON output
         JSON_OUTPUT=$(imps $FLAGS "$PASSWORD_TO_AUDIT" || true)
         
         SCORE=$(echo "$JSON_OUTPUT" | python -c "import sys, json; print(json.load(sys.stdin)['score']['value'])")
@@ -56,15 +72,36 @@ runs:
         echo "score=$SCORE" >> $GITHUB_OUTPUT
         echo "rating=$RATING" >> $GITHUB_OUTPUT
 
-    - name: Check exit code
+    - name: Check score threshold
+      shell: bash
+      env:
+        MIN_SCORE: ${{ inputs.min-score }}
+      run: |
+        SCORE="${{ steps.audit.outputs.score }}"
+        if [ "$SCORE" -lt "$MIN_SCORE" ]; then
+          echo "❌ Score $SCORE is below the minimum threshold of $MIN_SCORE."
+          exit 1
+        fi
+        echo "✅ Score $SCORE meets the minimum threshold of $MIN_SCORE."
+
+    - name: Check breach status (strict)
       shell: bash
       env:
         PASSWORD_TO_AUDIT: ${{ inputs.password }}
         OFFLINE_MODE: ${{ inputs.offline }}
+        ENGINE: ${{ inputs.engine }}
       run: |
-        FLAGS="-q"
+        FLAGS="-q --engine=$ENGINE"
         if [ "$OFFLINE_MODE" = "true" ]; then
           FLAGS="$FLAGS --offline"
         fi
         
+        # This will exit with 0 (safe), 1 (weak but not pwned), or 3 (pwned).
+        # We only fail if it's 3 (pwned) or if the min-score failed above.
+        # If the score is >= min-score, exit code 1 shouldn't happen anyway.
         imps $FLAGS "$PASSWORD_TO_AUDIT"
+        EXIT_CODE=$?
+        if [ $EXIT_CODE -eq 3 ]; then
+          echo "❌ CRITICAL: Password found in data breaches."
+          exit 3
+        fi
