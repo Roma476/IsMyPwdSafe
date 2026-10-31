@@ -23,7 +23,7 @@ class ZxcvbnTsEngine:
         proc = subprocess.run(  # noqa: S603
             ["node", str(_BUNDLE)],  # noqa: S607
             input=json.dumps({"password": password}),
-            capture_output=True, text=True, timeout=5, check=False,
+            capture_output=True, text=True, timeout=15, check=False,
         )
         if proc.returncode != 0:
             raise RuntimeError(f"zxcvbn-ts failed: {proc.stderr.strip()}")

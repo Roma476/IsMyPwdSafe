@@ -24,7 +24,7 @@ def test_default_skips_update_check(monkeypatch, no_network):
         return None
     monkeypatch.setattr(cli.network, "check_for_updates", fake_update)
 
-    code = cli.main(["correct-horse-battery-staple"])
+    code = cli.main(["--engine=native", "correct-horse-battery-staple"])
     assert code == 0
     assert called["update"] is False
 
@@ -35,7 +35,7 @@ def test_check_updates_flag(monkeypatch):
         return None
     monkeypatch.setattr(cli.network, "check_for_updates", fake_update)
 
-    code = cli.main(["--check-updates", "correct-horse-battery-staple"])
+    code = cli.main(["--engine=native", "--check-updates", "correct-horse-battery-staple"])
     assert code == 0
     assert called["update"] is True
 
