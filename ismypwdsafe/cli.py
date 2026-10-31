@@ -34,6 +34,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Output the result as a machine-readable JSON document",
     )
     parser.add_argument(
+        "-q", "--quiet",
+        action="store_true",
+        help="Suppress all output and only return the exit code",
+    )
+    parser.add_argument(
         "-o", "--offline",
         action="store_true",
         help="Disable all network requests. Implies --no-breach-check and --no-update-check",
@@ -130,10 +135,12 @@ def main(argv: Optional[list[str]] = None) -> int:
         engine_name=args.engine,
     )
 
-    if args.json:
-        print(render_json(result))
-    else:
-        print_output(result, password, mask_mode=args.Mask, view=view)
+    if not args.quiet:
+        if args.json:
+            print(render_json(result))
+        else:
+            print_output(result, password, mask_mode=args.Mask, view=view)
+            
     return result.exit_code
 
 
