@@ -27,6 +27,7 @@ dev = [
     "ruff>=0.3.0",
     "mypy>=1.8.0",
     "types-requests>=2.31.0",
+    "types-zxcvbn>=4.4",
     "pip-audit>=2.0.0",
     "cyclonedx-bom>=4.0.0",
 ]
@@ -34,8 +35,8 @@ dev = [
 [tool.setuptools.package-data]
 ismypwdsafe = ["js/*.mjs"]
 
-[tool.setuptools]
-packages = ["ismypwdsafe"]
+[tool.setuptools.packages.find]
+include = ["ismypwdsafe*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

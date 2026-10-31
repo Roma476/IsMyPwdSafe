@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple, Type
 
-from .engines import NativeEngine, PythonZxcvbnEngine, ZxcvbnTsEngine
-from . import patterns, network
+from . import network, patterns
+from .engines import EngineBackend, NativeEngine, PythonZxcvbnEngine, ZxcvbnTsEngine
 from .metrics import calc_charset, calc_combinations
 
 SCHEMA_VERSION = 1
@@ -161,7 +161,7 @@ def analyze_password(
             checked=False, pwned=None, breach_count=None, reason=breach_skip_reason,
         )
 
-    engines = {
+    engines: Dict[str, Type[EngineBackend]] = {
         "native": NativeEngine,
         "python": PythonZxcvbnEngine,
         "ts": ZxcvbnTsEngine
@@ -172,13 +172,23 @@ def analyze_password(
     
     engine_result = engine.score(password)
     
-    # Map EngineScore back to ScoreResult for backwards compatibility
+    raw_base = int(min(100, max(0, log10_value * 5)))
+    
+    # Determine capped_by based on 1.5.4 logic
+    capped_by = None
+    if breach_result.checked and breach_result.pwned:
+        capped_by = "breach"
+    elif pattern_result.detected:
+        capped_by = "pattern"
+    elif engine_result.value < raw_base:
+        capped_by = "engine"
+        
     score = ScoreResult(
         value=engine_result.value,
         rating=engine_result.rating,
-        base=int(min(100, max(0, log10_value * 5))),
-        capped_by="engine" if engine_result.value < int(min(100, max(0, log10_value * 5))) else None
-    )  
+        base=raw_base,
+        capped_by=capped_by
+    )
     hardware = compute_hardware_estimates(log10_value)
 
     return AuditResult(

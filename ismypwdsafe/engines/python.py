@@ -8,12 +8,12 @@ class PythonZxcvbnEngine:
 
     def __init__(self) -> None:
         try:
-            import zxcvbn
-        except ImportError:
+            import zxcvbn  # type: ignore[import-untyped]
+        except ImportError as e:
             raise RuntimeError(
                 "--engine=python requires the 'zxcvbn' package. "
                 "Install it with: pip install ismypwdsafe[python]"
-            )
+            ) from e
         self._zxcvbn = zxcvbn.zxcvbn
 
     def score(self, password: str) -> EngineScore:

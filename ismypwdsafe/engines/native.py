@@ -1,6 +1,7 @@
-from .base import EngineScore
 from .. import patterns
 from ..metrics import calc_charset, calc_combinations
+from .base import EngineScore
+
 
 class NativeEngine:
     name = "native"

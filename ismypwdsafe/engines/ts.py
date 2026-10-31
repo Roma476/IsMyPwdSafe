@@ -2,6 +2,7 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
+
 from .base import EngineScore
 
 _BUNDLE = Path(__file__).parent.parent / "js" / "zxcvbn-ts.bundle.js"
@@ -19,8 +20,8 @@ class ZxcvbnTsEngine:
             )
 
     def score(self, password: str) -> EngineScore:
-        proc = subprocess.run(
-            ["node", str(_BUNDLE)],
+        proc = subprocess.run(  # noqa: S603
+            ["node", str(_BUNDLE)],  # noqa: S607
             input=json.dumps({"password": password}),
             capture_output=True, text=True, timeout=5, check=False,
         )
