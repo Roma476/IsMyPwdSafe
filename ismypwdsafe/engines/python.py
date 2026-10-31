@@ -8,7 +8,7 @@ class PythonZxcvbnEngine:
 
     def __init__(self) -> None:
         try:
-            import zxcvbn  # type: ignore[import-untyped]
+            import zxcvbn
         except ImportError as e:
             raise RuntimeError(
                 "--engine=python requires the 'zxcvbn' package. "

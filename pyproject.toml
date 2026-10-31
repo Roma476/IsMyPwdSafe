@@ -27,13 +27,12 @@ dev = [
     "ruff>=0.3.0",
     "mypy>=1.8.0",
     "types-requests>=2.31.0",
-    "types-zxcvbn>=4.4",
     "pip-audit>=2.0.0",
     "cyclonedx-bom>=4.0.0",
 ]
 
 [tool.setuptools.package-data]
-ismypwdsafe = ["js/*.mjs"]
+ismypwdsafe = ["js/*.js", "js/*.mjs", "js/*.json"]
 
 [tool.setuptools.packages.find]
 include = ["ismypwdsafe*"]
@@ -65,3 +64,7 @@ strict = true
 
 [tool.setuptools.dynamic]
 version = {file = "version.txt"}
+
+[[tool.mypy.overrides]]
+module = ["zxcvbn"]
+ignore_missing_imports = true
