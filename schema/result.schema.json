@@ -10,7 +10,10 @@
       "type": ["object", "null"],
       "properties": {
         "value": {"type": "integer"},
-        "rating": {"type": "string"}
+        "rating": {"type": "string"},
+        "base": {"type": "integer"},
+        "capped_by": {"type": ["string", "null"]},
+        "capped_by_rule": {"type": ["string", "null"]}
       },
       "required": ["value", "rating"]
     },
