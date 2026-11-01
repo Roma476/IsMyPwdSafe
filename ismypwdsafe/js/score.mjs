@@ -2,7 +2,7 @@ import { webcrypto } from 'node:crypto';
 import { ZxcvbnFactory } from '@zxcvbn-ts/core';
 import * as common from '@zxcvbn-ts/language-common';
 import * as en from '@zxcvbn-ts/language-en';
-import { matcherPwnedFactory } from '@zxcvbn-ts/matcher-pwned';
+import { haveIBeenPwned } from '@zxcvbn-ts/matcher-pwned';
 
 // Node 18 exposes Web Crypto as require('node:crypto').webcrypto, not as a
 // global. The official HIBP matcher uses globalThis.crypto.subtle.
@@ -24,16 +24,11 @@ const options = {
 
 const withoutHibp = new ZxcvbnFactory(options);
 
-const pwnedMatcher = matcherPwnedFactory(globalThis.fetch, {
-  url: HIBP_URL,
-  // The zxcvbn-ts default silently ignores network errors. imps must never
-  // report a password as safe when the breach check could not run.
-  networkErrorHandler: (error) => {
-    throw error instanceof Error ? error : new Error(String(error));
-  },
-});
-
-const withHibp = new ZxcvbnFactory(options, { pwned: pwnedMatcher });
+// The zxcvbn-ts default silently ignores network errors. imps must never
+// report a password as safe when the breach check could not run.
+function failOnNetworkError(error) {
+  throw error instanceof Error ? error : new Error(String(error));
+}
 
 const MATCH_KEYS = {
   matchedWord: 'matched_word',
@@ -111,9 +106,9 @@ async function main() {
   const input = JSON.parse(await readStdin());
   const password = input.password;
   const checkBreach = input.check_breach === true;
+  const result = withoutHibp.check(password);
 
   if (!checkBreach) {
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,
@@ -123,7 +118,6 @@ async function main() {
   }
 
   if (typeof globalThis.fetch !== 'function') {
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,
@@ -134,17 +128,23 @@ async function main() {
   }
 
   try {
-    const result = await withHibp.checkAsync(password);
-    const match = result.sequence.find((entry) => entry.pattern === 'pwned');
+    // Keep zxcvbn's own sequence, guesses, feedback, and crack times. HIBP is
+    // an independent overlay: it caps the final score, but it must not replace
+    // the pattern breakdown that explains the original zxcvbn estimate.
+    const pwned = await haveIBeenPwned(password, {
+      universalFetch: globalThis.fetch,
+      url: HIBP_URL,
+      networkErrorHandler: failOnNetworkError,
+    });
+    const pwnedCount = pwned ? parseInt(pwned.split(':')[1], 10) : null;
     process.stdout.write(JSON.stringify(normalizeResult(result, {
-      pwned: Boolean(match),
-      pwnedCount: match?.pwnedAmount ?? (match ? 0 : null),
-      hibpStatus: match ? 'pwned' : 'clean',
+      pwned: Boolean(pwned),
+      pwnedCount,
+      hibpStatus: pwned ? 'pwned' : 'clean',
     })));
   } catch (error) {
     // Fail closed: still return the zxcvbn score, but tell the caller that
     // the breach status is unknown. The Python CLI maps this to exit 5.
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,

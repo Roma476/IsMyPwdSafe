@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Documentation, contract, and terminal-report patch. No scoring, privacy,
-  exit-code, or network behavior changed.
+- Documentation, contract, and terminal-report patch, plus a zxcvbn-ts
+  reporting fix. Final scores, exit codes, privacy, and network behavior are
+  unchanged.
 - The terminal report now uses the full terminal width, centers section titles,
   and places time-to-crack and pattern matches side by side on wide terminals.
   Empty zxcvbn sections are omitted for the native engine.
@@ -19,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The score line shows one rating (`STRONG 100/100`) instead of repeating the
   same result as both a percentage and a zxcvbn `0-4` score. The pattern
   section is labelled `PATTERN MATCHES` instead of the ambiguous `WHY`.
+- The `ts` engine now keeps zxcvbn's own sequence, guesses, feedback, and
+  crack-time estimates when HIBP is enabled. The breach check still caps the
+  final score at `0` and exits with code `3`, but it no longer replaces the
+  pattern breakdown with a synthetic `pwned` match. This matches the `python`
+  engine and makes `PATTERN MATCHES` useful for pwned weak passwords.
 - The terminal help for `-s/--short` now says it shows the score, breach
   verdict, and engine line.
 

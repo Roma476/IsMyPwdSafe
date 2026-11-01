@@ -80,6 +80,24 @@ def _pwned_result() -> AuditResult:
     )
 
 
+def _pwned_pattern_result() -> AuditResult:
+    return _result(
+        sequence=(
+            {
+                "pattern": "dictionary",
+                "token": "password",
+                "dictionary_name": "passwords-common",
+                "rank": 2,
+            },
+            {"pattern": "bruteforce", "token": ".123"},
+        ),
+        feedback=FeedbackInfo(
+            warning="This is similar to a commonly used password.",
+            suggestions=("Add more words that are less common.",),
+        ),
+    )
+
+
 def _weak_result() -> AuditResult:
     return _result(
         breach=BreachResult(True, False, 0, None),
@@ -136,6 +154,19 @@ def test_pwned_details_are_not_repeated(monkeypatch, capsys):
     assert "Your password was exposed" not in output
     assert "If you use this password elsewhere" not in output
     assert "• Add more words that are less common." in output
+
+
+def test_pwned_password_keeps_pattern_matches(monkeypatch, capsys):
+    monkeypatch.setattr(ui, "ANIMATE", False)
+    monkeypatch.setattr(ui, "get_width", lambda: 120)
+
+    ui.print_output(_pwned_pattern_result(), "password.123")
+    output = _plain(capsys.readouterr().out)
+
+    assert "PATTERN MATCHES" in output
+    assert "password  passwords-common #2" in output
+    assert ".123  brute-force" in output
+    assert output.count("2,266,543") == 1
 
 
 def test_native_report_omits_empty_zxcvbn_sections(monkeypatch, capsys):

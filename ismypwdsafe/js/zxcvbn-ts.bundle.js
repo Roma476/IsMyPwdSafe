@@ -3447,7 +3447,7 @@ var require_haveIBeenPwned = __commonJS({
     var defaultNetworkErrorHandler = (_error) => {
       return false;
     };
-    var haveIBeenPwned = async (password, {
+    var haveIBeenPwned2 = async (password, {
       universalFetch,
       url = pwnedUrl,
       networkErrorHandler = defaultNetworkErrorHandler
@@ -3479,7 +3479,7 @@ var require_haveIBeenPwned = __commonJS({
         return passwordHasPart === suffix;
       });
     };
-    module.exports = haveIBeenPwned;
+    module.exports = haveIBeenPwned2;
   }
 });
 
@@ -3488,7 +3488,7 @@ var require_matching9 = __commonJS({
   "node_modules/@zxcvbn-ts/matcher-pwned/dist/matching.cjs"(exports, module) {
     "use strict";
     var core = require_dist();
-    var haveIBeenPwned = require_haveIBeenPwned();
+    var haveIBeenPwned2 = require_haveIBeenPwned();
     var matchingFactory = (universalFetch, {
       url,
       networkErrorHandler
@@ -3498,7 +3498,7 @@ var require_matching9 = __commonJS({
           password
         }) {
           const matches = [];
-          const pwned = await haveIBeenPwned(password, {
+          const pwned = await haveIBeenPwned2(password, {
             universalFetch,
             url,
             networkErrorHandler
@@ -3553,16 +3553,16 @@ var require_dist4 = __commonJS({
     var matching = require_matching9();
     var scoring = require_scoring11();
     var feedback = require_feedback10();
-    var haveIBeenPwned = require_haveIBeenPwned();
-    var matcherPwnedFactory2 = (universalFetch, config = {}) => {
+    var haveIBeenPwned2 = require_haveIBeenPwned();
+    var matcherPwnedFactory = (universalFetch, config = {}) => {
       return {
         Matching: matching(universalFetch, config),
         feedback,
         scoring
       };
     };
-    exports.haveIBeenPwned = haveIBeenPwned;
-    exports.matcherPwnedFactory = matcherPwnedFactory2;
+    exports.haveIBeenPwned = haveIBeenPwned2;
+    exports.matcherPwnedFactory = matcherPwnedFactory;
   }
 });
 
@@ -3586,15 +3586,9 @@ var options = {
   translations: en.translations
 };
 var withoutHibp = new import_core.ZxcvbnFactory(options);
-var pwnedMatcher = (0, import_matcher_pwned.matcherPwnedFactory)(globalThis.fetch, {
-  url: HIBP_URL,
-  // The zxcvbn-ts default silently ignores network errors. imps must never
-  // report a password as safe when the breach check could not run.
-  networkErrorHandler: (error) => {
-    throw error instanceof Error ? error : new Error(String(error));
-  }
-});
-var withHibp = new import_core.ZxcvbnFactory(options, { pwned: pwnedMatcher });
+function failOnNetworkError(error) {
+  throw error instanceof Error ? error : new Error(String(error));
+}
 var MATCH_KEYS = {
   matchedWord: "matched_word",
   dictionaryName: "dictionary_name",
@@ -3665,8 +3659,8 @@ async function main() {
   const input = JSON.parse(await readStdin());
   const password = input.password;
   const checkBreach = input.check_breach === true;
+  const result = withoutHibp.check(password);
   if (!checkBreach) {
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,
@@ -3675,7 +3669,6 @@ async function main() {
     return;
   }
   if (typeof globalThis.fetch !== "function") {
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,
@@ -3685,15 +3678,18 @@ async function main() {
     return;
   }
   try {
-    const result = await withHibp.checkAsync(password);
-    const match = result.sequence.find((entry) => entry.pattern === "pwned");
+    const pwned = await (0, import_matcher_pwned.haveIBeenPwned)(password, {
+      universalFetch: globalThis.fetch,
+      url: HIBP_URL,
+      networkErrorHandler: failOnNetworkError
+    });
+    const pwnedCount = pwned ? parseInt(pwned.split(":")[1], 10) : null;
     process.stdout.write(JSON.stringify(normalizeResult(result, {
-      pwned: Boolean(match),
-      pwnedCount: match?.pwnedAmount ?? (match ? 0 : null),
-      hibpStatus: match ? "pwned" : "clean"
+      pwned: Boolean(pwned),
+      pwnedCount,
+      hibpStatus: pwned ? "pwned" : "clean"
     })));
   } catch (error) {
-    const result = withoutHibp.check(password);
     process.stdout.write(JSON.stringify(normalizeResult(result, {
       pwned: null,
       pwnedCount: null,

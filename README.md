@@ -32,8 +32,8 @@
 > optional Python dependency is installed. See [Scoring engines](#scoring-engines).
 
 > **Version 2.0.1.** Documentation, contract, and terminal-report patch for the
-> 2.0 line. Scoring, privacy, exit-code, and network behavior are unchanged from
-> `2.0.0`.
+> 2.0 line. Final scores, privacy, exit-code, and network behavior are unchanged
+> from `2.0.0`; zxcvbn-ts now keeps its pattern details behind a breach cap.
 
 > A small wrapper around excellent work — see [A note on humility](#a-note-on-humility)
 > for what this tool cannot do.
@@ -173,7 +173,11 @@ The legacy native engine is explicitly limited; see
 | `3` | `75` | strong |
 | `4` | `100` | strong |
 
-If HIBP says the password is pwned, the final score is forced to `0` and the result uses exit code `3`. The reason is exposed as `score.capped_by = "hibp"`.
+If HIBP says the password is pwned, the final score is forced to `0` and the
+result uses exit code `3`. The reason is exposed as `score.capped_by = "hibp"`.
+The zxcvbn sequence, guesses, and crack-time estimates are still reported, and
+`score.raw_score_0_4` keeps the original zxcvbn score; only the final score is
+capped.
 
 ---
 
