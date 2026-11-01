@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-11-01
+
+### Changed
+
+- Documentation and contract patch. No scoring, privacy, exit-code, or network
+  behavior changed.
+- The terminal help for `-s/--short` now says it shows the score, breach
+  verdict, and engine line.
+
+### Documentation
+
+- Documented `calc_time` as **milliseconds**. The field name is unchanged in
+  the 2.0 schema; `calc_time_ms` is deferred to a future minor release.
+- Added the complete JSON error envelope for exit codes `2`, `4`, `5`, and
+  `130`, including which fields are `null`.
+- Documented the `--engine=native` JSON shape: `engine_version: null`,
+  `raw_score_0_4: null`, empty `sequence`, empty feedback values, and
+  `calc_time: null`.
+- Added the `engine_version` table for `ts`, `python`, and `native`.
+- Clarified `-s`, `-M`, `-dw`, and `-q` behavior. In particular, `-q` does not
+  change input handling, and `-M` affects only the terminal UI.
+- Clarified that Node.js 18+ is required only for `--engine=ts`, not for the
+  default `auto` path when zxcvbn-python is installed.
+- Reordered the README to be demo-first, demoted the legacy native engine, and
+  added a terminal demo GIF.
+
 ## [2.0.0rc1] - 2026-11-01
 
 ### Release candidate
@@ -62,7 +88,7 @@ The public exit codes and score mapping are:
 - Exit code `5` for an unknown HIBP status. The CLI fails closed instead of reporting the password as safe.
 - `--json-full` to explicitly include matched tokens. `--json` redacts them by default.
 - Strict JSON contract v2 with `schema_version: "2.0"`, full zxcvbn sequence, feedback, crack times, engine metadata, and breach status.
-- Native GitHub Action that passes the password through stdin and fails on weak, pwned, engine-error, and HIBP-unknown results.
+- GitHub Action that passes the password through stdin and fails on weak, pwned, engine-error, and HIBP-unknown results.
 - `Add-Padding: true` on HIBP requests.
 - Shared `engines/` package with `auto`, `ts`, `python`, and `native` backends.
 
@@ -73,6 +99,8 @@ The public exit codes and score mapping are:
 - HIBP is no longer opt-in. The default audit makes one anonymous HIBP range request.
 - HIBP failures are reported as `UNKNOWN` (exit `5`) instead of silently computing a score without breach data.
 - The terminal UI is now zxcvbn-first: score, why/sequence, feedback, crack times, and breach status.
+- `-s/--short` now includes the breach verdict and engine line; 1.x showed only the score.
+- `-M/--Mask` now masks matched zxcvbn tokens in the terminal UI, not only the password.
 - The GitHub Action input default is `engine: auto`; it sets up Node only for `auto`/`ts`.
 
 ### Deprecated
