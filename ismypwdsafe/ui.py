@@ -216,13 +216,36 @@ def _print_lines(lines: Iterable[str], *, animate: bool = False) -> None:
             time.sleep(0.012)
 
 
+_BANNER_ART = (
+    r"                                                                                                        ",
+    r"$$$$$$\           $$\      $$\           $$$$$$$\                      $$\  $$$$$$\             $$$$$$\ ",
+    r"\_$$  _|          $$$\    $$$ |          $$  __$$\                     $$ |$$  __$$\           $$  __$$\ ",
+    r"  $$ |   $$$$$$$\ $$$$\  $$$$ |$$\   $$\ $$ |  $$ |$$\  $$\  $$\  $$$$$$$ |$$ /  \__| $$$$$$\  $$ /  \__|$$$$$$\ ",
+    r"  $$ |  $$  _____|$$\$$\$$ $$ |$$ |  $$ |$$$$$$$  |$$ | $$ | $$ |$$  __$$ |\$$$$$$\   \____$$\ $$$$\    $$  __$$\ ",
+    r"  $$ |  \$$$$$$\  $$ \$$$  $$ |$$ |  $$ |$$  ____/ $$ | $$ | $$ |$$ /  $$ | \____$$\  $$$$$$$ |$$  _|   $$$$$$$$ |",
+    r"  $$ |   \____$$\ $$ |\$  /$$ |$$ |  $$ |$$ |      $$ | $$ | $$ |$$ |  $$ |$$\   $$ |$$  __$$ |$$ |     $$   ____|",
+    r"$$$$$$\ $$$$$$$  |$$ | \_/ $$ |\$$$$$$$ |$$ |      \$$$$$\$$$$  |\$$$$$$$ |\$$$$$$  |\$$$$$$$ |$$ |     \$$$$$$$\ ",
+    r"\______|\_______/ \__|     \__| \____$$ |\__|       \_____\____/  \_______| \______/  \_______|\__|      \_______|",
+    r"                               $$\   $$ |",
+    r"                               \$$$$$$  |",
+    r"                                \______/",
+)
+
+
 def _banner() -> None:
     if ANIMATE:
         print("\033[2J\033[H", end="")
-    title = "IsMyPwdSafe"
-    tagline = "zxcvbn, but readable"
-    line = f"{bold(C.CYAN + title)} {dim('·')} {dim(tagline)}"
-    padding = max(0, (get_width() - _visible_len(line)) // 2)
+    width = get_width()
+    art_width = max(len(line) for line in _BANNER_ART)
+    if width >= art_width:
+        block_pad = max((width - art_width) // 2, 0)
+        print()
+        for line in _BANNER_ART:
+            print(" " * block_pad + C.CYAN + C.BOLD + line + C.RESET)
+        line = f"{dim('zxcvbn, but readable')}"
+    else:
+        line = f"{bold(C.CYAN + 'IsMyPwdSafe')} {dim('·')} {dim('zxcvbn, but readable')}"
+    padding = max(0, (width - _visible_len(line)) // 2)
     print()
     print(" " * padding + line)
     print()
@@ -256,14 +279,12 @@ def _score_lines(result: AuditResult, width: int = 30) -> list[str]:
         return ["No score available."]
     color = _color_for_rating(score.rating)
     label = score.rating.upper()
-    raw = (
-        f"zxcvbn {score.raw_score_0_4}/4"
-        if score.raw_score_0_4 is not None
-        else "native heuristic (no zxcvbn score)"
-    )
+    line = f"{color}{C.BOLD}{label}{C.RESET}  {color}{score.value}/100{C.RESET}"
+    if score.raw_score_0_4 is None:
+        line += f"   {dim('native heuristic')}"
     bar_width = max(20, width - 4)
     return [
-        f"{color}{C.BOLD}{label}{C.RESET}  {color}{score.value}/100{C.RESET}   {dim(raw)}",
+        line,
         f"{color}{_bar(score.value, bar_width)}{C.RESET}",
     ]
 
@@ -485,7 +506,7 @@ def print_output(
                 "TIME TO CRACK",
                 crack_lines,
                 C.BLUE,
-                "WHY",
+                "PATTERN MATCHES",
                 why_lines,
                 C.MAGENTA,
                 width=width,
@@ -499,7 +520,9 @@ def print_output(
             )
             print()
         if why_lines:
-            _print_lines(_box("WHY", why_lines, color=C.MAGENTA, width=width))
+            _print_lines(
+                _box("PATTERN MATCHES", why_lines, color=C.MAGENTA, width=width)
+            )
             print()
 
     breach, breach_color = _breach_lines(result)

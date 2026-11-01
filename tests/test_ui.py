@@ -117,7 +117,10 @@ def test_full_report_uses_columns_when_wide(monkeypatch, capsys):
     ui.print_output(_weak_result(), "password")
     lines = _plain(capsys.readouterr().out).splitlines()
 
-    assert any("TIME TO CRACK" in line and "WHY" in line for line in lines)
+    assert any(
+        "TIME TO CRACK" in line and "PATTERN MATCHES" in line for line in lines
+    )
+    assert "zxcvbn 0/4" not in "\n".join(lines)
 
 
 def test_pwned_details_are_not_repeated(monkeypatch, capsys):
@@ -154,6 +157,8 @@ def test_native_report_omits_empty_zxcvbn_sections(monkeypatch, capsys):
     output = _plain(capsys.readouterr().out)
 
     assert "TIME TO CRACK" not in output
-    assert "WHY" not in output
+    assert "PATTERN MATCHES" not in output
     assert "WHAT TO DO" not in output
     assert "No zxcvbn" not in output
+    assert "STRONG  100/100" in output
+    assert "native heuristic" in output
