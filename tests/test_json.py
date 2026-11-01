@@ -41,7 +41,39 @@ def test_error_output_validates() -> None:
     jsonschema = pytest.importorskip("jsonschema")
     schema = load_json(SCHEMA_PATH)
     result = analyze_password("", check_breach=False, engine_name="native")
-    jsonschema.validate(instance=json.loads(render_json(result)), schema=schema)
+    payload = json.loads(render_json(result))
+    jsonschema.validate(instance=payload, schema=schema)
+
+    assert payload["exit_code"] == 2
+    assert payload["error"]
+    assert payload["input"] is None
+    assert payload["score"] is None
+    assert payload["breach"] is None
+    assert payload["engine_requested"] == "native"
+    assert payload["engine_used"] is None
+    assert payload["engine_version"] is None
+    assert payload["calc_time"] is None
+
+
+def test_native_json_shape_is_stable() -> None:
+    result = analyze_password(
+        "correct-horse-battery-staple",
+        check_breach=False,
+        engine_name="native",
+    )
+    payload = json.loads(render_json(result))
+
+    assert payload["engine_used"] == "native"
+    assert payload["engine_version"] is None
+    assert payload["score"]["raw_score_0_4"] is None
+    assert payload["score"]["capped_by"] is None
+    assert payload["guesses"] is None
+    assert payload["guesses_log10"] is None
+    assert payload["crack_times_seconds"] == {}
+    assert payload["crack_times_display"] == {}
+    assert payload["feedback"] == {"warning": None, "suggestions": []}
+    assert payload["sequence"] == []
+    assert payload["calc_time"] is None
 
 
 @pytest.mark.skipif(not ts_available(), reason="Node.js 18+ is not installed")

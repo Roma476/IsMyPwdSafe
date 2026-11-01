@@ -19,6 +19,35 @@ def test_empty_password_returns_usage_error():
     assert cli.main([]) == 2
 
 
+def test_json_error_envelope_for_empty_password(capsys):
+    code = cli.main(["--json"])
+    assert code == 2
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["exit_code"] == 2
+    assert payload["error"]
+    assert payload["score"] is None
+    assert payload["input"] is None
+    assert payload["breach"] is None
+    assert payload["engine_used"] is None
+
+
+def test_quiet_suppresses_json(capsys):
+    code = cli.main(
+        ["--quiet", "--json", "--engine=native", "--offline", "password"]
+    )
+    assert code == 1
+    assert capsys.readouterr().out == ""
+
+
+def test_short_output_includes_breach_and_engine(capsys, no_network):
+    code = cli.main(["-s", "--engine=native", "--offline", "password"])
+    assert code == 1
+    output = capsys.readouterr().out
+    assert "SCORE" in output
+    assert "BREACH CHECK" in output
+    assert "Engine: native" in output
+
+
 def test_default_skips_update_check(monkeypatch, no_network):
     called = {"update": False}
 
