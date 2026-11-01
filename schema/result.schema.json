@@ -205,6 +205,7 @@
       "type": "boolean"
     },
     "calc_time": {
+      "description": "Engine calculation time in milliseconds; null when the engine does not report it.",
       "type": ["number", "null"]
     },
     "redacted": {

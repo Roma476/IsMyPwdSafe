@@ -72,7 +72,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "-s",
         "--short",
         action="store_true",
-        help="Display only the overall zxcvbn assessment.",
+        help="Show the score, breach verdict, and engine line.",
     )
     view_group.add_argument(
         "-dw",

@@ -4,7 +4,10 @@
 
 <p align="center">
   A privacy-first password audit for developers and CI/CD.<br>
-  zxcvbn-ts by default, HIBP enabled by default, semantic exit codes, strict JSON, and a native GitHub Action.
+  zxcvbn-first scoring by default: zxcvbn-ts with Node.js 18+, zxcvbn-python
+  otherwise, and a clean exit <code>4</code> if neither is installed. HIBP is
+  on by default, exit codes are semantic, JSON is strict, and the GitHub Action
+  fails closed.
 </p>
 
 <p align="center">
@@ -13,49 +16,49 @@
 </p>
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Node.js 18+ for zxcvbn-ts](https://img.shields.io/badge/node-18%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](#scoring-engines)
+[![Node.js 18+ (ts only)](https://img.shields.io/badge/node-18%2B%20%28ts%20only%29-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](#scoring-engines)
 [![License: MIT](https://img.shields.io/badge/license-MIT-63e6b4?style=flat-square)](LICENSE)
 [![CI](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml/badge.svg)](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml)
 
-> **Version 2.0.0.** This is a major release: zxcvbn is now the source of truth for score, sequence, feedback, and crack times. The old native heuristic remains available only with `--engine=native`.
+<p align="center">
+  <img width="900" alt="IsMyPwdSafe terminal demo: a pwned password gets a zero score and a breach warning, then a strong password gets a clean report."
+       src="https://raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/docs/assets/demo.gif">
+</p>
+
+<p align="center"><sub>The demo uses the real CLI and a throwaway demo password. No real secrets are shown.</sub></p>
+
+> Node.js 18+ is required only for `--engine=ts`. With `--engine=auto` (the
+> default), `imps` uses zxcvbn-python when Node is unavailable, provided the
+> optional Python dependency is installed. See [Scoring engines](#scoring-engines).
+
+> **Version 2.0.1.** Documentation and contract patch for the 2.0 line. Scoring,
+> privacy, exit-code, and network behavior are unchanged from `2.0.0`.
+
+> A small wrapper around excellent work — see [A note on humility](#a-note-on-humility)
+> for what this tool cannot do.
 
 **Read this first:** passing the password as an argument (`imps "my-password"`) exposes it to shell history, terminal scrollback, and process listings. Run `imps` without arguments to use the hidden prompt, or pipe from stdin with `imps -`. This is an audit tool, not a password manager.
 
 ---
 
-## A note on humility
+## Contents
 
-IsMyPwdSafe is a small wrapper around other people's excellent work. The hard
-parts - zxcvbn, the language dictionaries, and the HaveIBeenPwned range API -
-are not ours. What we try to add is a readable report, a small privacy budget,
-and predictable failure modes.
-
-It can help you notice that a password is a dictionary word, a keyboard walk, a
-date, a repeat, or a known breach. It **cannot prove that a password is safe**.
-A clean result is not a certificate, an audit opinion, or a guarantee. It means
-"this particular heuristic did not find a problem in this particular run".
-
-We would rather say `UNKNOWN` and exit `5` than tell you a password is safe when
-the breach check did not run. That is the main design principle behind 2.0, and
-it is also why the tool is occasionally annoying in CI.
-
----
-
-## The five 2.0 decisions that differ from the original plan
-
-While building 2.0 we changed five decisions. They are listed here because they
-are part of the contract, not hidden implementation details.
-
-| # | Decision | Why | Cost |
-| - | -------- | --- | ---- |
-| 1 | `auto` is the default engine, not `ts` and not `native`. | A normal install should use the best available zxcvbn engine without silently changing the meaning of the result. | If neither zxcvbn-ts nor zxcvbn-python is available, the command fails with exit `4`. |
-| 2 | HIBP is **on by default**, and an unreachable HIBP is `UNKNOWN` with exit `5`. | A missing breach check must not be confused with a clean breach check. | One anonymous range request per audit; `--offline` is required for a strictly local run. |
-| 3 | zxcvbn's `0-4` score maps to `0 / 25 / 50 / 75 / 100`. | The percentage is easier to read than a bare `0-4`, and the weak/medium/strong boundary is explicit. | The number is a presentation choice, not extra evidence; it does not make zxcvbn more precise. |
-| 4 | A pwned password is forced to score `0`, rating `weak`, with `score.capped_by = "hibp"`. | "Strong but already breached" must not look safe in a dashboard or a CI summary. | The zxcvbn details are still reported, but the final score is deliberately dominated by the breach. |
-| 5 | `--json` redacts matched tokens by default; `--json-full` is the explicit opt-in. | JSON often ends up in logs, artifacts, and issue comments. The default should not leak password fragments. | Users who need the matched tokens must ask for them and handle the output carefully. |
-
-The exact exit-code table and score mapping are documented below. If you build a
-CI policy on this tool, use those tables rather than assumptions from 1.x.
+- [Quick start](#quick-start)
+- [A note on humility](#a-note-on-humility)
+- [What it reports](#what-it-reports)
+- [Scoring engines](#scoring-engines)
+- [HaveIBeenPwned is ON by default](#haveibeenpwned-is-on-by-default)
+- [CLI reference](#cli-reference)
+- [Exit codes](#exit-codes)
+- [JSON contract v2.0](#json-contract-v20)
+- [GitHub Action](#github-action)
+- [Privacy](#privacy)
+- [The five 2.0 decisions](#the-five-20-decisions-that-differ-from-the-original-plan)
+- [What a clean result does not mean](#what-a-clean-result-does-not-mean)
+- [Compatibility and verification](#compatibility-and-verification)
+- [Development](#development)
+- [Release process](#release-process)
+- [License](#license)
 
 ---
 
@@ -88,18 +91,18 @@ imps - < password.txt        # password from stdin
 imps --json - < password.txt # machine-readable output
 ```
 
-The CLI default engine is `auto`:
+The default engine is `auto`:
 
 1. zxcvbn-ts 4.x, if Node.js 18+ is on `PATH`;
 2. otherwise zxcvbn-python, if installed;
 3. otherwise exit `4` with an explanation.
 
-`native` is **never selected silently**. Use `--engine=native` only for the legacy 1.x heuristic.
+`native` is **never selected silently**. It is the explicit legacy 1.x
+heuristic; see [Legacy native engine](#legacy-native-engine).
 
 ```bash
 imps --engine=ts "correct-horse-battery-staple"
 imps --engine=python "correct-horse-battery-staple"   # needs: pip install "ismypwdsafe[python]"
-imps --engine=native "correct-horse-battery-staple"   # legacy heuristic, explicit only
 ```
 
 ### Node.js
@@ -117,7 +120,28 @@ sudo apt install nodejs npm
 winget install OpenJS.NodeJS.LTS
 ```
 
-Verify with `node --version`. If Node is unavailable and you do not have the Python fallback installed, `imps` fails with exit `4` rather than pretending the native heuristic is zxcvbn.
+Verify with `node --version`. Node is needed only for `--engine=ts` and for the
+`ts` branch of `auto`. If Node is unavailable, install the Python fallback
+(`pip install "ismypwdsafe[python]"`) or `auto` exits `4` rather than pretending
+the native heuristic is zxcvbn.
+
+---
+
+## A note on humility
+
+IsMyPwdSafe is a small wrapper around other people's excellent work. The hard
+parts - zxcvbn, the language dictionaries, and the HaveIBeenPwned range API -
+are not ours. What we try to add is a readable report, a small privacy budget,
+and predictable failure modes.
+
+It can help you notice that a password is a dictionary word, a keyboard walk, a
+date, a repeat, or a known breach. It **cannot prove that a password is safe**.
+A clean result is not a certificate, an audit opinion, or a guarantee. It means
+"this particular heuristic did not find a problem in this particular run".
+
+We would rather say `UNKNOWN` and exit `5` than tell you a password is safe when
+the breach check did not run. That is the main design principle behind 2.0, and
+it is also why the tool is occasionally annoying in CI.
 
 ---
 
@@ -131,9 +155,24 @@ The default zxcvbn path renders:
 - zxcvbn feedback (warning + suggestions);
 - HIBP breach status.
 
-The native engine keeps the 1.x entropy and pattern model but does not produce zxcvbn sequence, feedback, or crack-time data.
+The legacy native engine is explicitly limited; see
+[Legacy native engine](#legacy-native-engine).
 
-### Engine identity is part of the result
+### Score mapping
+
+| zxcvbn | Percentage | Rating |
+| ------ | ---------: | ------ |
+| `0` | `0` | weak |
+| `1` | `25` | weak |
+| `2` | `50` | medium |
+| `3` | `75` | strong |
+| `4` | `100` | strong |
+
+If HIBP says the password is pwned, the final score is forced to `0` and the result uses exit code `3`. The reason is exposed as `score.capped_by = "hibp"`.
+
+---
+
+## Scoring engines
 
 "Available" is not the same as "used". The JSON contains both values:
 
@@ -147,17 +186,30 @@ If `auto` cannot find any zxcvbn engine, the command exits `4` and `engine_used`
 is `null`. It does **not** quietly run the native heuristic. Consumers should
 branch on `engine_used`, not on `engine_requested`.
 
-### Score mapping
+| Engine | `engine_version` |
+| ------ | ---------------- |
+| `ts` | zxcvbn-ts version reported by the bundle, for example `"4.2.0"` |
+| `python` | zxcvbn-python package version, for example `"4.5.0"` |
+| `native` | `null` |
+| error / no usable engine | `null` |
 
-| zxcvbn | Percentage | Rating |
-| ------ | ---------: | ------ |
-| `0` | `0` | weak |
-| `1` | `25` | weak |
-| `2` | `50` | medium |
-| `3` | `75` | strong |
-| `4` | `100` | strong |
+### Legacy native engine
 
-If HIBP says the password is pwned, the final score is forced to `0` and the result uses exit code `3`. The reason is exposed as `score.capped_by = "hibp"`.
+`--engine=native` keeps the 1.x ASCII-oriented entropy and pattern model for
+compatibility. It is explicit only and is not recommended for new audits. It
+does not produce zxcvbn sequence, feedback, or crack-time data:
+
+| JSON field | Value with `--engine=native` |
+| ---------- | --------------------------- |
+| `engine_version` | `null` |
+| `score.raw_score_0_4` | `null` |
+| `sequence` | `[]` |
+| `feedback` | `{"warning": null, "suggestions": []}` |
+| `guesses` / `guesses_log10` | `null` |
+| `crack_times_seconds` / `crack_times_display` | `{}` |
+| `calc_time` | `null` |
+
+The `score.value` and `score.rating` still come from the legacy heuristic.
 
 ---
 
@@ -207,9 +259,9 @@ imps [--engine {auto,ts,python,native}] [-M] [-o | --no-breach-check]
 | Flag | Description |
 | ---- | ----------- |
 | `--engine` | `auto` (default), `ts`, `python`, or `native`. |
-| `-M`, `--Mask` | Mask the password and matched tokens in the terminal UI. |
-| `-s`, `--short` | Show only the score and breach verdict. |
-| `-dw`, `--darkweb` | Show only the breach check. |
+| `-M`, `--Mask` | Mask the password and matched tokens in the terminal UI. JSON is unaffected. |
+| `-s`, `--short` | Show the score, breach verdict, and engine line. |
+| `-dw`, `--darkweb` | Show only the HIBP breach check. |
 | `-o`, `--offline` | Skip HIBP and all other network calls. |
 | `--no-breach-check` | Skip only HIBP. |
 | `--check-updates` | Enable the opt-in GitHub version check. |
@@ -218,7 +270,20 @@ imps [--engine {auto,ts,python,native}] [-M] [-o | --no-breach-check]
 | `-q`, `--quiet` | Suppress all output; return only the exit code. |
 | `password` | Password to audit. Omit for hidden prompt; use `-` for stdin. |
 
-The password argument is optional. In a non-interactive shell with no password and no stdin, `imps` exits `2` instead of hanging.
+Flag notes:
+
+- `-s` and `-dw` are mutually exclusive.
+- `-s` changed in 2.0: it now includes the breach verdict and engine line, not
+  only the score. See the [CHANGELOG](CHANGELOG.md).
+- `-M` affects the terminal UI only. `--json` always redacts matched tokens;
+  use `--json-full` only when you explicitly need them.
+- `-dw` is named for historical reasons. It shows the HIBP breach check, not a
+  dark-web scan.
+- `-q` suppresses output but does **not** change input handling. If stdin is a
+  TTY, the hidden prompt still appears. For non-interactive use, pipe the
+  password (`echo 'pwd' | imps -q -`) or pass it as an argument.
+- In a non-interactive shell with no password and no stdin, `imps` exits `2`
+  instead of hanging.
 
 ---
 
@@ -260,7 +325,7 @@ Example (abridged):
 ```json
 {
   "schema_version": "2.0",
-  "tool_version": "2.0.0",
+  "tool_version": "2.0.1",
   "exit_code": 0,
   "error": null,
   "input": {
@@ -315,8 +380,66 @@ Example (abridged):
   "engine_used": "ts",
   "engine_version": "4.2.0",
   "engine_fallback": false,
-  "calc_time": 12.0,
+  "calc_time": 11.0,
   "redacted": true
+}
+```
+
+`calc_time` is in **milliseconds**. It is `null` when the engine does not report
+a calculation time; zxcvbn-python and the legacy native engine currently return
+`null`. The field name is unchanged in the 2.0 schema. A `calc_time_ms` alias is
+deferred to a future minor release rather than changing a published schema in a
+patch.
+
+### JSON in error cases
+
+When the exit code is non-zero, `--json` still emits a valid schema document
+unless `--quiet` is also used. The envelope is stable:
+
+| Exit | JSON emitted | `error` | `input` | `score` | `breach` | `engine_used` |
+| ---- | :----------: | ------- | ------- | ------- | -------- | ------------- |
+| `0/1/3` | yes | `null` | object | object | object | real engine |
+| `2` | yes | string | `null` | `null` | `null` | `null` |
+| `4` | yes | string | `null` | `null` | `null` | `null` |
+| `5` | yes | `null` | object | object, with no HIBP cap | `pwned: null`, `reason: "api_error"` | real engine |
+| `130` | not guaranteed | — | — | — | — | — |
+
+For exit `5`, `score` is computed and present, but it is not a safety verdict:
+`breach.pwned` is `null` and the command fails closed. For exit `2` and `4`,
+`score` is `null`; a consumer that does `imps --json | jq .score.value` must
+handle that case.
+
+For exit `130` (Ctrl+C), JSON may be partially emitted or absent. Do not rely
+on it; check the exit code instead.
+
+If `--quiet` and `--json` are combined, `--quiet` wins and no JSON is written.
+`--json-full` does not change the error envelope.
+
+### Native engine JSON
+
+`--engine=native` is valid JSON with the same top-level shape, but the
+zxcvbn-specific fields are empty rather than absent:
+
+```json
+{
+  "engine_requested": "native",
+  "engine_used": "native",
+  "engine_version": null,
+  "score": {
+    "value": 100,
+    "rating": "strong",
+    "raw_score_0_4": null,
+    "capped_by": null
+  },
+  "guesses": null,
+  "crack_times_seconds": {},
+  "crack_times_display": {},
+  "feedback": {
+    "warning": null,
+    "suggestions": []
+  },
+  "sequence": [],
+  "calc_time": null
 }
 ```
 
@@ -368,6 +491,10 @@ jobs:
 
 The Action passes the password through stdin, not as a process argument. It fails closed on weak, pwned, engine-error, and HIBP-unknown results.
 
+For exit `2` and `4`, `score` is `null` and the Action's `score` output is empty;
+use `exit-code` as the reliable signal. The Action already exits before applying
+`min-score` in those cases.
+
 | Input | Default | Description |
 | ----- | ------- | ----------- |
 | `password` | required | Always pass through GitHub Secrets. |
@@ -378,8 +505,8 @@ The Action passes the password through stdin, not as a process argument. It fail
 
 | Output | Description |
 | ------ | ----------- |
-| `score` | `0-100` score. |
-| `rating` | `weak`, `medium`, or `strong`. |
+| `score` | `0-100` score. Empty for exit `2`/`4`. |
+| `rating` | `weak`, `medium`, or `strong`. Empty for exit `2`/`4`. |
 | `exit-code` | The `imps` exit code. |
 
 ---
@@ -401,6 +528,24 @@ suffix  = sha1[5:].upper()      # matched locally
 ```
 
 Not transmitted: plaintext password, full SHA-1, password length, character composition, account, or identifier. HIBP receives the prefix and the HTTP metadata inherent to any request.
+
+---
+
+## The five 2.0 decisions that differ from the original plan
+
+While building 2.0 we changed five decisions. They are listed here because they
+are part of the contract, not hidden implementation details.
+
+| # | Decision | Why | Cost |
+| - | -------- | --- | ---- |
+| 1 | `auto` is the default engine, not `ts` and not `native`. | A normal install should use the best available zxcvbn engine without silently changing the meaning of the result. | If neither zxcvbn-ts nor zxcvbn-python is available, the command fails with exit `4`. |
+| 2 | HIBP is **on by default**, and an unreachable HIBP is `UNKNOWN` with exit `5`. | A missing breach check must not be confused with a clean breach check. | One anonymous range request per audit; `--offline` is required for a strictly local run. |
+| 3 | zxcvbn's `0-4` score maps to `0 / 25 / 50 / 75 / 100`. | The percentage is easier to read than a bare `0-4`, and the weak/medium/strong boundary is explicit. | The number is a presentation choice, not extra evidence; it does not make zxcvbn more precise. |
+| 4 | A pwned password is forced to score `0`, rating `weak`, with `score.capped_by = "hibp"`. | "Strong but already breached" must not look safe in a dashboard or a CI summary. | The zxcvbn details are still reported, but the final score is deliberately dominated by the breach. |
+| 5 | `--json` redacts matched tokens by default; `--json-full` is the explicit opt-in. | JSON often ends up in logs, artifacts, and issue comments. The default should not leak password fragments. | Users who need the matched tokens must ask for them and handle the output carefully. |
+
+The exact exit-code table and score mapping are documented above. If you build a
+CI policy on this tool, use those tables rather than assumptions from 1.x.
 
 ---
 
@@ -459,8 +604,8 @@ small input to that work, not a replacement for it.
 
 "CI covers" means the workflow is configured to run those jobs; it is not a
 claim that every combination has been manually exercised on every machine. The
-2.0.0 release candidate is published to TestPyPI before the stable tag, and the
-GitHub Action is tested against that tag before `v2.0.0` is created.
+2.0.0 release was exercised as a release candidate on TestPyPI before the stable
+tag; patch releases follow the same tag-based publish workflow.
 
 ---
 
@@ -489,6 +634,12 @@ Regenerate golden fixtures:
 python scripts/generate_golden.py --engine ts
 ```
 
+Regenerate the terminal demo GIF after changing the CLI output:
+
+```bash
+vhs docs/assets/demo.tape
+```
+
 Project layout:
 
 ```text
@@ -510,7 +661,7 @@ ismypwdsafe/
 The release is intentionally boring. `version.txt` is the single source of
 truth, and a tag is only created after the candidate has been exercised.
 
-1. Set `version.txt` to the candidate version (for example `2.0.0rc1`) and update
+1. Set `version.txt` to the candidate version (for example `2.0.1rc1`) and update
    the changelog.
 2. Run the full local checks:
    ```bash
@@ -524,12 +675,15 @@ truth, and a tag is only created after the candidate has been exercised.
 4. Install from TestPyPI in a clean environment and run the GitHub Action with
    the candidate tag, for example:
    ```yaml
-   uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+   uses: Roma476/IsMyPwdSafe@v2.0.1rc1
    ```
 5. Let the candidate sit for a short soak period. Check the TestPyPI artifact,
    the Action result, and the CLI output before promoting it.
-6. Only then create the stable tag (`v2.0.0`), publish to PyPI, and merge the
+6. Only then create the stable tag (`v2.0.1`), publish to PyPI, and merge the
    release branch into `main`.
+
+Patch releases do not rewrite already published tags or PyPI provenance. If a
+release needs a correction, publish a new patch rather than moving a tag.
 
 PyPI and TestPyPI publishing uses GitHub OIDC Trusted Publishing. The repository
 must have the `pypi` and `testpypi` environments, and the corresponding trusted
