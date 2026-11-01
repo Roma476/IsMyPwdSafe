@@ -128,6 +128,42 @@ def test_full_report_uses_terminal_width(monkeypatch, capsys):
     assert {len(line) for line in tops} == {118}
 
 
+def test_full_report_can_animate(monkeypatch, capsys):
+    monkeypatch.setattr(ui, "ANIMATE", True)
+    monkeypatch.setattr(ui.time, "sleep", lambda _: None)
+    monkeypatch.setattr(ui, "get_width", lambda: 120)
+
+    ui.print_output(_weak_result(), "password")
+    output = _plain(capsys.readouterr().out)
+
+    assert "SUMMARY" in output
+    assert "PATTERN MATCHES" in output
+    assert "password  passwords-common #2" in output
+
+
+def test_animated_score_bar_ends_full(monkeypatch, capsys):
+    monkeypatch.setattr(ui, "ANIMATE", True)
+    monkeypatch.setattr(ui.time, "sleep", lambda _: None)
+    monkeypatch.setattr(ui, "get_width", lambda: 120)
+    result = _result(
+        score_value=100,
+        rating="strong",
+        raw_score=4,
+        capped_by=None,
+        breach=BreachResult(True, False, 0, None),
+    )
+
+    ui.print_output(result, "correct-horse-battery-staple")
+    frames = [
+        line
+        for line in _plain(capsys.readouterr().out).split("\r")
+        if "█" in line or "░" in line
+    ]
+
+    assert frames
+    assert "░" not in frames[-1]
+
+
 def test_full_report_uses_columns_when_wide(monkeypatch, capsys):
     monkeypatch.setattr(ui, "ANIMATE", False)
     monkeypatch.setattr(ui, "get_width", lambda: 120)

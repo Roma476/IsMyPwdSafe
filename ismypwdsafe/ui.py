@@ -209,7 +209,9 @@ def _columns(
     ]
 
 
-def _print_lines(lines: Iterable[str], *, animate: bool = False) -> None:
+def _print_lines(lines: Iterable[str], *, animate: Optional[bool] = None) -> None:
+    if animate is None:
+        animate = ANIMATE
     for line in lines:
         print(line)
         if animate:
@@ -242,6 +244,8 @@ def _banner() -> None:
         print()
         for line in _BANNER_ART:
             print(" " * block_pad + C.CYAN + C.BOLD + line + C.RESET)
+            if ANIMATE:
+                time.sleep(0.008)
         line = f"{dim('zxcvbn, but readable')}"
     else:
         line = f"{bold(C.CYAN + 'IsMyPwdSafe')} {dim('·')} {dim('zxcvbn, but readable')}"
@@ -495,7 +499,41 @@ def print_output(
     input_line = _input_summary_line(result, password, mask_mode)
     if input_line:
         summary.extend(["", input_line])
-    _print_lines(_box("SUMMARY", summary, color=score_color, width=width))
+    summary_box = _box("SUMMARY", summary, color=score_color, width=width)
+    bar_index = next(
+        (
+            index
+            for index, line in enumerate(summary_box)
+            if "█" in line or "░" in line
+        ),
+        None,
+    )
+    if ANIMATE and result.score is not None and bar_index is not None:
+        bar_width = max(20, width - 4)
+        target_fill = round(bar_width * result.score.value / 100)
+        step = max(1, target_fill // 30)
+        fills = list(range(0, target_fill + 1, step))
+        if fills[-1] != target_fill:
+            fills.append(target_fill)
+        for index, line in enumerate(summary_box):
+            if index != bar_index:
+                print(line)
+                sys.stdout.flush()
+                time.sleep(0.012)
+                continue
+            for fill in fills:
+                frame = _box(
+                    "SUMMARY",
+                    [f"{score_color}{'█' * fill}{'░' * (bar_width - fill)}{C.RESET}"],
+                    color=score_color,
+                    width=width,
+                )[1]
+                sys.stdout.write("\r" + frame)
+                sys.stdout.flush()
+                time.sleep(0.008)
+            print()
+    else:
+        _print_lines(summary_box)
     print()
 
     crack_lines = _crack_lines(result)
