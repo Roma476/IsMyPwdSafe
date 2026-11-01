@@ -17,7 +17,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-63e6b4?style=flat-square)](LICENSE)
 [![CI](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml/badge.svg)](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml)
 
-> **Version 2.0.0rc1 (release candidate).** This is a major release: zxcvbn is now the source of truth for score, sequence, feedback, and crack times. The old native heuristic remains available only with `--engine=native`. The stable `2.0.0` tag is created only after the release candidate has been tested on TestPyPI and through the GitHub Action.
+> **Version 2.0.0.** This is a major release: zxcvbn is now the source of truth for score, sequence, feedback, and crack times. The old native heuristic remains available only with `--engine=native`.
 
 **Read this first:** passing the password as an argument (`imps "my-password"`) exposes it to shell history, terminal scrollback, and process listings. Run `imps` without arguments to use the hidden prompt, or pipe from stdin with `imps -`. This is an audit tool, not a password manager.
 
@@ -260,7 +260,7 @@ Example (abridged):
 ```json
 {
   "schema_version": "2.0",
-  "tool_version": "2.0.0rc1",
+  "tool_version": "2.0.0",
   "exit_code": 0,
   "error": null,
   "input": {
