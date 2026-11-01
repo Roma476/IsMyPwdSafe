@@ -159,8 +159,9 @@ The default zxcvbn path renders:
 The report uses the full terminal width. On wide terminals, time-to-crack and
 pattern matches sit side by side; on narrow terminals they stack. Empty zxcvbn
 sections are omitted when the legacy native engine is used. On an interactive
-TTY the banner and sections are revealed gradually, and the summary score bar
-fills in; non-TTY output and `NO_COLOR` are printed immediately.
+TTY the banner and sections fade in, section titles briefly resolve from
+scrambled characters, and the summary score bar fills with an eased motion;
+non-TTY output and `NO_COLOR` are printed immediately.
 
 The legacy native engine is explicitly limited; see
 [Legacy native engine](#legacy-native-engine).

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import random
 import re
 import shutil
 import sys
@@ -209,13 +210,89 @@ def _columns(
     ]
 
 
+_TITLE_GLYPHS = "01#$%&@?*+=-<>/\\|"
+_TITLES = (
+    "SUMMARY",
+    "TIME TO CRACK",
+    "PATTERN MATCHES",
+    "BREACH CHECK",
+    "WHAT TO DO",
+    "SCORE",
+    "ERROR",
+)
+
+
+def _scramble_title(title: str, revealed: int) -> str:
+    return "".join(
+        char
+        if char.isspace() or index < revealed
+        else random.choice(_TITLE_GLYPHS)  # noqa: S311
+        for index, char in enumerate(title)
+    )
+
+
+def _title_fragments(line: str) -> list[tuple[str, str]]:
+    fragments = []
+    for title in _TITLES:
+        needle = f" {title} "
+        if needle in line:
+            fragments.append((needle, title))
+    return fragments
+
+
+def _animate_title_line(line: str) -> bool:
+    fragments = _title_fragments(line)
+    if not fragments:
+        return False
+    longest = max(len(title) for _, title in fragments)
+    steps = list(range(1, longest + 1, max(1, longest // 5)))
+    if steps[-1] != longest:
+        steps.append(longest)
+    for revealed in [0, *steps]:
+        frame = line
+        for needle, title in fragments:
+            frame = frame.replace(
+                needle,
+                f" {_scramble_title(title, revealed)} ",
+            )
+        sys.stdout.write("\r" + frame)
+        sys.stdout.flush()
+        time.sleep(0.045 if revealed == 0 else 0.022)
+    sys.stdout.write("\r" + line + "\n")
+    sys.stdout.flush()
+    return True
+
+
+def _fade_line(line: str, *, hold: float = 0.012, after: float = 0.005) -> None:
+    if not line:
+        print()
+        time.sleep(after)
+        return
+    plain = _ANSI.sub("", line)
+    sys.stdout.write(C.DIM + plain + C.RESET)
+    sys.stdout.flush()
+    time.sleep(hold)
+    sys.stdout.write("\r" + line + "\n")
+    sys.stdout.flush()
+    time.sleep(after)
+
+
+def _beat(seconds: float = 0.07) -> None:
+    if ANIMATE:
+        time.sleep(seconds)
+
+
 def _print_lines(lines: Iterable[str], *, animate: Optional[bool] = None) -> None:
     if animate is None:
         animate = ANIMATE
     for line in lines:
-        print(line)
-        if animate:
-            time.sleep(0.012)
+        if not animate:
+            print(line)
+            continue
+        if "┌" in line and _animate_title_line(line):
+            time.sleep(0.006)
+        else:
+            _fade_line(line)
 
 
 _BANNER_ART = (
@@ -242,17 +319,23 @@ def _banner() -> None:
     if width >= art_width:
         block_pad = max((width - art_width) // 2, 0)
         print()
-        for line in _BANNER_ART:
-            print(" " * block_pad + C.CYAN + C.BOLD + line + C.RESET)
+        for art_line in _BANNER_ART:
+            rendered = " " * block_pad + C.CYAN + C.BOLD + art_line + C.RESET
             if ANIMATE:
-                time.sleep(0.008)
+                _fade_line(rendered, hold=0.006, after=0.002)
+            else:
+                print(rendered)
         line = f"{dim('zxcvbn, but readable')}"
     else:
         line = f"{bold(C.CYAN + 'IsMyPwdSafe')} {dim('·')} {dim('zxcvbn, but readable')}"
     padding = max(0, (width - _visible_len(line)) // 2)
     print()
-    print(" " * padding + line)
+    if ANIMATE:
+        _fade_line(" " * padding + line, hold=0.01, after=0.004)
+    else:
+        print(" " * padding + line)
     print()
+    _beat(0.04)
 
 
 def _input_summary_line(result: AuditResult, password: str, mask_mode: bool) -> str:
@@ -469,14 +552,15 @@ def print_output(
     if result.error:
         _print_lines(_box("ERROR", [err(result.error)], color=C.RED, width=width))
         if result.engine_used is None and result.engine_requested:
-            print(dim(f"Requested engine: {result.engine_requested}"))
+            _print_lines((dim(f"Requested engine: {result.engine_requested}"),))
         return
 
     if view == "darkweb":
         breach, color = _breach_lines(result)
         _print_lines(_box("BREACH CHECK", breach, color=color, width=width))
         print()
-        print(_engine_line(result))
+        _beat(0.06)
+        _print_lines((_engine_line(result),))
         return
 
     if view == "short":
@@ -489,10 +573,12 @@ def print_output(
             )
         )
         print()
+        _beat(0.05)
         breach, color = _breach_lines(result)
         _print_lines(_box("BREACH CHECK", breach, color=color, width=width))
         print()
-        print(_engine_line(result))
+        _beat(0.05)
+        _print_lines((_engine_line(result),))
         return
 
     summary = _score_lines(result, width)
@@ -511,30 +597,45 @@ def print_output(
     if ANIMATE and result.score is not None and bar_index is not None:
         bar_width = max(20, width - 4)
         target_fill = round(bar_width * result.score.value / 100)
-        step = max(1, target_fill // 30)
-        fills = list(range(0, target_fill + 1, step))
+        fills: list[int] = []
+        for step in range(25):
+            eased = 1 - (1 - step / 24) ** 3
+            fill = round(target_fill * eased)
+            if not fills or fills[-1] != fill:
+                fills.append(fill)
         if fills[-1] != target_fill:
             fills.append(target_fill)
         for index, line in enumerate(summary_box):
-            if index != bar_index:
-                print(line)
-                sys.stdout.flush()
-                time.sleep(0.012)
-                continue
-            for fill in fills:
-                frame = _box(
-                    "SUMMARY",
-                    [f"{score_color}{'█' * fill}{'░' * (bar_width - fill)}{C.RESET}"],
-                    color=score_color,
-                    width=width,
-                )[1]
-                sys.stdout.write("\r" + frame)
-                sys.stdout.flush()
-                time.sleep(0.008)
-            print()
+            if index == bar_index:
+                for fill in fills:
+                    if fill == bar_width:
+                        bar = f"{score_color}{'█' * bar_width}{C.RESET}"
+                    elif fill == 0:
+                        bar = f"{score_color}{'░' * bar_width}{C.RESET}"
+                    else:
+                        bar = (
+                            f"{score_color}{'█' * (fill - 1)}"
+                            f"{C.BOLD}{C.WHITE}█{C.RESET}"
+                            f"{score_color}{'░' * (bar_width - fill)}{C.RESET}"
+                        )
+                    frame = _box(
+                        "SUMMARY",
+                        [bar],
+                        color=score_color,
+                        width=width,
+                    )[1]
+                    sys.stdout.write("\r" + frame)
+                    sys.stdout.flush()
+                    time.sleep(0.01)
+                print()
+            elif index == 0 and _animate_title_line(line):
+                time.sleep(0.006)
+            else:
+                _fade_line(line)
     else:
         _print_lines(summary_box)
     print()
+    _beat(0.08)
 
     crack_lines = _crack_lines(result)
     why_lines = _sequence_lines(result, mask_mode)
@@ -551,28 +652,33 @@ def print_output(
             )
         )
         print()
+        _beat(0.07)
     else:
         if crack_lines:
             _print_lines(
                 _box("TIME TO CRACK", crack_lines, color=C.BLUE, width=width)
             )
             print()
+            _beat(0.06)
         if why_lines:
             _print_lines(
                 _box("PATTERN MATCHES", why_lines, color=C.MAGENTA, width=width)
             )
             print()
+            _beat(0.06)
 
     breach, breach_color = _breach_lines(result)
     _print_lines(_box("BREACH CHECK", breach, color=breach_color, width=width))
     print()
+    _beat(0.06)
 
     feedback = _feedback_lines(result)
     if feedback:
         _print_lines(_box("WHAT TO DO", feedback, color=C.YELLOW, width=width))
         print()
+        _beat(0.05)
 
-    print(_engine_line(result))
+    _print_lines((_engine_line(result),))
 
 
 __all__ = [
