@@ -1,538 +1,543 @@
-<h1 align="center"> IsMyPwdSafe - The only password audit that doesn't spy on you.</h1>
+<h1 align="center">IsMyPwdSafe</h1>
+
+<p align="center"><strong>zxcvbn, but readable.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/Roma476/IsMyPwdSafe">
-    <img alt="IsMyPwdSafe full audit output" title="IsMyPwdSafe" src="docs/screenshots/hero.png">
-  </a>
-  <p align="center">A privacy-first command-line password auditor.<br>Entropy math, pattern detection and breach lookup - all from your terminal.</p>
-  <p align="center">
-    <a href="https://pypi.org/project/ismypwdsafe/"><img height="40" alt="Install from PyPI" src="https://img.shields.io/badge/pipx_install-ismypwdsafe-729dff?style=for-the-badge&logo=pypi&logoColor=white"></a>
-    &nbsp;&nbsp;&nbsp;
-    <a href="https://pypi.org/project/ismypwdsafe/"><img height="40" alt="PyPI version" src="https://img.shields.io/pypi/v/ismypwdsafe?style=for-the-badge&color=63e6b4"></a>
-  </p>
+  A privacy-first password audit for developers and CI/CD.<br>
+  zxcvbn-ts by default, HIBP enabled by default, semantic exit codes, strict JSON, and a native GitHub Action.
 </p>
 
-[![PyPI](https://img.shields.io/pypi/v/ismypwdsafe?style=flat-square&color=blue)](https://pypi.org/project/ismypwdsafe/)
+<p align="center">
+  <a href="https://pypi.org/project/ismypwdsafe/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/ismypwdsafe?style=for-the-badge&color=63e6b4"></a>
+  <a href="https://pypi.org/project/ismypwdsafe/"><img alt="Install with pipx" src="https://img.shields.io/badge/pipx_install-ismypwdsafe-729dff?style=for-the-badge&logo=pypi&logoColor=white"></a>
+</p>
+
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Node.js 18+ for zxcvbn-ts](https://img.shields.io/badge/node-18%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](#scoring-engines)
 [![License: MIT](https://img.shields.io/badge/license-MIT-63e6b4?style=flat-square)](LICENSE)
-[![Platforms](https://img.shields.io/badge/platforms-Windows_%7C_macOS_%7C_Linux-729dff?style=flat-square)](#installation)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Roma476/IsMyPwdSafe/issues)
-[![Runtime deps](https://img.shields.io/badge/deps-1_(requests)-63e6b4?style=flat-square)](pyproject.toml)
-[![Network calls](https://img.shields.io/badge/network_calls-1_(0_with_--offline)-729dff?style=flat-square)](#privacy-and-network-behavior)
 [![CI](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml/badge.svg)](https://github.com/Roma476/IsMyPwdSafe/actions/workflows/ci.yml)
 
-**Read this before you run it:** Passing the password as an argument (`imps "your-password"`) will put it in your shell history, terminal scrollback, and any logs. **To avoid this, simply run `imps` without arguments.** The tool will securely prompt you for the password using a hidden input (like `sudo`), keeping it entirely out of your history. This tool is an audit utility - **it is not a password manager.** Do not use it as one.
+> **Version 2.0.0rc1 (release candidate).** This is a major release: zxcvbn is now the source of truth for score, sequence, feedback, and crack times. The old native heuristic remains available only with `--engine=native`. The stable `2.0.0` tag is created only after the release candidate has been tested on TestPyPI and through the GitHub Action.
 
-> **Project status - v1.5.4, actively developed.** This release is the last 1.x before the engine rewrite. It adds a machine-readable contract (--json + schema), offline-first privacy (update check is now opt-in), golden scores for regression testing, and a strict CI pipeline.
+**Read this first:** passing the password as an argument (`imps "my-password"`) exposes it to shell history, terminal scrollback, and process listings. Run `imps` without arguments to use the hidden prompt, or pipe from stdin with `imps -`. This is an audit tool, not a password manager.
 
 ---
 
-## Quick Start
+## A note on humility
 
-### 1. Install
+IsMyPwdSafe is a small wrapper around other people's excellent work. The hard
+parts - zxcvbn, the language dictionaries, and the HaveIBeenPwned range API -
+are not ours. What we try to add is a readable report, a small privacy budget,
+and predictable failure modes.
 
-The only runtime dependency is `requests`. `pipx` gives you a global `imps` command in an isolated venv:
+It can help you notice that a password is a dictionary word, a keyboard walk, a
+date, a repeat, or a known breach. It **cannot prove that a password is safe**.
+A clean result is not a certificate, an audit opinion, or a guarantee. It means
+"this particular heuristic did not find a problem in this particular run".
+
+We would rather say `UNKNOWN` and exit `5` than tell you a password is safe when
+the breach check did not run. That is the main design principle behind 2.0, and
+it is also why the tool is occasionally annoying in CI.
+
+---
+
+## The five 2.0 decisions that differ from the original plan
+
+While building 2.0 we changed five decisions. They are listed here because they
+are part of the contract, not hidden implementation details.
+
+| # | Decision | Why | Cost |
+| - | -------- | --- | ---- |
+| 1 | `auto` is the default engine, not `ts` and not `native`. | A normal install should use the best available zxcvbn engine without silently changing the meaning of the result. | If neither zxcvbn-ts nor zxcvbn-python is available, the command fails with exit `4`. |
+| 2 | HIBP is **on by default**, and an unreachable HIBP is `UNKNOWN` with exit `5`. | A missing breach check must not be confused with a clean breach check. | One anonymous range request per audit; `--offline` is required for a strictly local run. |
+| 3 | zxcvbn's `0-4` score maps to `0 / 25 / 50 / 75 / 100`. | The percentage is easier to read than a bare `0-4`, and the weak/medium/strong boundary is explicit. | The number is a presentation choice, not extra evidence; it does not make zxcvbn more precise. |
+| 4 | A pwned password is forced to score `0`, rating `weak`, with `score.capped_by = "hibp"`. | "Strong but already breached" must not look safe in a dashboard or a CI summary. | The zxcvbn details are still reported, but the final score is deliberately dominated by the breach. |
+| 5 | `--json` redacts matched tokens by default; `--json-full` is the explicit opt-in. | JSON often ends up in logs, artifacts, and issue comments. The default should not leak password fragments. | Users who need the matched tokens must ask for them and handle the output carefully. |
+
+The exact exit-code table and score mapping are documented below. If you build a
+CI policy on this tool, use those tables rather than assumptions from 1.x.
+
+---
+
+## Quick start
+
+### Install
 
 ```bash
 pipx install ismypwdsafe
 ```
 
-`pip` works too if you prefer a shared environment:
+`pip` works too:
 
 ```bash
 pip install ismypwdsafe
 ```
 
-From source, or without installing at all:
+For the optional zxcvbn-python fallback:
 
 ```bash
-git clone https://github.com/Roma476/IsMyPwdSafe.git
-cd IsMyPwdSafe
-pip install .
-# or
-python -m ismypwdsafe.main "correct-horse-battery-staple"
+pipx install "ismypwdsafe[python]"
 ```
 
-### 2. Run an audit
+### Run
 
 ```bash
-$ imps 
-Enter password to audit: 
-# (The terminal automatically hides your keystrokes as you type)
+imps                         # hidden prompt
+imps --offline               # hidden prompt, no network calls
+imps - < password.txt        # password from stdin
+imps --json - < password.txt # machine-readable output
 ```
 
-If you prefer to pass the password as an inline argument (e.g., for scripts or non-interactive environments):
+The CLI default engine is `auto`:
+
+1. zxcvbn-ts 4.x, if Node.js 18+ is on `PATH`;
+2. otherwise zxcvbn-python, if installed;
+3. otherwise exit `4` with an explanation.
+
+`native` is **never selected silently**. Use `--engine=native` only for the legacy 1.x heuristic.
 
 ```bash
-imps "correct-horse-battery-staple"
+imps --engine=ts "correct-horse-battery-staple"
+imps --engine=python "correct-horse-battery-staple"   # needs: pip install "ismypwdsafe[python]"
+imps --engine=native "correct-horse-battery-staple"   # legacy heuristic, explicit only
 ```
 
-<img alt="IsMyPwdSafe full audit output" title="IsMyPwdSafe" src="docs/screenshots/good.png">
+### Node.js
 
-The engine computes the charset, the number of possible combinations, the estimated time to crack on four hardware profiles and the HaveIBeenPwned result. All in one pass, all locally apart from the single HIBP HTTP request (the GitHub update check is opt-in).
-
-### 3. Run an audit on a known-weak password
+Node.js is not bundled or downloaded. Install it with your platform package manager:
 
 ```bash
-imps "password"
+# macOS
+brew install node
+
+# Debian / Ubuntu
+sudo apt install nodejs npm
+
+# Windows
+winget install OpenJS.NodeJS.LTS
 ```
 
-Two independent things fire here. The pattern engine matches `password` against the top-150 dictionary and caps the score at 30. The HaveIBeenPwned lookup finds the password in breach data and caps at 10. The final result is a `WEAK 10/100` with two separate warnings in the DARKWEB SCANNER panel and the SEARCH SPACE panel:
+Verify with `node --version`. If Node is unavailable and you do not have the Python fallback installed, `imps` fails with exit `4` rather than pretending the native heuristic is zxcvbn.
 
-<img alt="IsMyPwdSafe pattern and search space warning" title="IsMyPwdSafe" src="docs/screenshots/password.png">
+---
 
-<img alt="IsMyPwdSafe darkweb scanner warning" title="IsMyPwdSafe" src="docs/screenshots/password-dw.png">
+## What it reports
 
-### 4. Mask the password in the output
+The default zxcvbn path renders:
 
-If you are auditing on a shared screen or a recording:
+- zxcvbn score `0-4` and a readable `0-100` percentage;
+- estimated time to crack under four attacker models;
+- **why** the score is low: dictionary matches, keyboard walks, repeats, dates, sequences, regexes, and brute force;
+- zxcvbn feedback (warning + suggestions);
+- HIBP breach status.
+
+The native engine keeps the 1.x entropy and pattern model but does not produce zxcvbn sequence, feedback, or crack-time data.
+
+### Engine identity is part of the result
+
+"Available" is not the same as "used". The JSON contains both values:
+
+- `engine_requested` is what you asked for (`auto`, `ts`, `python`, or `native`);
+- `engine_used` is the engine that actually produced the result;
+- `engine_version` is the version reported by that engine;
+- `engine_fallback` is `true` only when `auto` fell back to zxcvbn-python
+  because zxcvbn-ts was unavailable.
+
+If `auto` cannot find any zxcvbn engine, the command exits `4` and `engine_used`
+is `null`. It does **not** quietly run the native heuristic. Consumers should
+branch on `engine_used`, not on `engine_requested`.
+
+### Score mapping
+
+| zxcvbn | Percentage | Rating |
+| ------ | ---------: | ------ |
+| `0` | `0` | weak |
+| `1` | `25` | weak |
+| `2` | `50` | medium |
+| `3` | `75` | strong |
+| `4` | `100` | strong |
+
+If HIBP says the password is pwned, the final score is forced to `0` and the result uses exit code `3`. The reason is exposed as `score.capped_by = "hibp"`.
+
+---
+
+## HaveIBeenPwned is ON by default
+
+By default `imps` makes exactly one outbound request: HIBP's Pwned Passwords range API.
+
+- The password and the full SHA-1 hash never leave the machine.
+- Only the first five characters of the SHA-1 hash are sent.
+- Responses use `Add-Padding: true`.
+- The local suffix match happens in memory.
+- Timeout: 5 seconds.
+
+Skip it explicitly:
 
 ```bash
-imps -M "MySecretPassword!"
+imps --no-breach-check "my-password"   # skip HIBP
+imps --offline "my-password"           # skip HIBP and the optional update check
 ```
 
-<img alt="IsMyPwdSafe masked output" title="IsMyPwdSafe" src="docs/screenshots/masked.png">
+If HIBP cannot be reached, `imps` does **not** call the password safe:
 
-The password appears as `************` in the INPUT METRICS panel. Everything else is computed normally.
+- the report says `UNKNOWN`;
+- the JSON has `breach.checked = true`, `breach.pwned = null`, `breach.reason = "api_error"`;
+- the exit code is `5`.
 
-### 5. Pick a view mode
+The zxcvbn score is still shown, but CI must treat exit `5` as a failure.
 
-If you only care about the final verdict, or only about the breach check, skip the rest of the report:
+The GitHub update check is opt-in and separate: `--check-updates`.
 
-```bash
-imps -s "correct-horse-battery-staple"     # only the OVERALL SECURITY ASSESSMENT
-imps -dw "password"                        # only the DARKWEB SCANNER
-```
-The view modes are mutually exclusive: -s and -dw together are rejected by the parser. Both views are scriptable: they do not clear the terminal, do not animate, and do not trigger the update check.
-
-### 6. Audit without touching the network
-
-If you do not want the 5-character SHA-1 prefix of your password to leave the machine - even though it is only a k-anonymity prefix - you have a few options to control the network:
-
-```bash
-imps --no-breach-check "password"    # HIBP skipped
-imps -o "password"                   # all network requests skipped
-imps --check-updates "password"      # enable the opt-in GitHub update check
-```
-
-In every skip case the DARKWEB panel reports why it has no result, and the score is computed without the breach cap, exactly like the API-failure path.
-
-### 7. Use it as a library
-
-The analysis pipeline is importable. `analyze_password` returns a structured `AuditResult` and performs no I/O unless you ask it to:
-
-```python
-from ismypwdsafe import analyze_password
-
-result = analyze_password("correct-horse-battery-staple", check_breach=False)
-
-print(result.score.value) # 100
-print(result.score.rating) # "strong"
-print(result.pattern.detected) # False
-print(result.breach.checked) # False
-```
-
-`check_breach=True` (the default) performs the HIBP request; `check_breach=False` keeps the call fully offline. The result object is the same one the CLI renders, so anything the terminal shows is available as a field.
-
-### 8. Machine-readable output
-
-For scripts and CI pipelines, use `--json` to get a versioned, structured output. The schema is available in `schema/result.schema.json`.
-
-```bash
-imps --json "correct-horse-battery-staple"
-```
-
-You can also pipe the password from stdin using imps -:
-```bash
-echo "my-password" | imps --json -
-```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+| Command | HIBP | GitHub update check |
+| ------- | :--: | :-----------------: |
+| `imps "pwd"` | yes | no |
+| `imps --no-breach-check "pwd"` | no | no |
+| `imps --check-updates "pwd"` | yes | yes |
+| `imps --offline "pwd"` | no | no |
 
 ---
 
 ## CLI reference
 
 ```text
-imps [-M] [-o | --no-breach-check] [-s | -dw] [--check-updates] [--json] <password>
+imps [--engine {auto,ts,python,native}] [-M] [-o | --no-breach-check]
+     [-s | -dw] [--check-updates] [--json | --json-full | -q] [password|-]
 ```
 
-| Flag | Argument | Description |
-| ---- | -------- | ----------- |
-| `-M`, `--Mask` | - | Replace the password with asterisks in the INPUT METRICS panel. Useful on shared screens and recordings. |
-| `-s`, `--short` | - | Render only the OVERALL SECURITY ASSESSMENT. No banner, no boxes, no update check. Scriptable. |
-| `-dw`, `--darkweb` | - | Render only the DARKWEB SCANNER panel. Scriptable. Mutually exclusive with `-s`. |
-| `-o`, `--offline` | - | Skip **all** outbound requests. Implies `--no-breach-check`. |
-| `--no-breach-check` | - | Skip only the HIBP lookup. |
-| `--check-updates` | - | Enable the opt-in GitHub update check (disabled by default). |
-| `--json` | - | Output the result as a machine-readable JSON document. Implies non-interactive. |
-| *password* | optional | The raw text password to audit. If omitted, `imps` prompts with a hidden input. |
+| Flag | Description |
+| ---- | ----------- |
+| `--engine` | `auto` (default), `ts`, `python`, or `native`. |
+| `-M`, `--Mask` | Mask the password and matched tokens in the terminal UI. |
+| `-s`, `--short` | Show only the score and breach verdict. |
+| `-dw`, `--darkweb` | Show only the breach check. |
+| `-o`, `--offline` | Skip HIBP and all other network calls. |
+| `--no-breach-check` | Skip only HIBP. |
+| `--check-updates` | Enable the opt-in GitHub version check. |
+| `--json` | Strict JSON output; matched tokens are redacted. |
+| `--json-full` | JSON including matched tokens. Use with care. |
+| `-q`, `--quiet` | Suppress all output; return only the exit code. |
+| `password` | Password to audit. Omit for hidden prompt; use `-` for stdin. |
 
-### Network behaviour matrix
-
-| Command | HIBP | GitHub |
-| ------- | :--: | :----: |
-| `imps "pwd"` | ✓ | ✗ |
-| `imps --no-breach-check "pwd"` | ✗ | ✗ |
-| `imps --check-updates "pwd"` | ✓ | ✓ |
-| `imps -o "pwd"` | ✗ | ✗ |
-
-`--offline` is the shortcut for the air-gapped case; the two `--no-*-check` flags are the granular controls. In all skip cases the audit still runs, the pattern engine still runs, and the score is computed without the breach cap.
-
-The CLI is a thin layer over the `ismypwdsafe` package. Every flag maps to a field of `AuditResult`; nothing is computed twice.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+The password argument is optional. In a non-interactive shell with no password and no stdin, `imps` exits `2` instead of hanging.
 
 ---
 
-## What IsMyPwdSafe can do
+## Exit codes
 
-| Feature | Description |
-| ------- | ----------- |
-| [Entropy estimation](#charset-and-entropy) | Charset detection and `C^L` combination count with log10 fallback for large search spaces |
-| [Top-150 dictionary](#rule-1-top-150-dictionary) | Substring match against the 150 most-used passwords, with leet-speak normalization |
-| [QWERTY walk detection](#rule-2-qwerty-spatial-walk) | Real keyboard coordinate model catching `qwerty`, `1qaz2wsx`, `zxcvbn` and similar walks |
-| [Common year detection](#rule-3-common-year) | Flags 4-digit runs in the 1900-2050 range |
-| [Character repetition](#rule-4-character-repetition) | Flags three or more identical consecutive characters |
-| [HaveIBeenPwned range lookup](#privacy-and-network-behavior) | k-anonymity breach check; only a 5-character SHA-1 prefix leaves the machine |
-| [Hardware resistance graph](#scoring) | Estimated time-to-crack on PC, server, GPU rig and cluster |
-| [Privacy mask mode](#4-mask-the-password-in-the-output) | `-M` / `--Mask` replaces the password with asterisks in all output |
-| [Short view](#5-pick-a-view-mode) | `-s` / `--short` renders only the overall assessment. Scriptable. |
-| [Darkweb view](#5-pick-a-view-mode) | `-dw` / `--darkweb` renders only the breach check. Scriptable. |
-| [Offline mode](#6-audit-without-touching-the-network) | `-o` / `--offline` skips both network requests in a single switch |
-| [Granular network control](#6-audit-without-touching-the-network) | `--no-breach-check` disables HIBP. `--check-updates` enables the GitHub check. |
-| [Secure interactive prompt](#2-run-an-audit) | Run `imps` without arguments to enter the password via a hidden prompt, preventing shell history leaks |
-| [Importable engine](#7-use-it-as-a-library) | `from ismypwdsafe import analyze_password` returns a structured `AuditResult` with no CLI overhead |
-| [Modular architecture](#project-layout) | Core, patterns, network, UI and CLI live in separate modules; the engine has no terminal dependencies |
+| Code | Meaning |
+| ---- | ------- |
+| `0` | OK: score >= 50, not pwned, breach status known or disabled |
+| `1` | Weak: score < 50 |
+| `2` | Usage/input error, including an empty password |
+| `3` | Pwned: found in HIBP |
+| `4` | Engine error: no usable engine, Node too old, engine failure |
+| `5` | HIBP status unknown: do not treat the password as safe |
+| `130` | Interrupted with Ctrl+C |
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Use Cases
-
-- **Personal audit** - check your own passwords without pasting them into an unknown web form. Useful before migrating to a password manager.
-- **Security training** - show colleagues the actual difference between `Summer2024!` and `correct-horse-battery-staple` in entropy numbers and time-to-crack instead of vague "strong/weak" labels.
-- **Assessing leaked credentials** - when a plaintext password turns up in a dump or during a CTF, check how strong it actually is before deciding whether to report it as critical.
-- **Pre-deployment checks** - quick scan of default passwords or example strings before they ship in a config file.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Detection engine
-
-The score is not a linear function of length. It combines a mathematical entropy estimate with a set of pattern rules that catch the cases where entropy is misleading - `Password123` has non-trivial entropy on paper but is trivially guessable because the pattern is known.
-
-### Charset and entropy
-
-Each character contributes to the charset once:
-
-| Class | Contribution |
-| ----- | ------------ |
-| Digits `0-9` | +10 |
-| Lowercase `a-z` | +26 |
-| Uppercase `A-Z` | +26 |
-| Printable ASCII symbols | +33 |
-
-Non-ASCII characters do not contribute to the estimate - the search space is modelled over printable ASCII only. Total combinations are `C^L` and entropy in base 10 is `L * log10(C)`.
-
-For large search spaces the raw `C^L` overflows the display width, so the engine switches to log-space representation (`10^x`). The switch is decided by `must_use_log(C, L)`:
-
-| Condition | Behaviour |
-| --------- | --------- |
-| `C > 95` and `L >= 3` | log-space |
-| `C ∈ {62, 63}` and `L >= 5` | log-space |
-| Otherwise | `L >= 4` → log-space |
-
-That is why some outputs show `10^39.65` instead of a full integer - it is precise and it fits the panel.
-
-### Rule 1: Top-150 dictionary
-
-Substring match against the top-150 most-used passwords. Before matching, the input is lowercased and normalized through a leet-speak translation table:
-
-```
-@ → a    4 → a    3 → e    0 → o    1 → i
-! → i    $ → s    5 → s    7 → t    8 → b
-```
-
-So `P@ssw0rd` becomes `password` and is caught. `MyPassword123` also matches because `password123` is a substring of the normalized input. This is the most aggressive rule - it is why so many "clever" passwords still score low.
-
-### Rule 2: QWERTY spatial walk
-
-Each key is mapped to a `(row, column)` coordinate on a real QWERTY keyboard:
-
-```
-row 0:  1 2 3 4 5 6 7 8 9 0
-row 1:  q w e r t y u i o p
-row 2:  a s d f g h j k l
-row 3:  z x c v b n m
-```
-
-The engine looks for at least 4 consecutive keys moving in the same direction - horizontal, vertical or diagonal. When it finds a run, the password gets flagged. This catches the entire family of keyboard walks that look random to a human but are not:
+For CI, use `-q` when you only need the code, or `--json` when you need the data:
 
 ```bash
-imps "qwertyuiop"    # horizontal walk
-imps "1qaz2wsx"      # diagonal walk
-imps "mnbvcxz"       # horizontal reverse walk
-imps "1qaz"          # vertical walk
+imps -q --engine=ts - < password.txt
+echo $?
 ```
-
-### Rule 3: Common year
-
-Scans for a 4-digit run in the `1900-2050` range. `MyPassword2024` and `Summer1990!` both trip this rule even if the surrounding text is clean. This is not a hard match against a list of years - it catches any 4-digit number in the plausible-year range, which is the pattern most people add to a base word when a site forces a "number" requirement.
-
-### Rule 4: Character repetition
-
-Any three or more identical consecutive characters. Catches `aaa`, `111`, `...` and the family of `password!!!` variants. Padding is not entropy.
-
-### Scoring
-
-```
-base_score = min(100, max(0, log10_value * 5))
-
-if pattern_detected:    base_score = min(base_score, 30)
-if pwned_count > 0:     base_score = min(base_score, 10)
-```
-
-| Score | Rating |
-| ----- | ------ |
-| 0-9 | WEAK (pwned) |
-| 10-29 | WEAK (pattern) |
-| 30-49 | WEAK |
-| 50-69 | MEDIUM |
-| 70-100 | STRONG |
-
-The score is capped, not weighted. A single pattern match is treated as a binary event because in practice, once one obvious pattern exists, the rest of the string is no longer the bottleneck - the attacker is running a dictionary or a walk generator, not a brute-force sweep.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
 
-## Privacy and network behavior
+## JSON contract v2.0
 
-By default, the tool makes **one outbound HTTP request** (HaveIBeenPwned). A second request (GitHub) is made only if you explicitly pass `--check-updates`.
+`--json` emits a strict, versioned document validated against [`schema/result.schema.json`](schema/result.schema.json). Non-finite floats are converted to `null`; the output never contains `Infinity` or `NaN`.
 
-### 1. HaveIBeenPwned Range API
+By default, `sequence[].token`, `matched_word`, `base_token`, `sub_display`, `regex_match`, and `subs` are replaced with `"<redacted>"`. Use `--json-full` only when you explicitly need the matched tokens.
 
-The plaintext password and the full SHA-1 hash never leave the machine. Only a 5-character prefix is transmitted, following the [k-anonymity model recommended by HIBP](https://haveibeenpwned.com/API/v3#PwnedPasswords) and used by Firefox, 1Password and Bitwarden:
+The default JSON has no top-level `password` field, and the password is not
+included in `input`, `breach`, `feedback`, or the redacted `sequence`. The test
+suite checks this with a unique marker password against the selected engine; see
+[`tests/test_privacy.py`](tests/test_privacy.py). `--json-full` may reveal
+password fragments through `sequence[].token`, so treat it as sensitive output.
 
+Example (abridged):
+
+```json
+{
+  "schema_version": "2.0",
+  "tool_version": "2.0.0rc1",
+  "exit_code": 0,
+  "error": null,
+  "input": {
+    "length": 28,
+    "charset_size": 59,
+    "has_lower": true,
+    "has_upper": false,
+    "has_number": false,
+    "has_symbol": true,
+    "has_non_ascii": false
+  },
+  "score": {
+    "value": 100,
+    "rating": "strong",
+    "raw_score_0_4": 4,
+    "capped_by": null
+  },
+  "guesses": 100000000001.0,
+  "guesses_log10": 11.0,
+  "crack_times_seconds": {
+    "online_throttling_100_per_hour": 3600000000036.0,
+    "online_no_throttling_10_per_second": 10000000000.1,
+    "offline_slow_hashing_1e4_per_second": 10000000.0001,
+    "offline_fast_hashing_1e10_per_second": 10.0000000001
+  },
+  "crack_times_display": {
+    "online_throttling_100_per_hour": "centuries",
+    "online_no_throttling_10_per_second": "centuries",
+    "offline_slow_hashing_1e4_per_second": "4 months",
+    "offline_fast_hashing_1e10_per_second": "10 seconds"
+  },
+  "feedback": {
+    "warning": null,
+    "suggestions": []
+  },
+  "sequence": [
+    {
+      "pattern": "bruteforce",
+      "token": "<redacted>",
+      "i": 0,
+      "j": 27,
+      "guesses": 100000000000
+    }
+  ],
+  "breach": {
+    "checked": true,
+    "pwned": false,
+    "breach_count": 0,
+    "reason": null
+  },
+  "engine_requested": "auto",
+  "engine_used": "ts",
+  "engine_version": "4.2.0",
+  "engine_fallback": false,
+  "calc_time": 12.0,
+  "redacted": true
+}
 ```
-sha1    = SHA1(password)
-prefix  = sha1[:5].upper()
-suffix  = sha1[5:].upper()
 
-GET https://api.pwnedpasswords.com/range/{prefix}
-  → server returns ~800 candidate suffixes
-  → local match of `suffix` against the response
+The library returns the same data:
+
+```python
+from ismypwdsafe import analyze_password
+
+result = analyze_password(
+    "correct-horse-battery-staple",
+    check_breach=False,
+    engine_name="ts",  # or "auto", "python", "native"
+)
+print(result.score.value)
+print(result.score.rating)
+print(result.engine_used)
+print(result.breach.checked)
 ```
 
-- **Transmitted:** the 5-character SHA-1 prefix.
-- **Not transmitted:** plaintext password, full hash, length, character composition, any IP-linked identifier.
-- **Timeout:** 5 seconds.
-- **On failure:** the DARKWEB panel shows a warning and the score is computed without the breach cap. The rest of the audit runs normally.
-- **Disable with:** `--no-breach-check` (or `-o/--offline`).
+`check_breach=True` is the default. `engine_name="auto"` follows the same no-silent-native rule as the CLI.
 
-### 2. GitHub version check
+---
 
-A single `GET` to `raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/version.txt` at startup. No identifier, no analytics, no telemetry. It exists solely to warn if a newer version is available. 1.5-second timeout, silent failure. Enable with `--check-updates`.
+## GitHub Action
 
-### Granular network control
+```yaml
+name: Password audit
+on: [push, pull_request]
 
-The two requests are controlled independently, with `--offline` as the shortcut:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit password
+        id: audit
+        uses: Roma476/IsMyPwdSafe@v2
+        with:
+          password: ${{ secrets.PASSWORD_TO_AUDIT }}
+          engine: auto          # auto | ts | python | native
+          node-version: "20"
+          min-score: 70
+          offline: false        # true skips HIBP
+
+      - name: Print result
+        run: echo "Score ${{ steps.audit.outputs.score }} (${{ steps.audit.outputs.rating }})"
+```
+
+The Action passes the password through stdin, not as a process argument. It fails closed on weak, pwned, engine-error, and HIBP-unknown results.
+
+| Input | Default | Description |
+| ----- | ------- | ----------- |
+| `password` | required | Always pass through GitHub Secrets. |
+| `engine` | `auto` | `auto`, `ts`, `python`, or `native`. |
+| `node-version` | `20` | Node version for `auto`/`ts`. |
+| `min-score` | `70` | Fail below this score. |
+| `offline` | `false` | Skip HIBP and all network calls. |
+
+| Output | Description |
+| ------ | ----------- |
+| `score` | `0-100` score. |
+| `rating` | `weak`, `medium`, or `strong`. |
+| `exit-code` | The `imps` exit code. |
+
+---
+
+## Privacy
+
+- No telemetry, analytics, crash reporting, accounts, or local audit history.
+- No logs, cache, or config written on first run.
+- One request by default: HIBP k-anonymity. The GitHub update check is opt-in.
+- `--offline` disables all outbound requests.
+- JSON is token-redacted by default.
+
+### What is sent to HIBP
+
+```text
+sha1    = SHA1(password)        # local only
+prefix  = sha1[:5].upper()      # transmitted
+suffix  = sha1[5:].upper()      # matched locally
+```
+
+Not transmitted: plaintext password, full SHA-1, password length, character composition, account, or identifier. HIBP receives the prefix and the HTTP metadata inherent to any request.
+
+---
+
+## What a clean result does not mean
+
+This is the most important section in the README.
+
+A password that scores `100`, is not found in HIBP, and has a long crack-time
+estimate is **not proven safe**. It has passed one heuristic and one partial
+breach corpus at one point in time. That is all.
+
+In particular:
+
+- **zxcvbn is a heuristic.** It is very good at recognising common patterns and
+  bad at knowing your personal context. A password can be strong by its model
+  and still be reused across five services.
+- **A clean HIBP result is not a guarantee.** HIBP is a large corpus, not every
+  breach. A password can be absent from HIBP and still be compromised or reused.
+- **HIBP availability matters.** If HIBP is unreachable, the result is
+  `UNKNOWN`, `breach.pwned` is `null`, and the exit code is `5`. The zxcvbn score
+  is still shown, but it is not a safety verdict.
+- **Crack times are scenarios, not predictions.** They assume fixed hash rates
+  and do not model rainbow tables, targeted dictionaries, GPU optimisations,
+  side channels, or the attacker who already knows something about you.
+- **The native engine is legacy.** `--engine=native` uses the 1.x ASCII-oriented
+  entropy model and a finite pattern list. It is retained for compatibility, not
+  recommended for new use.
+- **Node is external.** `--engine=auto`/`ts` needs Node.js 18+. Without Node and
+  without zxcvbn-python, `imps` exits `4`.
+- **Bundled languages are English.** The shipped zxcvbn-ts bundle includes the
+  `language-common` and `language-en` dictionaries. It does not claim 20+
+  bundled languages.
+- **This is not a password manager, a policy engine, or a compliance tool.** It
+  audits one password at a time; it does not store, generate, rotate, or
+  centrally enforce credentials. It also cannot tell whether a password is
+  reused, shared, written on a sticky note, or sent over an insecure channel.
+
+If you need a guarantee, you need a password manager, a reviewed policy,
+multi-factor authentication, and an incident process. This tool can be one
+small input to that work, not a replacement for it.
+
+---
+
+## Compatibility and verification
+
+| Area | What is covered |
+| ---- | --------------- |
+| Python runtime | `>=3.8` in package metadata; CI covers 3.8, 3.10, and 3.12 |
+| Recommended engine | Node.js 18+ and zxcvbn-ts 4.2.0 |
+| Fallback engine | zxcvbn-python 4.4+ (`pip install "ismypwdsafe[python]"`) |
+| Operating systems | CI coverage on Ubuntu, macOS, and Windows |
+| JSON contract | validated against `schema/result.schema.json` |
+| zxcvbn-ts bundle | rebuilt and checked for reproducibility in CI on Node 18 and 20 |
+| HIBP failure path | unit tests plus a simulated missing-`fetch` run; exit `5` |
+| Action | smoke-tested with strong, weak, and below-threshold passwords |
+
+"CI covers" means the workflow is configured to run those jobs; it is not a
+claim that every combination has been manually exercised on every machine. The
+2.0.0 release candidate is published to TestPyPI before the stable tag, and the
+GitHub Action is tested against that tag before `v2.0.0` is created.
+
+---
+
+## Development
 
 ```bash
-imps --no-breach-check "your-password"    # HIBP skipped
-imps --check-updates "your-password"      # Enable GitHub version check
-imps -o "your-password"                   # both skipped, fully air-gapped
-```
-
-| Command | HIBP | GitHub |
-| ------- | :--: | :----: |
-| `imps "pwd"` | ✓ | ✗ |
-| `imps --no-breach-check "pwd"` | ✗ | ✗ |
-| `imps --check-updates "pwd"` | ✓ | ✓ |
-| `imps -o "pwd"` | ✗ | ✗ |
-
-In every skip case:
-
-- The audit still runs. The pattern engine still runs. The hardware resistance graph still runs.
-- The DARKWEB panel reports **why** it has no result (`OFFLINE MODE` vs `BREACH CHECK DISABLED (--no-breach-check)` vs a real network error).
-- The overall score is computed **without** the breach cap, exactly like the API-failure path.
-
-### What the tool does not do
-
-- No telemetry, no analytics, no crash reporting
-- No account, no email, no local history of past audits
-- No file writes (no logs, no cache, no config on first run)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Known limitations
-
-- **Shell history.** If you pass the password inline (`imps "pass"`), it ends up in bash/zsh history and terminal scrollback. **Workaround:** Just run `imps` without arguments to use the secure interactive prompt, or prefix the command with a space (requires `HISTCONTROL=ignorespace`).
-- **The default still makes one network call.** `--no-breach-check` disables the HIBP lookup; `-o/--offline` disables it. A `--quiet` pair that composes cleanly with the network flags is on the roadmap.
-- **ASCII only.** The charset is estimated over printable ASCII. Non-ASCII passwords are underestimated in entropy.
-- **Finite pattern list.** Top-150 plus four structural rules. An uncommon password is not automatically strong - it is only not *obviously* weak.
-- **Crack times are theoretical.** They assume a constant hash rate on a given hardware profile. They do not model rainbow tables, targeted dictionaries, GPU-specific optimizations or side channels.
-- **DARKWEB depends on HIBP.** If the API changes behaviour the panel reports it, but the tool does not update itself.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Checks
-
-```bash
-# Minimal run
-imps "test"
-
-# Strong password, no pattern
-imps "correct-horse-battery-staple"
-
-# Walk pattern - should show pattern warning
-imps "qwertyuiop"
-
-# Known breach - should show red alert in the DARKWEB SCANNER
-imps "123456"
-
-# Mask mode
-imps -M "password"
-
-# View modes
-imps -s "correct-horse-battery-staple"     # only overall assessment
-imps -dw "password"                        # only darkweb scanner
-
-# Network control
-imps --no-breach-check "password"          # HIBP skipped
-imps --check-updates "password"            # Enable GitHub update check
-imps -o "password"                         # both skipped
-
-# Scriptable, network-free, one line
-imps -o -s "password"
-```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Testing
-
-```bash
-pip install -e ".[test]"
+git clone https://github.com/Roma476/IsMyPwdSafe.git
+cd IsMyPwdSafe
+python -m pip install -e ".[test,dev]"
 pytest
 ```
 
-The test suite runs offline. `network.check_breach` and `network.check_for_updates` are mocked in `tests/conftest.py`, and a `no_network` fixture fails any test that accidentally performs an HTTP request. CI runs on Windows, macOS and Linux across Python 3.8, 3.10 and 3.12.
+Node 18+ is required for the golden suite that covers the `ts` engine. Without Node, those golden tests are skipped; the `native` and `python` paths still run.
 
-The suite also includes golden scores for regression testing and property-based tests with Hypothesis. To regenerate the golden scores after an intentional engine change, run `python scripts/generate_golden.py`.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Project layout
-
-```text
-IsMyPwdSafe/
-├── ismypwdsafe/
-│   ├── __init__.py      # __version__, public API re-exports
-│   ├── core.py          # AuditResult data model, analyze_password, entropy math
-│   ├── patterns.py      # top-150 dictionary, QWERTY walks, years, repetition
-│   ├── network.py       # HaveIBeenPwned range lookup, GitHub version check
-│   ├── render.py        # JSON rendering for the machine contract
-│   ├── ui.py            # ANSI helpers, boxes, animation, print_output
-│   ├── cli.py           # argparse, orchestration, exit codes, entry()
-│   └── main.py          # compatibility shim, removed in 2.0
-├── schema/
-│   └── result.schema.json
-├── scripts/
-│   ├── generate_golden.py
-│   └── bench.py
-├── tests/
-│   ├── conftest.py
-│   ├── golden/
-│   ├── test_cli.py
-│   ├── test_core.py
-│   ├── test_edge_cases.py
-│   ├── test_golden.py
-│   ├── test_json.py
-│   ├── test_network.py
-│   ├── test_patterns.py
-│   └── test_properties.py
-├── .github/workflows/   # CI and Trusted Publishing
-├── docs/screenshots/
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── CHANGELOG.md
-├── .gitignore
-├── LICENSE
-├── pyproject.toml
-├── version.txt
-└── README.md
-```
-
-The split is deliberate. `core.py` and `patterns.py` contain no I/O and no ANSI: they can be imported and tested in isolation. `network.py` is the only module that talks to the network, and it can be mocked with a single import. `ui.py` is the only module that writes to stdout. `cli.py` is the only module that parses argv.
-
-`tests/` mirrors the module split: one file per module. The suite is offline by construction, so it runs on a plane and in CI without flakiness.
-
-`main.py` is a three-line shim that keeps `python -m ismypwdsafe.main` working; it will be removed in 2.0 when the `imps` entry point is the only documented invocation.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Roadmap
-
-Actively in progress:
-
-- **v2.0.0 Engine Rewrite** - weighted scoring (zxcvbn-like), full Unicode/emoji support, and a GitHub Action for CI/CD pipelines. This will be a major release with breaking changes to the scoring logic.
-
-Out of scope by design: password storage, account systems, cloud sync.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
----
-
-## Contributing
-
-Contributions are welcome. Bug reports, feature requests and pull requests all help.
-
-**If you want to contribute but the codebase is new to you**, open an issue first and describe what you would like to do - new pattern rules, additional hardware profiles in the resistance graph and new flags are all good entry points. Nothing here is locked in.
+Rebuild the zxcvbn-ts bundle after changing `ismypwdsafe/js/score.mjs` or the JS dependencies:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/IsMyPwdSafe.git
-cd IsMyPwdSafe
-python -m venv .venv
-source .venv/bin/activate     # Linux/macOS
-.venv\Scripts\activate        # Windows
-pip install -e .
-
-imps "test-password"
-python -m ismypwdsafe.main "test-password"
+cd ismypwdsafe/js
+npm ci
+npm run build
 ```
 
-The `python -m ismypwdsafe.main` form works without an installed console script, and it is what you should use when you are editing `cli.py` and have not reinstalled yet.
+Regenerate golden fixtures:
 
-For non-trivial changes please open an issue first to agree on the approach.
+```bash
+python scripts/generate_golden.py --engine ts
+```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+Project layout:
+
+```text
+ismypwdsafe/
+├── engines/          # auto resolution, ts, python, native
+├── js/               # score.mjs, package.json, committed zxcvbn-ts bundle
+├── core.py           # result model, HIBP overlay, exit codes
+├── render.py         # strict JSON + redaction
+├── cli.py            # argparse, stdin, output
+├── ui.py             # terminal report
+├── network.py        # HIBP + optional update check
+└── metrics.py        # native/legacy metrics
+```
 
 ---
 
-## Contact
+## Release process
 
-- **Issues / ideas:** [github.com/Roma476/IsMyPwdSafe/issues](https://github.com/Roma476/IsMyPwdSafe/issues)
-- **Pull requests:** [github.com/Roma476/IsMyPwdSafe/pulls](https://github.com/Roma476/IsMyPwdSafe/pulls)
+The release is intentionally boring. `version.txt` is the single source of
+truth, and a tag is only created after the candidate has been exercised.
 
-If you have a feature in mind that is not on the roadmap, or you disagree with something already on it, say so - the roadmap above is a plan, not a contract.
+1. Set `version.txt` to the candidate version (for example `2.0.0rc1`) and update
+   the changelog.
+2. Run the full local checks:
+   ```bash
+   pytest
+   ruff check .
+   mypy ismypwdsafe
+   python -m build
+   ```
+3. Push the candidate tag. The publish workflow sends tags containing `a`, `b`,
+   or `rc` to TestPyPI.
+4. Install from TestPyPI in a clean environment and run the GitHub Action with
+   the candidate tag, for example:
+   ```yaml
+   uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+   ```
+5. Let the candidate sit for a short soak period. Check the TestPyPI artifact,
+   the Action result, and the CLI output before promoting it.
+6. Only then create the stable tag (`v2.0.0`), publish to PyPI, and merge the
+   release branch into `main`.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+PyPI and TestPyPI publishing uses GitHub OIDC Trusted Publishing. The repository
+must have the `pypi` and `testpypi` environments, and the corresponding trusted
+publishers must be configured on PyPI/TestPyPI for this repository and the
+`publish.yml` workflow. No long-lived PyPI token belongs in GitHub secrets.
 
 ---
 
 ## License
 
-Released under the MIT License. See [`LICENSE`](LICENSE) for the full text.
+MIT. See [LICENSE](LICENSE).

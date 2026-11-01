@@ -1,3 +1,4 @@
+import argparse
 import json
 import time
 from pathlib import Path
@@ -9,6 +10,13 @@ GOLDEN_DIR = Path(__file__).parent.parent / "tests" / "golden"
 CASES_PATH = GOLDEN_DIR / "cases.json"
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--engine",
+        choices=["auto", "ts", "python", "native"],
+        default="auto",
+    )
+    args = parser.parse_args()
     if not CASES_PATH.exists():
         print("Run scripts/generate_golden.py first.")
         return
@@ -18,12 +26,12 @@ def main():
 
     # Run once to warm up
     for pwd in cases:
-        analyze_password(pwd, check_breach=False)
+        analyze_password(pwd, check_breach=False, engine_name=args.engine)
 
     start = time.perf_counter()
     for _ in range(10):  # 10 iterations over all cases
         for pwd in cases:
-            analyze_password(pwd, check_breach=False)
+            analyze_password(pwd, check_breach=False, engine_name=args.engine)
     end = time.perf_counter()
 
     total_runs = len(cases) * 10

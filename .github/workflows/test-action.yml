@@ -3,11 +3,13 @@ name: Test GitHub Action
 on:
   push:
     branches: [v2]
+    tags: ["v2.0.0rc1"]
   pull_request:
     branches: [v2]
 
 jobs:
   test-action:
+    if: github.event_name == 'pull_request' || github.ref_type != 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,12 +39,68 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          password: "password123" # score 30
-          min-score: "50"
+          engine: native
+          password: "vT7#pQ2!" # native score 79, so a 90 threshold fails
+          min-score: "90"
           offline: "true"
           
       - name: Verify min-score failed
         if: steps.minscore_test.outcome == 'success'
         run: |
           echo "Expected min-score to fail, but it succeeded!"
+          exit 1
+
+  test-rc-tag:
+    if: startsWith(github.ref, 'refs/tags/v2.0.0rc')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test released RC action with a strong password
+        uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+        with:
+          password: "correct-horse-battery-staple"
+          offline: "true"
+
+      - name: Test released RC action with a weak password (must fail)
+        id: weak_rc
+        continue-on-error: true
+        uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+        with:
+          password: "password"
+          offline: "true"
+
+      - name: Verify weak RC test failed
+        if: steps.weak_rc.outcome == 'success'
+        run: |
+          echo "Expected the released RC action to reject a weak password."
+          exit 1
+
+      - name: Test released RC action below min-score (must fail)
+        id: minscore_rc
+        continue-on-error: true
+        uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+        with:
+          engine: native
+          password: "vT7#pQ2!"
+          min-score: "90"
+          offline: "true"
+
+      - name: Verify min-score RC test failed
+        if: steps.minscore_rc.outcome == 'success'
+        run: |
+          echo "Expected the released RC action to reject a password below min-score."
+          exit 1
+
+      - name: Test released RC action against live HIBP (must exit 3)
+        id: pwned_rc
+        continue-on-error: true
+        uses: Roma476/IsMyPwdSafe@v2.0.0rc1
+        with:
+          password: "password"
+
+      - name: Verify the released RC action failed closed on HIBP
+        if: steps.pwned_rc.outputs['exit-code'] != '3'
+        run: |
+          echo "Expected a pwned password to exit 3, got '${{ steps.pwned_rc.outputs['exit-code'] }}'."
           exit 1

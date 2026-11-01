@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ismypwdsafe"
-version = "1.5.4"
-description = "The only password audit that doesn't spy on you."
+dynamic = ["version"]
+description = "zxcvbn, but readable. A privacy-first password audit."
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
@@ -22,6 +22,7 @@ test = [
     "pytest-cov>=4.0",
     "hypothesis>=6.0",
     "jsonschema>=4.0",
+    "zxcvbn>=4.4",
 ]
 dev = [
     "ruff>=0.3.0",
@@ -30,6 +31,11 @@ dev = [
     "pip-audit>=2.0.0",
     "cyclonedx-bom>=4.0.0",
 ]
+
+[tool.setuptools]
+# Only ship the generated bundle and its small metadata files. `node_modules`
+# is a local build dependency and must never leak into a wheel or sdist.
+include-package-data = false
 
 [tool.setuptools.package-data]
 ismypwdsafe = ["js/*.js", "js/*.mjs", "js/*.json"]
@@ -58,9 +64,6 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 
-[[tool.mypy.overrides]]
-module = ["ismypwdsafe.core", "ismypwdsafe.patterns"]
-strict = true
 
 [tool.setuptools.dynamic]
 version = {file = "version.txt"}

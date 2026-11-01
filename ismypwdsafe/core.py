@@ -1,114 +1,140 @@
-"""Core analysis engine: data model and orchestration."""
+"""Core analysis: zxcvbn-first result model and orchestration."""
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple, Type
+import math
+from dataclasses import dataclass, field
+from importlib import metadata
+from pathlib import Path
+from typing import Any, Mapping, Optional, Tuple
 
-from . import network, patterns
-from .engines import EngineBackend, NativeEngine, PythonZxcvbnEngine, ZxcvbnTsEngine
-from .metrics import calc_charset, calc_combinations
+from . import network
+from .engines import EngineError, make_engine, resolve_engine
+from .metrics import calc_charset
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = "2.0"
 
-# Exit codes. In 1.3.0 only 0 and 64/65/70 are returned; 1 and 3 are
-# reserved for 1.5.0 when the semantic exit code contract lands.
 EXIT_OK = 0
-EXIT_USAGE = 64
-EXIT_DATA = 65
-EXIT_INTERNAL = 70
+EXIT_WEAK = 1
+EXIT_USAGE = 2
+EXIT_PWNED = 3
+EXIT_ENGINE = 4
+EXIT_HIBP_UNKNOWN = 5
+EXIT_INTERRUPTED = 130
+
+# Backwards-compatible aliases for callers that used the 1.x names.
+EXIT_DATA = EXIT_USAGE
+EXIT_INTERNAL = EXIT_ENGINE
 
 
 @dataclass(frozen=True)
 class InputInfo:
     length: int
     charset_size: int
-    has_lowercase: bool
-    has_uppercase: bool
-    has_digits: bool
-    has_symbols: bool
-
-
-@dataclass(frozen=True)
-class EntropyInfo:
-    log10_value: float
-    combinations: Optional[int]
+    has_lower: bool
+    has_upper: bool
+    has_number: bool
+    has_symbol: bool
+    has_non_ascii: bool
 
 
 @dataclass(frozen=True)
 class ScoreResult:
     value: int
-    rating: str                 # "weak" | "medium" | "strong"
-    base: int                   # entropy-only score before caps
-    capped_by: Optional[str]    # None | "pattern" | "breach"
+    rating: str
+    raw_score_0_4: Optional[int]
+    capped_by: Optional[str] = None
 
 
 @dataclass(frozen=True)
-class HardwareEstimate:
-    key: str
-    label: str
-    attempts_per_second: float
-    seconds: float
+class FeedbackInfo:
+    warning: Optional[str] = None
+    suggestions: Tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
 class AuditResult:
-    schema_version: int
+    schema_version: str
     tool_version: str
     exit_code: int
     error: Optional[str]
     input: Optional[InputInfo]
-    entropy: Optional[EntropyInfo]
-    pattern: Optional[patterns.PatternResult]
-    breach: Optional[network.BreachResult]
     score: Optional[ScoreResult]
-    hardware: Tuple[HardwareEstimate, ...]
-    engine_used: str = "native"
-    zxcvbn_score: Optional[int] = None
+    guesses: Optional[float]
+    guesses_log10: Optional[float]
+    crack_times_seconds: Mapping[str, Optional[float]] = field(default_factory=dict)
+    crack_times_display: Mapping[str, str] = field(default_factory=dict)
+    feedback: Optional[FeedbackInfo] = None
+    sequence: Tuple[Mapping[str, Any], ...] = ()
+    breach: Optional[network.BreachResult] = None
+    engine_requested: str = "auto"
+    engine_used: Optional[str] = None
+    engine_version: Optional[str] = None
+    engine_fallback: bool = False
+    calc_time: Optional[float] = None
 
 
-_HARDWARE_PROFILES = (
-    ("pc_1k", "PC (1K/s)", 1e3),
-    ("server_1m", "Server (1M/s)", 1e6),
-    ("gpu_1b", "GPU Rig (1B/s)", 1e9),
-    ("cluster_1t", "Cluster (1T/s)", 1e12),
-)
-
-
-def calculate_score(
-    log10_value: float,
-    pattern: patterns.PatternResult,
-    breach: network.BreachResult,
-) -> ScoreResult:
-    raw_base = int(min(100, max(0, log10_value * 5)))
-    value = raw_base
-    capped_by = None
-
-    if pattern.detected:
-        value = min(value, 30)
-        capped_by = "pattern"
-    if breach.checked and breach.pwned:
-        value = min(value, 10)
-        capped_by = "breach"
-
-    if pattern.detected or log10_value < 10:
-        rating = "weak"
-    elif log10_value < 14:
-        rating = "medium"
-    else:
-        rating = "strong"
-
-    return ScoreResult(value=value, rating=rating, base=raw_base, capped_by=capped_by)
-
-
-def compute_hardware_estimates(log10_value: float) -> Tuple[HardwareEstimate, ...]:
-    out: list[HardwareEstimate] = []
-    for key, label, aps in _HARDWARE_PROFILES:
+def _tool_version() -> str:
+    # In a source checkout version.txt is authoritative. In an installed wheel
+    # it is absent and package metadata is used instead.
+    version_file = Path(__file__).resolve().parent.parent / "version.txt"
+    try:
+        return version_file.read_text(encoding="utf-8").strip()
+    except OSError:
         try:
-            seconds = (10 ** log10_value) / aps
-        except OverflowError:
-            seconds = float("inf")
-        out.append(HardwareEstimate(key=key, label=label, attempts_per_second=aps, seconds=seconds))
-    return tuple(out)
+            return metadata.version("ismypwdsafe")
+        except metadata.PackageNotFoundError:
+            return "0.0.0+unknown"
+
+
+def _input_info(password: str) -> InputInfo:
+    charset_size, lower, upper, number, symbol, non_ascii = calc_charset(password)
+    return InputInfo(
+        length=len(password),
+        charset_size=charset_size,
+        has_lower=lower,
+        has_upper=upper,
+        has_number=number,
+        has_symbol=symbol,
+        has_non_ascii=non_ascii,
+    )
+
+
+def _error_result(
+    message: str,
+    code: int,
+    requested: str,
+    used: Optional[str] = None,
+) -> AuditResult:
+    return AuditResult(
+        schema_version=SCHEMA_VERSION,
+        tool_version=_tool_version(),
+        exit_code=code,
+        error=message,
+        input=None,
+        score=None,
+        guesses=None,
+        guesses_log10=None,
+        crack_times_seconds={},
+        crack_times_display={},
+        feedback=None,
+        sequence=(),
+        breach=None,
+        engine_requested=requested,
+        engine_used=used,
+        engine_version=None,
+        engine_fallback=False,
+        calc_time=None,
+    )
+
+
+def _finite(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) else None
 
 
 def analyze_password(
@@ -116,110 +142,125 @@ def analyze_password(
     *,
     check_breach: bool = True,
     breach_skip_reason: Optional[str] = None,
-    tool_version: Optional[str] = None,
-    engine_name: str = "native"
+    engine_name: str = "auto",
 ) -> AuditResult:
-    """
-    Run the full audit on a password and return a structured result.
+    """Audit a password and return a normalized, JSON-safe result.
 
-    check_breach=False skips the HIBP request. breach_skip_reason is stored
-    verbatim in result.breach.reason ("offline", "disabled", or None).
-    tool_version defaults to the package __version__ when not provided.
+    ``auto`` uses zxcvbn-ts when Node.js 18+ is available, then zxcvbn-python,
+    and never silently falls back to the native heuristic. The native engine is
+    available only when explicitly requested.
     """
-    if tool_version is None:
-        from . import __version__ as package_version
-        tool_version = package_version
-
+    requested = engine_name or "auto"
     if not password:
-        return AuditResult(
-            schema_version=SCHEMA_VERSION,
-            tool_version=tool_version,
-            exit_code=EXIT_DATA,
-            error="No password provided",
-            input=None, entropy=None, pattern=None, breach=None,
-            score=None, hardware=(),
-            engine_used=engine_name,
-            zxcvbn_score=None,
+        return _error_result(
+            "No password provided. Pass a password as an argument, use '-', "
+            "or provide one on stdin.",
+            EXIT_USAGE,
+            requested,
         )
 
-    charset, has_low, has_upp, has_num, has_sym, _ = calc_charset(password)
-    if charset == 0:
-        return AuditResult(
-            schema_version=SCHEMA_VERSION,
-            tool_version=tool_version,
-            exit_code=EXIT_DATA,
-            error="Could not determine charset",
-            input=None, entropy=None, pattern=None, breach=None,
-            score=None, hardware=(),
-            engine_used=engine_name,
-            zxcvbn_score=None,
+    try:
+        used = resolve_engine(requested)
+        engine = make_engine(used)
+        engine_result = engine.score(password, check_breach=check_breach)
+    except EngineError as exc:
+        return _error_result(str(exc), EXIT_ENGINE, requested)
+    except Exception as exc:  # noqa: BLE001 - CLI must never traceback on engine failure
+        return _error_result(f"Engine failure: {exc}", EXIT_ENGINE, requested)
+
+    if not check_breach:
+        breach = network.BreachResult(
+            checked=False,
+            pwned=None,
+            breach_count=None,
+            reason=breach_skip_reason or "disabled",
         )
-    length = len(password)
-    combinations, log10_value = calc_combinations(charset, length)
-
-    pattern_result = patterns.detect_pattern(password)
-
-    if check_breach:
-        breach_result = network.check_breach(password)
+    elif engine_result.hibp_status == "error":
+        breach = network.BreachResult(True, None, None, "api_error")
     else:
-        breach_result = network.BreachResult(
-            checked=False, pwned=None, breach_count=None, reason=breach_skip_reason,
+        breach = network.BreachResult(
+            checked=True,
+            pwned=engine_result.pwned,
+            breach_count=engine_result.pwned_count,
+            reason=None,
         )
 
-    engines: Dict[str, Type[EngineBackend]] = {
-        "native": NativeEngine,
-        "python": PythonZxcvbnEngine,
-        "ts": ZxcvbnTsEngine
-    }
-    
-    engine_cls = engines.get(engine_name, NativeEngine)
-    engine = engine_cls()
-    
-    engine_result = engine.score(password)
-    
-    raw_base = int(min(100, max(0, log10_value * 5)))
-    
-    # Determine capped_by based on 1.5.4 logic
-    capped_by = None
-    if breach_result.checked and breach_result.pwned:
-        capped_by = "breach"
-    elif pattern_result.detected:
-        capped_by = "pattern"
-    elif engine_result.value < raw_base:
-        capped_by = "engine"
-        
-    score = ScoreResult(
-        value=engine_result.value,
-        rating=engine_result.rating,
-        base=raw_base,
-        capped_by=capped_by
+    value = engine_result.score_100
+    rating = engine_result.rating
+    capped_by: Optional[str] = None
+    if breach.checked and breach.pwned:
+        value = 0
+        rating = "weak"
+        capped_by = "hibp"
+
+    if breach.checked and breach.pwned is None:
+        exit_code = EXIT_HIBP_UNKNOWN
+    elif breach.pwned:
+        exit_code = EXIT_PWNED
+    elif value < 50:
+        exit_code = EXIT_WEAK
+    else:
+        exit_code = EXIT_OK
+
+    feedback = FeedbackInfo(
+        warning=engine_result.feedback_warning,
+        suggestions=tuple(engine_result.feedback_suggestions),
     )
-    hardware = compute_hardware_estimates(log10_value)
 
     return AuditResult(
         schema_version=SCHEMA_VERSION,
-        tool_version=tool_version,
-        exit_code=EXIT_OK,
+        tool_version=_tool_version(),
+        exit_code=exit_code,
         error=None,
-        input=InputInfo(
-            length=length,
-            charset_size=charset,
-            has_lowercase=has_low,
-            has_uppercase=has_upp,
-            has_digits=has_num,
-            has_symbols=has_sym,
+        input=_input_info(password),
+        score=ScoreResult(
+            value=max(0, min(100, int(value))),
+            rating=rating,
+            raw_score_0_4=engine_result.raw_score_0_4,
+            capped_by=capped_by,
         ),
-        entropy=EntropyInfo(log10_value=log10_value, combinations=combinations),
-        pattern=pattern_result,
-        breach=breach_result,
-        score=score,
-        hardware=hardware,
+        guesses=_finite(engine_result.guesses),
+        guesses_log10=_finite(engine_result.guesses_log10),
+        crack_times_seconds={
+            key: _finite(value)
+            for key, value in engine_result.crack_times_seconds.items()
+        },
+        crack_times_display=dict(engine_result.crack_times_display),
+        feedback=feedback,
+        sequence=tuple(engine_result.sequence),
+        breach=breach,
+        engine_requested=requested,
+        engine_used=used,
+        engine_version=engine_result.engine_version,
+        engine_fallback=requested == "auto" and used != "ts",
+        calc_time=_finite(engine_result.calc_time),
     )
 
-def compute_exit_code(score: ScoreResult, breach: network.BreachResult) -> int:
-    """Compute the semantic exit code for CI/CD pipelines."""
-    if breach.checked and breach.pwned:
-        return 3
-    if score.value < 50:
-        return 1
-    return 0
+
+def compute_exit_code(result: AuditResult) -> int:
+    """Return the result's exit code.
+
+    Kept as a small compatibility helper for 1.x callers; new code should read
+    ``AuditResult.exit_code`` directly.
+    """
+    return result.exit_code
+
+
+__all__ = [
+    "AuditResult",
+    "FeedbackInfo",
+    "InputInfo",
+    "SCHEMA_VERSION",
+    "ScoreResult",
+    "analyze_password",
+    "compute_exit_code",
+    "EXIT_DATA",
+    "EXIT_ENGINE",
+    "EXIT_HIBP_UNKNOWN",
+    "EXIT_INTERNAL",
+    "EXIT_INTERRUPTED",
+    "EXIT_OK",
+    "EXIT_PWNED",
+    "EXIT_USAGE",
+    "EXIT_WEAK",
+]

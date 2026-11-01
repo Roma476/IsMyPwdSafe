@@ -1,15 +1,14 @@
 # ruff: noqa: E501
-"""Terminal rendering: ANSI helpers, boxes, animation, print_output."""
+"""Terminal rendering for the zxcvbn-first result model."""
 from __future__ import annotations
 
-import math
 import os
 import re
 import shutil
 import sys
 import textwrap
 import time
-from typing import List, Optional
+from typing import Any, Iterable, Mapping, Sequence
 
 from .core import AuditResult
 
@@ -35,401 +34,358 @@ ANIMATE = sys.stdout.isatty() and USE_COLOR
 
 
 class C:
-    """ANSI color palette. Empty strings if colors are disabled."""
-    RESET   = "\033[0m"       if USE_COLOR else ""
-    BOLD    = "\033[1m"       if USE_COLOR else ""
-    DIM     = "\033[2m"       if USE_COLOR else ""
-    ITALIC  = "\033[3m"       if USE_COLOR else ""
-    UNDER   = "\033[4m"       if USE_COLOR else ""
-
-    BLACK   = "\033[30m"      if USE_COLOR else ""
-    RED     = "\033[31m"      if USE_COLOR else ""
-    GREEN   = "\033[32m"      if USE_COLOR else ""
-    YELLOW  = "\033[33m"      if USE_COLOR else ""
-    BLUE    = "\033[34m"      if USE_COLOR else ""
-    MAGENTA = "\033[35m"      if USE_COLOR else ""
-    CYAN    = "\033[36m"      if USE_COLOR else ""
-    WHITE   = "\033[37m"      if USE_COLOR else ""
-    GRAY    = "\033[90m"      if USE_COLOR else ""
-
-    BRIGHT_RED     = "\033[91m" if USE_COLOR else ""
-    BRIGHT_GREEN   = "\033[92m" if USE_COLOR else ""
-    BRIGHT_YELLOW  = "\033[93m" if USE_COLOR else ""
-    BRIGHT_BLUE    = "\033[94m" if USE_COLOR else ""
-    BRIGHT_MAGENTA = "\033[95m" if USE_COLOR else ""
-    BRIGHT_CYAN    = "\033[96m" if USE_COLOR else ""
-    BRIGHT_WHITE   = "\033[97m" if USE_COLOR else ""
+    RESET = "\033[0m" if USE_COLOR else ""
+    BOLD = "\033[1m" if USE_COLOR else ""
+    DIM = "\033[2m" if USE_COLOR else ""
+    ITALIC = "\033[3m" if USE_COLOR else ""
+    UNDER = "\033[4m" if USE_COLOR else ""
+    RED = "\033[31m" if USE_COLOR else ""
+    GREEN = "\033[32m" if USE_COLOR else ""
+    YELLOW = "\033[33m" if USE_COLOR else ""
+    BLUE = "\033[34m" if USE_COLOR else ""
+    MAGENTA = "\033[35m" if USE_COLOR else ""
+    CYAN = "\033[36m" if USE_COLOR else ""
+    WHITE = "\033[37m" if USE_COLOR else ""
 
 
-def colorize(text: str, *codes: str) -> str:
-    if not USE_COLOR or not codes:
-        return text
-    return "".join(codes) + str(text) + C.RESET
+_ANSI = re.compile(r"\033\[[0-9;]*m")
 
-
-def ok(s: str) -> str:     return colorize(s, C.BRIGHT_GREEN)
-def warn(s: str) -> str:   return colorize(s, C.BRIGHT_YELLOW)
-def err(s: str) -> str:    return colorize(s, C.BRIGHT_RED)
-def info(s: str) -> str:   return colorize(s, C.BRIGHT_CYAN)
-def dim(s: str) -> str:    return colorize(s, C.GRAY)
-def bold(s: str) -> str:   return colorize(s, C.BOLD)
-def accent(s: str) -> str: return colorize(s, C.BRIGHT_MAGENTA, C.BOLD)
-
-
-ANSI_RE = re.compile(r"\033\[[0-9;]*m")
-
-
-def visible_len(s: str) -> int:
-    return len(ANSI_RE.sub("", s))
-
-
-def pad_visible(s: str, width: int, align: str = "left") -> str:
-    v = visible_len(s)
-    p = max(width - v, 0)
-    if align == "left":
-        return s + " " * p
-    if align == "right":
-        return " " * p + s
-    left = p // 2
-    return " " * left + s + " " * (p - left)
-
-
-def truncate_visible(s: str, width: int) -> str:
-    out: List[str] = []
-    vis, i = 0, 0
-    while i < len(s) and vis < width:
-        m = ANSI_RE.match(s, i)
-        if m:
-            out.append(m.group(0))
-            i = m.end()
-        else:
-            out.append(s[i])
-            vis += 1
-            i += 1
-    return "".join(out) + (C.RESET if USE_COLOR else "")
-
-
-# ================== ANIMATION ==================
-
-def typewrite(text: str, delay: float = 0.005, end: str = "\n") -> None:
-    if not ANIMATE:
-        print(text + end.rstrip("\n"))
-        return
-    for ch in text:
-        sys.stdout.write(ch)
-        sys.stdout.flush()
-        time.sleep(delay)
-    sys.stdout.write(end)
-    sys.stdout.flush()
-
-
-def print_lines_animated(lines: List[str], delay: float = 0.015) -> None:
-    if not ANIMATE:
-        for line in lines:
-            print(line)
-        return
-    for line in lines:
-        print(line)
-        sys.stdout.flush()
-        time.sleep(delay)
-
-
-# ================== TERMINAL ==================
 
 def get_width() -> int:
-    return shutil.get_terminal_size((120, 30)).columns
+    return max(40, shutil.get_terminal_size((80, 20)).columns)
 
 
-def clear() -> None:
-    os.system("cls" if os.name == "nt" else "clear")  # noqa: S605
+def dim(text: str) -> str:
+    return f"{C.DIM}{text}{C.RESET}"
 
 
-# ================== UI ==================
-
-def banner() -> None:
-    raw_art = [
-r"                                                                                                        ",
-r"$$$$$$\           $$\      $$\           $$$$$$$\                      $$\  $$$$$$\             $$$$$$\ ",
-r"\_$$  _|          $$$\    $$$ |          $$  __$$\                     $$ |$$  __$$\           $$  __$$\ ",
-r"  $$ |   $$$$$$$\ $$$$\  $$$$ |$$\   $$\ $$ |  $$ |$$\  $$\  $$\  $$$$$$$ |$$ /  \__| $$$$$$\  $$ /  \__|$$$$$$\ ",
-r"  $$ |  $$  _____|$$\$$\$$ $$ |$$ |  $$ |$$$$$$$  |$$ | $$ | $$ |$$  __$$ |\$$$$$$\   \____$$\ $$$$\    $$  __$$\ ",
-r"  $$ |  \$$$$$$\  $$ \$$$  $$ |$$ |  $$ |$$  ____/ $$ | $$ | $$ |$$ /  $$ | \____$$\  $$$$$$$ |$$  _|   $$$$$$$$ |",
-r"  $$ |   \____$$\ $$ |\$  /$$ |$$ |  $$ |$$ |      $$ | $$ | $$ |$$ |  $$ |$$\   $$ |$$  __$$ |$$ |     $$   ____|",
-r"$$$$$$\ $$$$$$$  |$$ | \_/ $$ |\$$$$$$$ |$$ |      \$$$$$\$$$$  |\$$$$$$$ |\$$$$$$  |\$$$$$$$ |$$ |     \$$$$$$$\ ",
-r"\______|\_______/ \__|     \__| \____$$ |\__|       \_____\____/  \_______| \______/  \_______|\__|      \_______|",
-r"                               $$\   $$ |",
-r"                               \$$$$$$  |",
-r"                                \______/",
-    ]
-    art = [line.replace('\xa0', ' ') for line in raw_art]
-
-    clear()
-    width = get_width()
-    max_art_width = max(len(line) for line in art)
-    block_pad = max((width - max_art_width) // 2, 0)
-
-    for line in art:
-        print(" " * block_pad + colorize(line, C.BRIGHT_CYAN, C.BOLD))
-
-    subtitle = "IsMyPwdSafe Engine -> The only password audit that doesn't spy on you."
-    pad_sub = max((width - len(subtitle)) // 2, 0)
-    credits = "Made by Robert Gabriel Friciu"
-    pad_cred = max((width - len(credits)) // 2, 0)
-    print()
-
-    if ANIMATE:
-        sys.stdout.write(" " * pad_sub)
-        typewrite(colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC), delay=0.005)
-        sys.stdout.write(" " * pad_cred)
-        typewrite(colorize(credits, C.GRAY), delay=0.005)
-        print()
-    else:
-        print(" " * pad_sub + colorize(subtitle, C.BRIGHT_MAGENTA, C.ITALIC))
-        print(" " * pad_cred + colorize(credits, C.GRAY) + "\n")
+def bold(text: str) -> str:
+    return f"{C.BOLD}{text}{C.RESET}"
 
 
-def make_box(title: str, lines: List[str], width: int,
-             title_color: Optional[str] = None) -> List[str]:
-    box: List[str] = []
-    box.append("╔" + "═" * (width - 2) + "╗")
-    tc = title_color if title_color is not None else C.BRIGHT_WHITE
-    inner = (width - 2 - len(title)) // 2
-    right_pad = (width - 2 - len(title)) - inner
-    colored_title = " " * inner + colorize(title, tc, C.BOLD) + " " * right_pad
-    box.append("║" + colored_title + "║")
-    box.append("╠" + "═" * (width - 2) + "╣")
+def err(text: str) -> str:
+    return f"{C.RED}{text}{C.RESET}"
+
+
+def warn(text: str) -> str:
+    return f"{C.YELLOW}{text}{C.RESET}"
+
+
+def ok(text: str) -> str:
+    return f"{C.GREEN}{text}{C.RESET}"
+
+
+def _visible_len(text: str) -> int:
+    return len(_ANSI.sub("", text))
+
+
+def _pad(text: str, width: int) -> str:
+    return text + " " * max(0, width - _visible_len(text))
+
+
+def _color_for_rating(rating: str) -> str:
+    if rating == "weak":
+        return C.RED
+    if rating == "medium":
+        return C.YELLOW
+    return C.GREEN
+
+
+def _bar(percent: int, width: int = 30) -> str:
+    percent = max(0, min(100, percent))
+    filled = round(width * percent / 100)
+    return "█" * filled + "░" * (width - filled)
+
+
+def _box(title: str, lines: Sequence[str], *, color: str = "") -> list[str]:
+    width = min(get_width() - 2, 76)
+    inner = max(20, width - 4)
+    rendered: list[str] = []
+    title_text = f" {title} "
+    top_left = "┌" + title_text
+    top = top_left + "─" * max(0, width - _visible_len(top_left) - 1) + "┐"
+    rendered.append((color or "") + top + C.RESET)
     for line in lines:
-        padded = pad_visible(line, width - 4)
-        padded = truncate_visible(padded, width - 4)
-        box.append("║ " + padded + " ║")
-    box.append("╚" + "═" * (width - 2) + "╝")
-    return box
+        if not line:
+            rendered.append((color or "") + "│" + C.RESET + " " * (width - 2) + (color or "") + "│" + C.RESET)
+            continue
+        wrapped = textwrap.wrap(
+            str(line),
+            width=inner,
+            break_long_words=True,
+            break_on_hyphens=False,
+            replace_whitespace=False,
+        ) or [""]
+        for part in wrapped:
+            rendered.append(
+                (color or "")
+                + "│"
+                + C.RESET
+                + " "
+                + _pad(part, inner)
+                + " "
+                + (color or "")
+                + "│"
+                + C.RESET
+            )
+    rendered.append((color or "") + "└" + "─" * (width - 2) + "┘" + C.RESET)
+    return rendered
 
 
-def merge_boxes(left: List[str], right: List[str], width: int) -> None:
-    col = width // 2
-    left = list(left)
-    right = list(right)
-    max_rows = max(len(left), len(right))
-    left  += ["║" + " " * (col - 2) + " ║"] * (max_rows - len(left))
-    right += ["║" + " " * (col - 2) + " ║"] * (max_rows - len(right))
-    for left_line, right_line in zip(left, right):
-        print(pad_visible(truncate_visible(left_line, col), col) + pad_visible(truncate_visible(right_line, col), col))
-        if ANIMATE:
-            sys.stdout.flush()
+def _print_lines(lines: Iterable[str], *, animate: bool = False) -> None:
+    for line in lines:
+        print(line)
+        if animate:
             time.sleep(0.012)
 
 
-def progress_bar(value: float, max_value: float, width: int,
-                 colored: bool = False) -> str:
-    if max_value == 0 or width <= 0:
-        return "░" * max(width, 0)
-    ratio = min(max(value / max_value, 0), 1)
-    filled = int(ratio * width)
-    bar_filled = "█" * filled
-    bar_empty = "░" * (width - filled)
-    if not colored or not USE_COLOR:
-        return bar_filled + bar_empty
-    if ratio < 0.35:
-        col = C.BRIGHT_RED
-    elif ratio < 0.65:
-        col = C.BRIGHT_YELLOW
-    else:
-        col = C.BRIGHT_GREEN
-    return col + bar_filled + C.RESET + C.GRAY + bar_empty + C.RESET
+def _banner() -> None:
+    if ANIMATE:
+        print("\033[2J\033[H", end="")
+    title = "IsMyPwdSafe"
+    tagline = "zxcvbn, but readable"
+    line = f"{bold(C.CYAN + title)} {dim('·')} {dim(tagline)}"
+    print()
+    print("  " + line)
+    print()
 
 
-def format_time(time_seconds: float) -> str:
-    if time_seconds < 1:
-        return "Instant"
-    if time_seconds < 60:
-        return f"{time_seconds:.1f} s"
-    if time_seconds < 3600:
-        return f"{time_seconds / 60:.1f} min"
-    if time_seconds < 86400:
-        return f"{time_seconds / 3600:.1f} hrs"
-    
-    days = time_seconds / 86400
-    if days < 365:
-        return f"{days:.1f} days"
-        
-    years = days / 365
-    if years < 1000:
-        return f"{years:.1f} y"
-    return "1000+ y"
+def _input_lines(result: AuditResult, password: str, mask_mode: bool) -> list[str]:
+    info = result.input
+    if info is None:
+        return []
+    shown = "*" * len(password) if mask_mode else password
+    flags = []
+    if info.has_lower:
+        flags.append("lower")
+    if info.has_upper:
+        flags.append("upper")
+    if info.has_number:
+        flags.append("numbers")
+    if info.has_symbol:
+        flags.append("symbols")
+    if info.has_non_ascii:
+        flags.append("non-ASCII")
+    return [
+        f"Password:  {shown or '(empty)'}",
+        f"Length:    {info.length}",
+        f"Charset:   {info.charset_size} [{', '.join(flags) or 'none'}]",
+    ]
 
 
-# ================== OUTPUT ==================
+def _score_lines(result: AuditResult) -> list[str]:
+    score = result.score
+    if score is None:
+        return ["No score available."]
+    color = _color_for_rating(score.rating)
+    label = score.rating.upper()
+    raw = (
+        f"zxcvbn {score.raw_score_0_4}/4"
+        if score.raw_score_0_4 is not None
+        else "native heuristic (no zxcvbn score)"
+    )
+    lines = [
+        f"{color}{C.BOLD}{label}{C.RESET}  {color}{score.value}/100{C.RESET}   {dim(raw)}",
+        f"{color}{_bar(score.value)}{C.RESET}",
+    ]
+    if score.capped_by == "hibp":
+        lines.append(err("Score forced to 0 because the password appears in a breach."))
+    if result.engine_used == "native":
+        lines.append(warn("Legacy native engine: no sequence, feedback, or crack-time detail."))
+    return lines
 
-def print_output(result: AuditResult, password: str,
-                 mask_mode: bool = False, view: str = "full") -> None:
-    """Render an AuditResult. view: "full" | "short" | "darkweb"."""
-    width = get_width()
-    col_w = width // 2
+
+_CRACK_LABELS = {
+    "online_throttling_100_per_hour": "Online, throttled (100/hour)",
+    "online_no_throttling_10_per_second": "Online, unthrottled (10/sec)",
+    "offline_slow_hashing_1e4_per_second": "Offline, slow hash (10k/sec)",
+    "offline_fast_hashing_1e10_per_second": "Offline, fast hash (10B/sec)",
+}
+
+
+def _crack_lines(result: AuditResult) -> list[str]:
+    if not result.crack_times_display:
+        return ["No zxcvbn crack-time estimate available."]
+    lines = []
+    for key, label in _CRACK_LABELS.items():
+        value = result.crack_times_display.get(key)
+        if value:
+            lines.append(f"{label:<34} {bold(value)}")
+    return lines
+
+
+def _format_number(value: Any) -> str:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return "?"
+    if number >= 1e15:
+        return f"{number:.2e}"
+    if number >= 1000:
+        return f"{number:,.0f}"
+    if number >= 1:
+        return f"{number:.2f}".rstrip("0").rstrip(".")
+    return f"{number:.3g}"
+
+
+def _match_detail(match: Mapping[str, Any]) -> str:
+    pattern = str(match.get("pattern") or "unknown")
+    if pattern == "dictionary":
+        detail = f"dictionary: {match.get('dictionary_name') or '?'}"
+        if match.get("rank") is not None:
+            detail += f", rank {match.get('rank')}"
+        if match.get("reversed"):
+            detail += ", reversed"
+        if match.get("l33t"):
+            detail += ", l33t"
+        return detail
+    if pattern == "spatial":
+        return f"keyboard: {match.get('graph') or '?'}, {match.get('turns') or '?'} turns"
+    if pattern == "repeat":
+        return f"repeated {match.get('repeat_count') or '?'} times"
+    if pattern == "sequence":
+        return f"sequence: {match.get('sequence_name') or '?'}"
+    if pattern == "regex":
+        return f"regex: {match.get('regex_name') or '?'}"
+    if pattern == "date":
+        parts = [match.get("year"), match.get("month"), match.get("day")]
+        if any(part is not None for part in parts):
+            return "date: " + "-".join(str(part or "?") for part in parts)
+        return "date pattern"
+    if pattern == "bruteforce":
+        return "brute-force"
+    if pattern == "pwned":
+        return "found in HaveIBeenPwned"
+    return pattern
+
+
+def _sequence_lines(result: AuditResult, mask_mode: bool) -> list[str]:
+    if not result.sequence:
+        if result.engine_used == "native":
+            return ["Native engine does not expose sequence matches."]
+        return ["No matches: zxcvbn did not find a recognisable pattern."]
+    lines = []
+    for index, match in enumerate(result.sequence, start=1):
+        token = str(match.get("token") or "")
+        shown = "*" * len(token) if mask_mode else token
+        shown = shown if shown else "(empty)"
+        detail = _match_detail(match)
+        guesses = _format_number(match.get("guesses"))
+        lines.append(
+            f"{index:>2}. {bold(shown)}  {detail}  {dim('guesses: ' + guesses)}"
+        )
+    return lines
+
+
+def _feedback_lines(result: AuditResult) -> list[str]:
+    feedback = result.feedback
+    if feedback is None:
+        return ["No feedback available."]
+    lines: list[str] = []
+    if feedback.warning:
+        lines.append(err(f"Warning: {feedback.warning}"))
+    if feedback.suggestions:
+        lines.append("Suggestions:")
+        lines.extend(f"  • {item}" for item in feedback.suggestions)
+    if not lines:
+        lines.append("No specific zxcvbn feedback.")
+    return lines
+
+
+def _breach_lines(result: AuditResult) -> tuple[list[str], str]:
+    breach = result.breach
+    if breach is None:
+        return ["No breach information available."], C.DIM
+    if not breach.checked:
+        if breach.reason == "offline":
+            return [
+                warn("OFFLINE: breach check skipped because --offline was used."),
+                dim("No network request was made."),
+            ], C.YELLOW
+        return [
+            warn("Breach check disabled."),
+            dim("Use the default mode (without --no-breach-check) to enable HIBP."),
+        ], C.YELLOW
+    if breach.pwned is None or breach.reason == "api_error":
+        return [
+            err("UNKNOWN: HaveIBeenPwned could not be reached."),
+            "This password must not be treated as safe.",
+            dim("Exit code 5 indicates an unknown breach status."),
+        ], C.RED
+    if breach.pwned:
+        count = _format_number(breach.breach_count) if breach.breach_count else "many"
+        return [
+            err("FOUND IN DATA BREACHES"),
+            f"Seen {bold(count)} times in the HaveIBeenPwned corpus.",
+            "Change this password everywhere it is used.",
+        ], C.RED
+    return [
+        ok("Not found in HaveIBeenPwned."),
+        dim("Checked with k-anonymity: only a 5-character SHA-1 prefix was sent."),
+    ], C.GREEN
+
+
+def _engine_line(result: AuditResult) -> str:
+    if result.engine_used is None:
+        requested = result.engine_requested
+        return dim(f"Engine: unavailable (requested: {requested})")
+    version = f" {result.engine_version}" if result.engine_version else ""
+    line = f"Engine: {result.engine_used}{version}"
+    if result.engine_fallback:
+        line += " (auto fallback: Node/zxcvbn-ts unavailable)"
+    if result.calc_time is not None:
+        line += f"  ·  {result.calc_time:.0f} ms"
+    return dim(line)
+
+
+def print_output(
+    result: AuditResult,
+    password: str,
+    mask_mode: bool = False,
+    view: str = "full",
+) -> None:
+    """Print a result in full, short, or dark-web-only mode."""
+    _banner()
 
     if result.error:
-        print(err("[!] " + result.error))
+        _print_lines(_box("ERROR", [err(result.error)], color=C.RED))
+        if result.engine_used is None and result.engine_requested:
+            print(dim(f"Requested engine: {result.engine_requested}"))
         return
 
-    assert result.input is not None
-    assert result.entropy is not None
-    assert result.pattern is not None
-    assert result.breach is not None
-    assert result.score is not None
+    if view == "darkweb":
+        breach, color = _breach_lines(result)
+        _print_lines(_box("BREACH CHECK", breach, color=color))
+        print(_engine_line(result))
+        return
 
-    show_full    = view == "full"
-    show_darkweb = view in ("full", "darkweb")
-    show_overall = view in ("full", "short")
+    if view == "short":
+        _print_lines(_box("SCORE", _score_lines(result), color=_color_for_rating(result.score.rating if result.score else "weak")))
+        breach, color = _breach_lines(result)
+        _print_lines(_box("BREACH CHECK", breach, color=color))
+        print(_engine_line(result))
+        return
 
-    if show_full:
-        banner()
+    _print_lines(_box("INPUT", _input_lines(result, password, mask_mode), color=C.CYAN))
+    score_color = _color_for_rating(result.score.rating if result.score else "weak")
+    _print_lines(_box("SCORE", _score_lines(result), color=score_color))
+    _print_lines(_box("TIME TO CRACK", _crack_lines(result), color=C.BLUE))
+    _print_lines(_box("WHY", _sequence_lines(result, mask_mode), color=C.MAGENTA))
+    _print_lines(_box("FEEDBACK", _feedback_lines(result), color=C.YELLOW))
+    breach, breach_color = _breach_lines(result)
+    _print_lines(_box("BREACH CHECK", breach, color=breach_color))
+    print(_engine_line(result))
 
-        L = result.input.length
-        charset = result.input.charset_size
-        comb_str = (
-            f"{result.entropy.combinations:,}"
-            if result.entropy.combinations is not None
-            else f"10^{result.entropy.log10_value:.2f}"
-        )
-        display_pwd = "*" * L if mask_mode else password
 
-        pwd_label = colorize("Password: ", C.GRAY)
-        pwd_value = colorize(display_pwd, C.BRIGHT_WHITE, C.BOLD)
-        len_label = colorize("Length: ", C.GRAY)
-        len_value = colorize(str(L), C.BRIGHT_WHITE, C.BOLD)
-        cs_label  = colorize("Total Charset: ", C.GRAY)
-        cs_value  = colorize(str(charset), C.BRIGHT_WHITE, C.BOLD)
-
-        input_box = make_box("INPUT METRICS", [
-            f"{pwd_label}{pwd_value}  │  {len_label}{len_value} characters  │  {cs_label}{cs_value} options"
-        ], width)
-        print_lines_animated(input_box, delay=0.015)
-        print()
-
-        status_low = ok("[✔] Present") if result.input.has_lowercase else err("[✘] Missing")
-        status_upp = ok("[✔] Present") if result.input.has_uppercase else err("[✘] Missing")
-        status_num = ok("[✔] Present") if result.input.has_digits    else err("[✘] Missing")
-        status_sym = ok("[✔] Present") if result.input.has_symbols   else err("[✘] Missing")
-
-        in_top150 = result.pattern.detected and result.pattern.rule == "top150"
-        status_top150 = err("[✘] Found") if in_top150 else ok("[✔] Clean")
-
-        search_lines = [
-            f"Combinations : {colorize(comb_str, C.BRIGHT_WHITE, C.BOLD)}",
-            f"Lowercase a-z: {status_low}",
-            f"Uppercase A-Z: {status_upp}",
-            f"Digits 0-9   : {status_num}",
-            f"Symbols !@#$ : {status_sym}",
-            f"Top 150 List : {status_top150}",
-        ]
-        if result.pattern.detected:
-            search_lines.append("Pattern Risk : " + warn("[!] " + str(result.pattern.detail)))
-        else:
-            search_lines.append("Pattern Risk : " + ok("[+] No structural patterns found"))
-
-        box_search = make_box("SEARCH SPACE & STRUCTURAL ANALYSIS", search_lines, col_w)
-
-        graph_lines: List[str] = []
-        for hw in result.hardware:
-            time_str = format_time(hw.seconds)
-            bar_value = math.log10(hw.seconds) if hw.seconds > 0 else 0
-            bar = progress_bar(bar_value, 12, col_w - 36)
-            graph_lines.append(
-                "{} [{}] {}".format(
-                    colorize(f"{hw.label:<14}", C.GRAY),
-                    colorize(bar, C.WHITE),
-                    colorize(time_str, C.BRIGHT_WHITE),
-                )
-            )
-
-        if result.pattern.detected:
-            graph_lines.append("")
-            disclaimer_text = (
-                "[!] The presence of known patterns makes cracking this password "
-                "significantly faster than brute-force estimates. "
-                "(in the scale of milliseconds to seconds)"
-            )
-            for line in textwrap.wrap(disclaimer_text, width=col_w - 4):
-                graph_lines.append(warn(line))
-
-        while len(graph_lines) < len(search_lines):
-            graph_lines.append("")
-
-        box_hardware = make_box("RESISTANCE BY HARDWARE", graph_lines, col_w)
-        merge_boxes(box_search, box_hardware, width)
-        print()
-
-    if show_darkweb:
-        b = result.breach
-        if b.reason == "offline":
-            risk_status = warn("[!] OFFLINE MODE: BREACH CHECK SKIPPED")
-            risk_details = dim("Run without -o/--offline to check this password against the HIBP breach database.")
-        elif b.reason == "disabled":
-            risk_status = warn("[!] BREACH CHECK DISABLED (--no-breach-check)")
-            risk_details = dim("The HIBP request was skipped on request. Run without --no-breach-check to enable it.")
-        elif b.reason == "api_error":
-            risk_status = warn("[x] AN ERROR OCCURRED WHILE CHECKING DARK WEB DATABASES")
-            risk_details = dim("The HIBP API is unreachable. The audit was computed without the breach cap.")
-        elif b.pwned:
-            risk_status = colorize(
-                "[!] CRITICAL ALERT: CREDENTIAL EXPOSED IN DARK WEB DATABASE LEAKS!",
-                C.BRIGHT_RED, C.BOLD,
-            )
-            risk_details = colorize(
-                f"This exact password was found leaked {b.breach_count:,} times online. Hackers already know it.",
-                C.BRIGHT_RED,
-            )
-        else:
-            risk_status = ok("[+] DATABASE CLEAN: NO MATCHES FOUND")
-            risk_details = ok("Good news. This password asset does not appear in any known public data breaches.")
-
-        darkweb_box = make_box("DARKWEB SCANNER", [risk_status, risk_details],
-                               width, title_color=C.BRIGHT_MAGENTA)
-        if show_full:
-            print_lines_animated(darkweb_box, delay=0.02)
-        else:
-            print("\n".join(darkweb_box))
-        print()
-
-    if show_overall:
-        s = result.score
-        lvl = s.rating.upper()
-        score = s.value
-        lvl_color = {
-            "WEAK":   C.BRIGHT_RED,
-            "MEDIUM": C.BRIGHT_YELLOW,
-            "STRONG": C.BRIGHT_GREEN,
-        }[lvl]
-        lvl_fill = score / 100.0
-        lvl_colored = colorize(f"{lvl} {score}/100", lvl_color, C.BOLD)
-
-        if ANIMATE and show_full:
-            bar_width = width - 38
-            target_fill = int(bar_width * lvl_fill)
-
-            print("╔" + "═" * (width - 2) + "╗")
-            title = "OVERALL SECURITY ASSESSMENT"
-            inner = (width - 2 - len(title)) // 2
-            right_pad = (width - 2 - len(title)) - inner
-            colored_title = " " * inner + colorize(title, C.BRIGHT_WHITE, C.BOLD) + " " * right_pad
-            print("║" + colored_title + "║")
-            print("╠" + "═" * (width - 2) + "╣")
-
-            for f in range(0, target_fill + 1, max(1, target_fill // 30)):
-                bar = lvl_color + "█" * f + C.RESET + C.GRAY + "░" * (bar_width - f) + C.RESET
-                sys.stdout.write("\r║ [{}] {} {}".format(
-                    bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
-                sys.stdout.flush()
-                time.sleep(0.008)
-            bar = lvl_color + "█" * target_fill + C.RESET + C.GRAY + "░" * (bar_width - target_fill) + C.RESET
-            sys.stdout.write("\r║ [{}] {} {}".format(
-                bar, lvl_colored, " " * (width - 6 - bar_width - len(lvl) - 8)))
-            sys.stdout.flush()
-            print("\n╚" + "═" * (width - 2) + "╝")
-        else:
-            bar_width = width - 38
-            filled = int(bar_width * lvl_fill)
-            bar = lvl_color + "█" * filled + C.RESET + C.GRAY + "░" * (bar_width - filled) + C.RESET
-            for line in make_box("OVERALL SECURITY ASSESSMENT",
-                                 [f"[{bar}] {lvl_colored}"], width):
-                print(line)
+__all__ = [
+    "ANIMATE",
+    "C",
+    "USE_COLOR",
+    "bold",
+    "dim",
+    "err",
+    "get_width",
+    "ok",
+    "print_output",
+    "warn",
+]

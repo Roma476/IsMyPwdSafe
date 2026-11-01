@@ -1,31 +1,214 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/Roma476/IsMyPwdSafe/schema/result.schema.json",
+  "title": "IsMyPwdSafe result v2",
   "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_version",
+    "exit_code",
+    "error",
+    "input",
+    "score",
+    "guesses",
+    "guesses_log10",
+    "crack_times_seconds",
+    "crack_times_display",
+    "feedback",
+    "sequence",
+    "breach",
+    "engine_requested",
+    "engine_used",
+    "engine_version",
+    "engine_fallback",
+    "calc_time",
+    "redacted"
+  ],
   "properties": {
-    "schema_version": {"type": "string"},
-    "tool_version": {"type": "string"},
-    "exit_code": {"type": "integer"},
-    "error": {"type": ["string", "null"]},
-    "engine_used": {"type": "string"},
-    "zxcvbn_score": {"type": ["integer", "null"]},
-    "score": {
-      "type": ["object", "null"],
-      "properties": {
-        "value": {"type": "integer"},
-        "rating": {"type": "string"},
-        "base": {"type": "integer"},
-        "capped_by": {"type": ["string", "null"]}
-      },
-      "required": ["value", "rating"]
+    "schema_version": {
+      "const": "2.0"
     },
-    "pattern": {
-      "type": ["object", "null"],
+    "tool_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "type": "integer",
+      "enum": [0, 1, 2, 3, 4, 5, 130]
+    },
+    "error": {
+      "type": ["string", "null"]
+    },
+    "input": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "length",
+            "charset_size",
+            "has_lower",
+            "has_upper",
+            "has_number",
+            "has_symbol",
+            "has_non_ascii"
+          ],
+          "properties": {
+            "length": {"type": "integer", "minimum": 0},
+            "charset_size": {"type": "integer", "minimum": 0},
+            "has_lower": {"type": "boolean"},
+            "has_upper": {"type": "boolean"},
+            "has_number": {"type": "boolean"},
+            "has_symbol": {"type": "boolean"},
+            "has_non_ascii": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "score": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "rating", "raw_score_0_4", "capped_by"],
+          "properties": {
+            "value": {"type": "integer", "minimum": 0, "maximum": 100},
+            "rating": {"enum": ["weak", "medium", "strong"]},
+            "raw_score_0_4": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "maximum": 4
+            },
+            "capped_by": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      ]
+    },
+    "guesses": {
+      "type": ["number", "null"]
+    },
+    "guesses_log10": {
+      "type": ["number", "null"]
+    },
+    "crack_times_seconds": {
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "detected": {"type": "boolean"},
-        "rules_fired": {"type": "array", "items": {"type": "string"}}
-      },
-      "required": ["detected", "rules_fired"]
+        "online_throttling_100_per_hour": {"type": ["number", "null"]},
+        "online_no_throttling_10_per_second": {"type": ["number", "null"]},
+        "offline_slow_hashing_1e4_per_second": {"type": ["number", "null"]},
+        "offline_fast_hashing_1e10_per_second": {"type": ["number", "null"]}
+      }
+    },
+    "crack_times_display": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "online_throttling_100_per_hour": {"type": "string"},
+        "online_no_throttling_10_per_second": {"type": "string"},
+        "offline_slow_hashing_1e4_per_second": {"type": "string"},
+        "offline_fast_hashing_1e10_per_second": {"type": "string"}
+      }
+    },
+    "feedback": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["warning", "suggestions"],
+          "properties": {
+            "warning": {"type": ["string", "null"]},
+            "suggestions": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      ]
+    },
+    "sequence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern", "i", "j"],
+        "additionalProperties": true,
+        "properties": {
+          "pattern": {"type": "string"},
+          "i": {"type": "integer", "minimum": 0},
+          "j": {"type": "integer", "minimum": 0},
+          "token": {"type": ["string", "null"]},
+          "matched_word": {"type": ["string", "null"]},
+          "dictionary_name": {"type": ["string", "null"]},
+          "rank": {"type": ["integer", "null"]},
+          "guesses": {"type": ["number", "null"]},
+          "guesses_log10": {"type": ["number", "null"]},
+          "reversed": {"type": ["boolean", "null"]},
+          "l33t": {"type": ["boolean", "null"]},
+          "graph": {"type": ["string", "null"]},
+          "turns": {"type": ["integer", "null"]},
+          "repeat_count": {"type": ["integer", "null"]},
+          "sequence_name": {"type": ["string", "null"]},
+          "regex_name": {"type": ["string", "null"]},
+          "year": {"type": ["integer", "null"]},
+          "month": {"type": ["integer", "null"]},
+          "day": {"type": ["integer", "null"]},
+          "pwned_amount": {"type": ["integer", "null"]}
+        }
+      }
+    },
+    "breach": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["checked", "pwned", "breach_count", "reason"],
+          "properties": {
+            "checked": {"type": "boolean"},
+            "pwned": {"type": ["boolean", "null"]},
+            "breach_count": {
+              "type": ["integer", "null"],
+              "minimum": 0
+            },
+            "reason": {
+              "enum": [null, "offline", "disabled", "api_error"]
+            }
+          }
+        }
+      ]
+    },
+    "engine_requested": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engine_used": {
+      "enum": ["ts", "python", "native", null]
+    },
+    "engine_version": {
+      "type": ["string", "null"]
+    },
+    "engine_fallback": {
+      "type": "boolean"
+    },
+    "calc_time": {
+      "type": ["number", "null"]
+    },
+    "redacted": {
+      "type": "boolean"
     }
-  },
-  "required": ["schema_version", "tool_version", "exit_code", "engine_used"]
+  }
 }

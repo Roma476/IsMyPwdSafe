@@ -5,6 +5,7 @@ on:
     branches: [main, v2]
   pull_request:
     branches: [main, v2]
+
 jobs:
   test:
     name: ${{ matrix.os }} / py${{ matrix.python }}
@@ -19,6 +20,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - name: Install
         run: |
           python -m pip install --upgrade pip
@@ -27,8 +31,76 @@ jobs:
       - name: Lint with ruff
         run: ruff check .
 
-      - name: Type check with mypy
-        run: mypy ismypwdsafe/core.py ismypwdsafe/patterns.py
+      - name: Type check
+        run: mypy ismypwdsafe
 
       - name: Run tests with coverage
         run: pytest --cov=ismypwdsafe --cov-report=term-missing
+
+  javascript-bundle:
+    name: JavaScript bundle / Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["18", "20"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install JS dependencies
+        working-directory: ismypwdsafe/js
+        run: npm ci
+      - name: Rebuild bundle
+        working-directory: ismypwdsafe/js
+        run: npm run build
+      - name: Verify committed bundle is current
+        run: git diff --exit-code -- ismypwdsafe/js/zxcvbn-ts.bundle.js
+      - name: Smoke-test crypto and HIBP matching without network
+        working-directory: ismypwdsafe/js
+        run: |
+          printf '%s' '{"password":"password","check_breach":true}' \
+            | node --input-type=module -e "globalThis.fetch=async()=>({status:200,text:async()=> '1E4C9B93F3F0682250B6CF8331B7EE68FD8:42'}); await import('./zxcvbn-ts.bundle.js')" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['pwned'] is True and d['pwned_count']==42, d; print('HIBP match OK')"
+
+  package:
+    name: Build package
+    runs-on: ubuntu-latest
+    needs: [test, javascript-bundle]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build
+        run: python -m pip install build
+      - name: Build wheel and sdist
+        run: python -m build
+      - name: Verify distributions do not contain node_modules
+        run: |
+          python - <<'PY'
+          import glob
+          import tarfile
+          import zipfile
+
+          for wheel in glob.glob("dist/*.whl"):
+              with zipfile.ZipFile(wheel) as z:
+                  bad = [n for n in z.namelist() if "node_modules" in n]
+                  assert not bad, (wheel, bad[:5])
+
+          for sdist in glob.glob("dist/*.tar.gz"):
+              with tarfile.open(sdist) as t:
+                  bad = [n for n in t.getnames() if "node_modules" in n]
+                  assert not bad, (sdist, bad[:5])
+
+          print("no node_modules in distributions")
+          PY
+      - name: Verify wheel version matches version.txt
+        run: |
+          python -c "import glob, pathlib; v=pathlib.Path('version.txt').read_text().strip(); w=glob.glob('dist/*.whl')[0]; print(w); assert f'ismypwdsafe-{v}-' in w"
+      - name: Store distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/

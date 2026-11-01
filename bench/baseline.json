@@ -1,7 +1,7 @@
 {
-  "cases": 140,
+  "cases": 42,
   "iterations": 10,
-  "total_runs": 1400,
-  "total_time_seconds": 0.14275780000025406,
-  "avg_time_per_run_ms": 0.10196985714303862
+  "total_runs": 420,
+  "total_time_seconds": 1.0193652710004244,
+  "avg_time_per_run_ms": 2.4270601690486298
 }

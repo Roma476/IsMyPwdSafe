@@ -38,8 +38,10 @@ python -m pytest -v
 python -m ruff check .
 
 # Run the type checker
-python -m mypy ismypwdsafe/core.py ismypwdsafe/patterns.py
+python -m mypy ismypwdsafe
 ```
+
+Node.js 18+ is required for the zxcvbn-ts engine and its golden tests. The test suite does not call HIBP; breach checks are disabled or mocked.
 
 ## Pull Request Guidelines
 

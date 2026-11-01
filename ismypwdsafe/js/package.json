@@ -2,12 +2,19 @@
   "name": "ismypwdsafe-js",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "esbuild score.mjs --bundle --platform=node --format=esm --outfile=zxcvbn-ts.bundle.js"
+  },
   "dependencies": {
-    "@zxcvbn-ts/core": "^3.0.0",
-    "@zxcvbn-ts/language-common": "^3.0.0",
-    "@zxcvbn-ts/language-en": "^3.0.0"
+    "@zxcvbn-ts/core": "^4.2.0",
+    "@zxcvbn-ts/language-common": "^4.1.3",
+    "@zxcvbn-ts/language-en": "^4.1.1",
+    "@zxcvbn-ts/matcher-pwned": "^4.1.3"
   },
   "devDependencies": {
-    "esbuild": "^0.20.0"
+    "esbuild": "^0.25.0"
   }
 }

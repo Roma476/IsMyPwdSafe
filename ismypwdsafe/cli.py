@@ -1,4 +1,4 @@
-"""Command-line interface: argparse, update check, exit code orchestration."""
+"""Command-line interface: argparse, input handling, and exit codes."""
 from __future__ import annotations
 
 import argparse
@@ -7,89 +7,116 @@ import sys
 from typing import Optional
 
 from . import __version__, network
-from .core import analyze_password, compute_exit_code
+from .core import analyze_password
 from .render import render_json
 from .ui import dim, err, get_width, print_output, warn
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="IsMyPwdSafe CLI Engine - The only password tester that doesn't spy on you.",
-        usage="imps [-M] [-o | --no-breach-check] [-s | -dw] <password>",
+        prog="imps",
+        description="IsMyPwdSafe - zxcvbn, but readable. Your password stays local.",
+        usage="imps [options] [password|-]",
         add_help=True,
     )
     parser.add_argument(
-        "--engine", choices=["ts", "python", "native"], default="ts",
-        help="Scoring engine: ts (zxcvbn-ts, requires Node 18+), "
-             "python (zxcvbn-python, zero deps), native (built-in). Default: ts.",
+        "--engine",
+        choices=["auto", "ts", "python", "native"],
+        default="auto",
+        help=(
+            "Scoring engine. auto (default) uses zxcvbn-ts when Node 18+ is "
+            "available, then zxcvbn-python. native is the explicit legacy "
+            "heuristic and is never selected automatically."
+        ),
     )
     parser.add_argument(
-        "-M", "--Mask",
+        "-M",
+        "--Mask",
         action="store_true",
-        help="Completely mask the input password with asterisks in the summary screen box",
+        help="Mask the password and matched tokens in the terminal UI.",
     )
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Output the result as a machine-readable JSON document",
+        help="Machine-readable JSON. Matched tokens are redacted by default.",
     )
     parser.add_argument(
-        "-q", "--quiet",
+        "--json-full",
         action="store_true",
-        help="Suppress all output and only return the exit code",
+        help="JSON including matched tokens. Use with care: this can reveal the password.",
     )
     parser.add_argument(
-        "-o", "--offline",
+        "-q",
+        "--quiet",
         action="store_true",
-        help="Disable all network requests. Implies --no-breach-check and --no-update-check",
+        help="Suppress all output and only return the exit code.",
+    )
+    parser.add_argument(
+        "-o",
+        "--offline",
+        action="store_true",
+        help="Disable all network requests (HIBP and update check).",
     )
     parser.add_argument(
         "--no-breach-check",
         action="store_true",
-        help="Skip the HaveIBeenPwned breach lookup, keep the GitHub update check",
+        help="Skip the HaveIBeenPwned lookup but allow explicit update checks.",
     )
     parser.add_argument(
         "--check-updates",
         action="store_true",
-        help="Check for newer versions on startup (disabled by default for privacy)",
+        help="Check GitHub for a newer version (disabled by default for privacy).",
     )
     view_group = parser.add_mutually_exclusive_group()
     view_group.add_argument(
-        "-s", "--short",
+        "-s",
+        "--short",
         action="store_true",
-        help="Display only the overall security assessment",
+        help="Display only the overall zxcvbn assessment.",
     )
     view_group.add_argument(
-        "-dw", "--darkweb",
+        "-dw",
+        "--darkweb",
         action="store_true",
-        help="Display only the dark web breach check",
+        help="Display only the breach check.",
     )
     parser.add_argument(
         "password",
-        type=str,
         nargs="?",
-        help="The raw text password string to submit for auditing",
+        help="Password to audit. Use '-' to read it from stdin.",
     )
-    # deprecated
     parser.add_argument(
         "--no-update-check",
         action="store_true",
-        help=argparse.SUPPRESS, # Hides from help text, but still works for backwards compatibility
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     return parser
+
+
+def _read_password(args: argparse.Namespace) -> Optional[str]:
+    if args.password == "-":  # noqa: S105
+        return sys.stdin.read().rstrip("\r\n")
+    if args.password:
+        return str(args.password)
+    if not sys.stdin.isatty():
+        return None
+    try:
+        return getpass.getpass(prompt="Enter password to audit: ")
+    except Exception as exc:  # noqa: BLE001 - no traceback for terminal errors
+        print(err(f"[!] Error reading password: {exc}"), file=sys.stderr)
+        return None
 
 
 def main(argv: Optional[list[str]] = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
-    password = args.password
-
-    if args.no_update_check:
-        print(
-            "Warning: --no-update-check is deprecated and is now the default behavior. "
-            "Use --check-updates to enable the check.",
-            file=sys.stderr
-        )
+    if args.json_full:
+        args.json = True
 
     if args.short:
         view = "short"
@@ -98,27 +125,40 @@ def main(argv: Optional[list[str]] = None) -> int:
     else:
         view = "full"
 
+    if args.no_update_check and not args.quiet:
+        print(
+            "Warning: --no-update-check is deprecated and is now the default. "
+            "Use --check-updates to enable it.",
+            file=sys.stderr,
+        )
+
     skip_breach = args.offline or args.no_breach_check
+    password = _read_password(args)
+    if password is None:
+        password = ""
 
-    if password == "-":  # noqa: S105
-        password = sys.stdin.read().rstrip("\n")
-    elif not password:
-        try:
-            password = getpass.getpass(prompt="Enter password to audit: ")
-        except Exception as e:
-            print(err(f"[!] Error reading password: {e}"))
-            return 65
-        if not password:
-            print(warn("[!] No password provided."))
-            return 65
-
-    if args.check_updates and view == "full" and not args.json:
+    if (
+        args.check_updates
+        and not args.offline
+        and view == "full"
+        and not args.json
+        and not args.quiet
+    ):
         new_ver = network.check_for_updates(__version__)
         if new_ver:
             width = get_width()
-            msg = f"[!] A new version of IsMyPwdSafe is available: v{new_ver} (you have v{__version__})"  # noqa: E501
+            msg = (
+                f"[!] A new version of IsMyPwdSafe is available: v{new_ver} "
+                f"(you have v{__version__})"
+            )
             print(warn(msg.center(width)))
-            print(dim("    Update now: https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width) + "\n"))  # noqa: E501
+            print(
+                dim(
+                    "    Update now: "
+                    "https://github.com/Roma476/IsMyPwdSafe/releases/latest".center(width)
+                    + "\n"
+                )
+            )
 
     if args.offline:
         breach_reason = "offline"
@@ -131,25 +171,24 @@ def main(argv: Optional[list[str]] = None) -> int:
         password,
         check_breach=not skip_breach,
         breach_skip_reason=breach_reason,
-        tool_version=__version__,
         engine_name=args.engine,
     )
 
     if not args.quiet:
         if args.json:
-            print(render_json(result))
+            print(render_json(result, include_tokens=args.json_full))
         else:
             print_output(result, password, mask_mode=args.Mask, view=view)
-            
-    assert result.score is not None
-    assert result.breach is not None
-    return compute_exit_code(result.score, result.breach)
+
+    return result.exit_code
 
 
 def entry() -> int:
-    """Console-script entry point. Handles KeyboardInterrupt."""
+    """Console-script entry point. Handles interrupts and closed pipes."""
     try:
         return main()
     except KeyboardInterrupt:
-        print("\n" + warn("[!] Audit interrupted by user."))
+        print("\n" + warn("[!] Audit interrupted by user."), file=sys.stderr)
         return 130
+    except BrokenPipeError:
+        return 0
