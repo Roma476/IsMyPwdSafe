@@ -8,7 +8,7 @@ import shutil
 import sys
 import textwrap
 import time
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Optional, Sequence
 
 from .core import AuditResult
 
@@ -93,29 +93,70 @@ def _color_for_rating(rating: str) -> str:
 
 def _bar(percent: int, width: int = 30) -> str:
     percent = max(0, min(100, percent))
+    width = max(1, width)
     filled = round(width * percent / 100)
     return "█" * filled + "░" * (width - filled)
 
 
-def _box(title: str, lines: Sequence[str], *, color: str = "") -> list[str]:
-    width = min(get_width() - 2, 76)
+def _layout_width() -> int:
+    """Use the terminal width, leaving one column of breathing room."""
+    return max(40, get_width() - 2)
+
+
+def _wrap_line(text: str, width: int) -> list[str]:
+    """Wrap visible characters without counting ANSI escape sequences."""
+    plain = _ANSI.sub("", str(text))
+    leading = ""
+    position = 0
+    while True:
+        match = _ANSI.match(str(text), position)
+        if match is None:
+            break
+        leading += match.group(0)
+        position = match.end()
+    parts = textwrap.wrap(
+        plain,
+        width=width,
+        break_long_words=True,
+        break_on_hyphens=False,
+        replace_whitespace=False,
+    ) or [""]
+    if leading:
+        return [leading + part + C.RESET for part in parts]
+    return parts
+
+
+def _box(
+    title: str,
+    lines: Sequence[str],
+    *,
+    color: str = "",
+    width: Optional[int] = None,
+) -> list[str]:
+    width = max(40, width if width is not None else _layout_width())
     inner = max(20, width - 4)
     rendered: list[str] = []
     title_text = f" {title} "
-    top_left = "┌" + title_text
-    top = top_left + "─" * max(0, width - _visible_len(top_left) - 1) + "┐"
+    if _visible_len(title_text) > width - 2:
+        title_text = f" {title[: max(0, width - 4)]} "
+    available = max(0, width - 2 - _visible_len(title_text))
+    left = available // 2
+    right = available - left
+    top = "┌" + "─" * left + title_text + "─" * right + "┐"
     rendered.append((color or "") + top + C.RESET)
     for line in lines:
         if not line:
-            rendered.append((color or "") + "│" + C.RESET + " " * (width - 2) + (color or "") + "│" + C.RESET)
+            rendered.append(
+                (color or "")
+                + "│"
+                + C.RESET
+                + " " * (width - 2)
+                + (color or "")
+                + "│"
+                + C.RESET
+            )
             continue
-        wrapped = textwrap.wrap(
-            str(line),
-            width=inner,
-            break_long_words=True,
-            break_on_hyphens=False,
-            replace_whitespace=False,
-        ) or [""]
+        wrapped = _wrap_line(str(line), inner)
         for part in wrapped:
             rendered.append(
                 (color or "")
@@ -132,6 +173,42 @@ def _box(title: str, lines: Sequence[str], *, color: str = "") -> list[str]:
     return rendered
 
 
+def _columns(
+    left_title: str,
+    left_lines: Sequence[str],
+    left_color: str,
+    right_title: str,
+    right_lines: Sequence[str],
+    right_color: str,
+    *,
+    width: Optional[int] = None,
+) -> list[str]:
+    """Render two boxes side by side without losing box borders."""
+    total = max(40, width if width is not None else _layout_width())
+    gap = 2
+    left_width = (total - gap) // 2
+    right_width = total - gap - left_width
+    left = _box(left_title, left_lines, color=left_color, width=left_width)
+    right = _box(right_title, right_lines, color=right_color, width=right_width)
+
+    def _pad_rows(box: list[str], color: str, width: int, rows: int) -> list[str]:
+        if rows <= 0:
+            return box
+        bottom = box.pop()
+        interior = (color or "") + "│" + C.RESET + " " * (width - 2) + (color or "") + "│" + C.RESET
+        box.extend([interior] * rows)
+        box.append(bottom)
+        return box
+
+    rows = max(len(left), len(right)) - 2
+    _pad_rows(left, left_color, left_width, rows - (len(left) - 2))
+    _pad_rows(right, right_color, right_width, rows - (len(right) - 2))
+    return [
+        _pad(left_line, left_width) + " " * gap + _pad(right_line, right_width)
+        for left_line, right_line in zip(left, right)
+    ]
+
+
 def _print_lines(lines: Iterable[str], *, animate: bool = False) -> None:
     for line in lines:
         print(line)
@@ -145,15 +222,16 @@ def _banner() -> None:
     title = "IsMyPwdSafe"
     tagline = "zxcvbn, but readable"
     line = f"{bold(C.CYAN + title)} {dim('·')} {dim(tagline)}"
+    padding = max(0, (get_width() - _visible_len(line)) // 2)
     print()
-    print("  " + line)
+    print(" " * padding + line)
     print()
 
 
-def _input_lines(result: AuditResult, password: str, mask_mode: bool) -> list[str]:
+def _input_summary_line(result: AuditResult, password: str, mask_mode: bool) -> str:
     info = result.input
     if info is None:
-        return []
+        return ""
     shown = "*" * len(password) if mask_mode else password
     flags = []
     if info.has_lower:
@@ -166,14 +244,13 @@ def _input_lines(result: AuditResult, password: str, mask_mode: bool) -> list[st
         flags.append("symbols")
     if info.has_non_ascii:
         flags.append("non-ASCII")
-    return [
-        f"Password:  {shown or '(empty)'}",
-        f"Length:    {info.length}",
-        f"Charset:   {info.charset_size} [{', '.join(flags) or 'none'}]",
-    ]
+    return (
+        f"Password: {shown or '(empty)'}  ·  Length: {info.length}  ·  "
+        f"Charset: {info.charset_size} [{', '.join(flags) or 'none'}]"
+    )
 
 
-def _score_lines(result: AuditResult) -> list[str]:
+def _score_lines(result: AuditResult, width: int = 30) -> list[str]:
     score = result.score
     if score is None:
         return ["No score available."]
@@ -184,33 +261,29 @@ def _score_lines(result: AuditResult) -> list[str]:
         if score.raw_score_0_4 is not None
         else "native heuristic (no zxcvbn score)"
     )
-    lines = [
+    bar_width = max(20, width - 4)
+    return [
         f"{color}{C.BOLD}{label}{C.RESET}  {color}{score.value}/100{C.RESET}   {dim(raw)}",
-        f"{color}{_bar(score.value)}{C.RESET}",
+        f"{color}{_bar(score.value, bar_width)}{C.RESET}",
     ]
-    if score.capped_by == "hibp":
-        lines.append(err("Score forced to 0 because the password appears in a breach."))
-    if result.engine_used == "native":
-        lines.append(warn("Legacy native engine: no sequence, feedback, or crack-time detail."))
-    return lines
 
 
 _CRACK_LABELS = {
-    "online_throttling_100_per_hour": "Online, throttled (100/hour)",
-    "online_no_throttling_10_per_second": "Online, unthrottled (10/sec)",
-    "offline_slow_hashing_1e4_per_second": "Offline, slow hash (10k/sec)",
-    "offline_fast_hashing_1e10_per_second": "Offline, fast hash (10B/sec)",
+    "online_throttling_100_per_hour": "Online, 100/hour",
+    "online_no_throttling_10_per_second": "Online, 10/sec",
+    "offline_slow_hashing_1e4_per_second": "Offline, 10k/sec",
+    "offline_fast_hashing_1e10_per_second": "Offline, 10B/sec",
 }
 
 
 def _crack_lines(result: AuditResult) -> list[str]:
     if not result.crack_times_display:
-        return ["No zxcvbn crack-time estimate available."]
+        return []
     lines = []
     for key, label in _CRACK_LABELS.items():
         value = result.crack_times_display.get(key)
         if value:
-            lines.append(f"{label:<34} {bold(value)}")
+            lines.append(f"{label:<18} {bold(value)}")
     return lines
 
 
@@ -231,64 +304,82 @@ def _format_number(value: Any) -> str:
 def _match_detail(match: Mapping[str, Any]) -> str:
     pattern = str(match.get("pattern") or "unknown")
     if pattern == "dictionary":
-        detail = f"dictionary: {match.get('dictionary_name') or '?'}"
+        detail = str(match.get("dictionary_name") or "dictionary")
         if match.get("rank") is not None:
-            detail += f", rank {match.get('rank')}"
+            detail += f" #{match.get('rank')}"
         if match.get("reversed"):
-            detail += ", reversed"
+            detail += " rev"
         if match.get("l33t"):
-            detail += ", l33t"
+            detail += " l33t"
         return detail
     if pattern == "spatial":
-        return f"keyboard: {match.get('graph') or '?'}, {match.get('turns') or '?'} turns"
+        return f"keyboard {match.get('graph') or '?'}, {match.get('turns') or '?'} turns"
     if pattern == "repeat":
-        return f"repeated {match.get('repeat_count') or '?'} times"
+        return f"repeat x{match.get('repeat_count') or '?'}"
     if pattern == "sequence":
-        return f"sequence: {match.get('sequence_name') or '?'}"
+        return f"sequence {match.get('sequence_name') or '?'}"
     if pattern == "regex":
-        return f"regex: {match.get('regex_name') or '?'}"
+        return f"regex {match.get('regex_name') or '?'}"
     if pattern == "date":
         parts = [match.get("year"), match.get("month"), match.get("day")]
         if any(part is not None for part in parts):
-            return "date: " + "-".join(str(part or "?") for part in parts)
+            return "date " + "-".join(str(part or "?") for part in parts)
         return "date pattern"
     if pattern == "bruteforce":
         return "brute-force"
     if pattern == "pwned":
-        return "found in HaveIBeenPwned"
+        return "breach match"
     return pattern
 
 
 def _sequence_lines(result: AuditResult, mask_mode: bool) -> list[str]:
-    if not result.sequence:
+    # The HIBP matcher adds a synthetic "pwned" match. The breach section
+    # already reports it, so showing it again here would be repetitive.
+    matches = [
+        match
+        for match in result.sequence
+        if str(match.get("pattern") or "") != "pwned"
+    ]
+    if not matches:
         if result.engine_used == "native":
-            return ["Native engine does not expose sequence matches."]
-        return ["No matches: zxcvbn did not find a recognisable pattern."]
+            return []
+        if result.breach is not None and result.breach.pwned:
+            return []
+        return ["No zxcvbn pattern matched."]
     lines = []
-    for index, match in enumerate(result.sequence, start=1):
+    for index, match in enumerate(matches, start=1):
         token = str(match.get("token") or "")
         shown = "*" * len(token) if mask_mode else token
         shown = shown if shown else "(empty)"
         detail = _match_detail(match)
-        guesses = _format_number(match.get("guesses"))
-        lines.append(
-            f"{index:>2}. {bold(shown)}  {detail}  {dim('guesses: ' + guesses)}"
-        )
+        lines.append(f"{index:>2}. {bold(shown)}  {detail}")
     return lines
+
+
+def _is_breach_advice(text: str) -> bool:
+    lower = text.lower()
+    return "breach" in lower or "elsewhere" in lower or "pwned" in lower
 
 
 def _feedback_lines(result: AuditResult) -> list[str]:
     feedback = result.feedback
     if feedback is None:
-        return ["No feedback available."]
+        return []
+
+    pwned = result.breach is not None and bool(result.breach.pwned)
     lines: list[str] = []
-    if feedback.warning:
+    if feedback.warning and not (pwned and _is_breach_advice(feedback.warning)):
         lines.append(err(f"Warning: {feedback.warning}"))
-    if feedback.suggestions:
-        lines.append("Suggestions:")
-        lines.extend(f"  • {item}" for item in feedback.suggestions)
-    if not lines:
-        lines.append("No specific zxcvbn feedback.")
+
+    suggestions = [
+        item
+        for item in feedback.suggestions
+        if not (pwned and _is_breach_advice(item))
+    ]
+    if suggestions:
+        if lines:
+            lines.append("")
+        lines.extend(f"• {item}" for item in suggestions)
     return lines
 
 
@@ -315,9 +406,9 @@ def _breach_lines(result: AuditResult) -> tuple[list[str], str]:
     if breach.pwned:
         count = _format_number(breach.breach_count) if breach.breach_count else "many"
         return [
-            err("FOUND IN DATA BREACHES"),
-            f"Seen {bold(count)} times in the HaveIBeenPwned corpus.",
+            err(f"FOUND IN HIBP  ·  seen {bold(count)} times"),
             "Change this password everywhere it is used.",
+            dim("Final score capped at 0."),
         ], C.RED
     return [
         ok("Not found in HaveIBeenPwned."),
@@ -346,34 +437,80 @@ def print_output(
 ) -> None:
     """Print a result in full, short, or dark-web-only mode."""
     _banner()
+    width = _layout_width()
+    rating = result.score.rating if result.score else "weak"
+    score_color = _color_for_rating(rating)
 
     if result.error:
-        _print_lines(_box("ERROR", [err(result.error)], color=C.RED))
+        _print_lines(_box("ERROR", [err(result.error)], color=C.RED, width=width))
         if result.engine_used is None and result.engine_requested:
             print(dim(f"Requested engine: {result.engine_requested}"))
         return
 
     if view == "darkweb":
         breach, color = _breach_lines(result)
-        _print_lines(_box("BREACH CHECK", breach, color=color))
+        _print_lines(_box("BREACH CHECK", breach, color=color, width=width))
+        print()
         print(_engine_line(result))
         return
 
     if view == "short":
-        _print_lines(_box("SCORE", _score_lines(result), color=_color_for_rating(result.score.rating if result.score else "weak")))
+        _print_lines(
+            _box(
+                "SCORE",
+                _score_lines(result, width),
+                color=score_color,
+                width=width,
+            )
+        )
+        print()
         breach, color = _breach_lines(result)
-        _print_lines(_box("BREACH CHECK", breach, color=color))
+        _print_lines(_box("BREACH CHECK", breach, color=color, width=width))
+        print()
         print(_engine_line(result))
         return
 
-    _print_lines(_box("INPUT", _input_lines(result, password, mask_mode), color=C.CYAN))
-    score_color = _color_for_rating(result.score.rating if result.score else "weak")
-    _print_lines(_box("SCORE", _score_lines(result), color=score_color))
-    _print_lines(_box("TIME TO CRACK", _crack_lines(result), color=C.BLUE))
-    _print_lines(_box("WHY", _sequence_lines(result, mask_mode), color=C.MAGENTA))
-    _print_lines(_box("FEEDBACK", _feedback_lines(result), color=C.YELLOW))
+    summary = _score_lines(result, width)
+    input_line = _input_summary_line(result, password, mask_mode)
+    if input_line:
+        summary.extend(["", input_line])
+    _print_lines(_box("SUMMARY", summary, color=score_color, width=width))
+    print()
+
+    crack_lines = _crack_lines(result)
+    why_lines = _sequence_lines(result, mask_mode)
+    if crack_lines and why_lines and width >= 88:
+        _print_lines(
+            _columns(
+                "TIME TO CRACK",
+                crack_lines,
+                C.BLUE,
+                "WHY",
+                why_lines,
+                C.MAGENTA,
+                width=width,
+            )
+        )
+        print()
+    else:
+        if crack_lines:
+            _print_lines(
+                _box("TIME TO CRACK", crack_lines, color=C.BLUE, width=width)
+            )
+            print()
+        if why_lines:
+            _print_lines(_box("WHY", why_lines, color=C.MAGENTA, width=width))
+            print()
+
     breach, breach_color = _breach_lines(result)
-    _print_lines(_box("BREACH CHECK", breach, color=breach_color))
+    _print_lines(_box("BREACH CHECK", breach, color=breach_color, width=width))
+    print()
+
+    feedback = _feedback_lines(result)
+    if feedback:
+        _print_lines(_box("WHAT TO DO", feedback, color=C.YELLOW, width=width))
+        print()
+
     print(_engine_line(result))
 
 

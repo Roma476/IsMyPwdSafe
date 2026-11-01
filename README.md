@@ -31,8 +31,9 @@
 > default), `imps` uses zxcvbn-python when Node is unavailable, provided the
 > optional Python dependency is installed. See [Scoring engines](#scoring-engines).
 
-> **Version 2.0.1.** Documentation and contract patch for the 2.0 line. Scoring,
-> privacy, exit-code, and network behavior are unchanged from `2.0.0`.
+> **Version 2.0.1.** Documentation, contract, and terminal-report patch for the
+> 2.0 line. Scoring, privacy, exit-code, and network behavior are unchanged from
+> `2.0.0`.
 
 > A small wrapper around excellent work — see [A note on humility](#a-note-on-humility)
 > for what this tool cannot do.
@@ -152,8 +153,12 @@ The default zxcvbn path renders:
 - zxcvbn score `0-4` and a readable `0-100` percentage;
 - estimated time to crack under four attacker models;
 - **why** the score is low: dictionary matches, keyboard walks, repeats, dates, sequences, regexes, and brute force;
-- zxcvbn feedback (warning + suggestions);
+- zxcvbn feedback (warning + suggestions) under `WHAT TO DO`;
 - HIBP breach status.
+
+The report uses the full terminal width. On wide terminals, time-to-crack and
+why sit side by side; on narrow terminals they stack. Empty zxcvbn sections are
+omitted when the legacy native engine is used.
 
 The legacy native engine is explicitly limited; see
 [Legacy native engine](#legacy-native-engine).

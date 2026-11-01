@@ -9,8 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Documentation and contract patch. No scoring, privacy, exit-code, or network
-  behavior changed.
+- Documentation, contract, and terminal-report patch. No scoring, privacy,
+  exit-code, or network behavior changed.
+- The terminal report now uses the full terminal width, centers section titles,
+  and places time-to-crack and why side by side on wide terminals. Empty
+  zxcvbn sections are omitted for the native engine.
+- Breach details are shown once, in `BREACH CHECK`, instead of being repeated
+  in the score, why, and feedback sections.
 - The terminal help for `-s/--short` now says it shows the score, breach
   verdict, and engine line.
 

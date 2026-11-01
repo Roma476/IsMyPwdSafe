@@ -9,7 +9,7 @@ Output docs/assets/demo.gif
 Set Shell "bash"
 Set FontSize 15
 Set Width 1100
-Set Height 840
+Set Height 720
 Set Padding 24
 Set Theme "Dracula"
 Set TypingSpeed 45ms
