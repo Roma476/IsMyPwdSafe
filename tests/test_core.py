@@ -51,6 +51,20 @@ def test_native_engine_offline_is_deterministic(no_network):
     assert result.score.rating == "strong"
 
 
+def test_python_engine_reports_calc_time_in_milliseconds(no_network):
+    if not engines.python_available():
+        pytest.skip("zxcvbn-python is not installed")
+
+    result = analyze_password(
+        "correct-horse-battery-staple",
+        check_breach=False,
+        engine_name="python",
+    )
+    assert result.error is None
+    assert result.calc_time is not None
+    assert result.calc_time >= 0
+
+
 def test_offline_reason(no_network):
     result = analyze_password(
         "correct-horse-battery-staple",

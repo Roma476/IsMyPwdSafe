@@ -26,7 +26,7 @@
        src="https://raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/docs/assets/demo.gif">
 </p>
 
-<p align="center"><sub>The demo uses the real CLI and a throwaway demo password.</sub></p>
+<p align="center"><sub>The demo uses the real CLI and a public throwaway password; the first scene makes a live HIBP request, so its result and exit code are real. The second scene runs offline.</sub></p>
 
 > Node.js 18+ is required only for `--engine=ts`. With `--engine=auto` (the
 > default), `imps` uses zxcvbn-python when Node is unavailable, provided the
@@ -196,9 +196,11 @@ capped.
 - `engine_fallback` is `true` only when `auto` fell back to zxcvbn-python
   because zxcvbn-ts was unavailable.
 
-If `auto` cannot find any zxcvbn engine, the command exits `4` and `engine_used`
-is `null`. It does **not** quietly run the native heuristic. Consumers should
-branch on `engine_used`, not on `engine_requested`.
+For example, without Node.js, `--engine=auto` reports
+`engine_requested: "auto"`, `engine_used: "python"`, and
+`engine_fallback: true`. If `auto` cannot find any zxcvbn engine, the command
+exits `4` and `engine_used` is `null`. It does **not** quietly run the native
+heuristic. Consumers should branch on `engine_used`, not on `engine_requested`.
 
 | Engine | `engine_version` |
 | ------ | ---------------- |
@@ -243,6 +245,10 @@ Skip it explicitly:
 imps --no-breach-check "my-password"   # skip HIBP
 imps --offline "my-password"           # skip HIBP and the optional update check
 ```
+
+When skipped, `breach.checked` is `false`, `breach.pwned` is `null`, and
+`breach.reason` is `"disabled"` (or `"offline"` for `--offline`). The exit code
+is based only on the score (`0` or `1`), never `5`.
 
 If HIBP cannot be reached, `imps` does **not** call the password safe:
 
@@ -289,13 +295,16 @@ Flag notes:
 - `-s` and `-dw` are mutually exclusive.
 - `-s` changed in 2.0: it now includes the breach verdict and engine line, not
   only the score. See the [CHANGELOG](CHANGELOG.md).
-- `-M` affects the terminal UI only. `--json` always redacts matched tokens;
-  use `--json-full` only when you explicitly need them.
+- `-M` affects the terminal UI only. It does not change `--json` or
+  `--json-full`: `--json` redacts matched tokens; `--json-full` includes them.
+  Use `--json-full` only when you explicitly need them.
 - `-dw` is named for historical reasons. It shows the HIBP breach check, not a
   dark-web scan.
 - `-q` suppresses output but does **not** change input handling. If stdin is a
   TTY, the hidden prompt still appears. For non-interactive use, pipe the
-  password (`echo 'pwd' | imps -q -`) or pass it as an argument.
+  password (`echo 'pwd' | imps -q -`) or read it from a file
+  (`imps -q - < password.txt`). Passing it as an argument is possible but
+  exposes it to shell history; see the warning at the top.
 - In a non-interactive shell with no password and no stdin, `imps` exits `2`
   instead of hanging.
 
@@ -327,6 +336,9 @@ echo $?
 `--json` emits a strict, versioned document validated against [`schema/result.schema.json`](schema/result.schema.json). Non-finite floats are converted to `null`; the output never contains `Infinity` or `NaN`.
 
 By default, `sequence[].token`, `matched_word`, `base_token`, `sub_display`, `regex_match`, and `subs` are replaced with `"<redacted>"`. Use `--json-full` only when you explicitly need the matched tokens.
+
+`redacted` is `true` for `--json` and `false` for `--json-full`. Native-engine
+JSON follows the same flag even though it has no tokens to reveal.
 
 The default JSON has no top-level `password` field, and the password is not
 included in `input`, `breach`, `feedback`, or the redacted `sequence`. The test
@@ -399,11 +411,10 @@ Example (abridged):
 }
 ```
 
-`calc_time` is in **milliseconds**. It is `null` when the engine does not report
-a calculation time; zxcvbn-python and the legacy native engine currently return
-`null`. The field name is unchanged in the 2.0 schema. A `calc_time_ms` alias is
-deferred to a future minor release rather than changing a published schema in a
-patch.
+`calc_time` is in **milliseconds**. zxcvbn-ts and zxcvbn-python report it; the
+legacy native engine returns `null`. The field name is unchanged in the 2.0
+schema. A `calc_time_ms` alias is deferred to a future minor release rather than
+changing a published schema in a patch.
 
 ### JSON in error cases
 

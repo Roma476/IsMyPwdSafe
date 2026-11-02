@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Python API is now documented and exported consistently: `render_json` and
   `result_to_dict` are available from the package root, and the package ships
   `py.typed`.
+- zxcvbn-python's `calc_time` (a `timedelta`) is now converted to milliseconds
+  instead of being dropped as `null`; `calc_time` remains milliseconds in the
+  JSON contract, and the legacy native engine still reports `null`.
 
 ### Documentation
 

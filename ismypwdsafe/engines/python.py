@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import timedelta
 from importlib import metadata
 from typing import Any, Dict, Optional
 
@@ -33,6 +34,18 @@ def _version() -> Optional[str]:
     try:
         return metadata.version("zxcvbn")
     except metadata.PackageNotFoundError:
+        return None
+
+
+def _calc_time_ms(value: Any) -> Optional[float]:
+    """Convert zxcvbn-python's timedelta to the contract's milliseconds."""
+    if isinstance(value, timedelta):
+        return value.total_seconds() * 1000.0
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
         return None
 
 
@@ -98,7 +111,7 @@ class PythonZxcvbnEngine:
             feedback_warning=feedback.get("warning"),
             feedback_suggestions=tuple(feedback.get("suggestions") or ()),
             sequence=sequence,
-            calc_time=raw.get("calc_time"),
+            calc_time=_calc_time_ms(raw.get("calc_time")),
             pwned=pwned,
             pwned_count=pwned_count,
             hibp_status=hibp_status,

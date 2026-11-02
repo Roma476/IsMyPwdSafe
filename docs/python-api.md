@@ -41,9 +41,15 @@ print(payload["score"])
 print(render_json(result))
 ```
 
-`analyze_password()` returns a frozen `AuditResult` dataclass. `score`, `input`,
-and `breach` are `None` only for the documented error envelopes; check
-`result.error` and `result.exit_code` instead of assuming success.
+`analyze_password()` returns a frozen `AuditResult` dataclass. It also exposes
+`guesses`, `crack_times_seconds`, `crack_times_display`, `feedback`, `sequence`,
+`engine_requested`, `engine_used`, `engine_version`, `engine_fallback`, and
+`calc_time` (milliseconds; `null` for the legacy native engine).
+
+`score`, `input`, and `breach` are `None` only for the documented error
+envelopes; check `result.error` and `result.exit_code` instead of assuming
+success. Invalid input and engine failures are returned as `AuditResult` error
+results, not raised as exceptions.
 
 ## Public surface
 
@@ -66,8 +72,13 @@ The package ships `py.typed`, so type checkers can use the annotations.
 ## Network behavior
 
 `check_breach=True` is the default and performs the same HIBP k-anonymity
-request as the CLI. Use `check_breach=False` when the caller must not make
-network requests:
+request as the CLI:
+
+```python
+result = analyze_password(password)
+```
+
+Use `check_breach=False` when the caller must not make network requests:
 
 ```python
 result = analyze_password(
