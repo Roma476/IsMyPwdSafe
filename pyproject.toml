@@ -38,7 +38,7 @@ dev = [
 include-package-data = false
 
 [tool.setuptools.package-data]
-ismypwdsafe = ["js/*.js", "js/*.mjs", "js/*.json"]
+ismypwdsafe = ["js/*.js", "js/*.mjs", "js/*.json", "py.typed"]
 
 [tool.setuptools.packages.find]
 include = ["ismypwdsafe*"]

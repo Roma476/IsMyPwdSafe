@@ -5,6 +5,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from .core import SCHEMA_VERSION, AuditResult, analyze_password  # noqa: E402,F401
+from .render import render_json, result_to_dict  # noqa: E402,F401
 
 try:
     __version__ = version("ismypwdsafe")
@@ -16,4 +17,11 @@ except PackageNotFoundError:
     except OSError:
         __version__ = "0.0.0+unknown"
 
-__all__ = ["analyze_password", "AuditResult", "SCHEMA_VERSION", "__version__"]
+__all__ = [
+    "analyze_password",
+    "AuditResult",
+    "SCHEMA_VERSION",
+    "__version__",
+    "render_json",
+    "result_to_dict",
+]

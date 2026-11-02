@@ -33,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   engine and makes `PATTERN MATCHES` useful for pwned weak passwords.
 - The terminal help for `-s/--short` now says it shows the score, breach
   verdict, and engine line.
+- The Python API is now documented and exported consistently: `render_json` and
+  `result_to_dict` are available from the package root, and the package ships
+  `py.typed`.
 
 ### Documentation
 

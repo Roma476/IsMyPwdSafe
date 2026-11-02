@@ -3,7 +3,8 @@
 <p align="center"><strong>zxcvbn, but readable.</strong></p>
 
 <p align="center">
-  A privacy-first password audit for developers and CI/CD.<br>
+  A privacy-first password audit for developers and CI/CD, with a CLI and an
+  importable Python API.<br>
   zxcvbn-first scoring by default: zxcvbn-ts with Node.js 18+, zxcvbn-python
   otherwise, and a clean exit <code>4</code> if neither is installed. HIBP is
   on by default, exit codes are semantic, JSON is strict, and the GitHub Action
@@ -25,7 +26,7 @@
        src="https://raw.githubusercontent.com/Roma476/IsMyPwdSafe/main/docs/assets/demo.gif">
 </p>
 
-<p align="center"><sub>The demo uses the real CLI and a throwaway demo password. No real secrets are shown.</sub></p>
+<p align="center"><sub>The demo uses the real CLI and a throwaway demo password.</sub></p>
 
 > Node.js 18+ is required only for `--engine=ts`. With `--engine=auto` (the
 > default), `imps` uses zxcvbn-python when Node is unavailable, provided the
@@ -52,6 +53,7 @@
 - [CLI reference](#cli-reference)
 - [Exit codes](#exit-codes)
 - [JSON contract v2.0](#json-contract-v20)
+- [Python API](#python-api)
 - [GitHub Action](#github-action)
 - [Privacy](#privacy)
 - [The five 2.0 decisions](#the-five-20-decisions-that-differ-from-the-original-plan)
@@ -455,23 +457,15 @@ zxcvbn-specific fields are empty rather than absent:
 }
 ```
 
-The library returns the same data:
+## Python API
 
-```python
-from ismypwdsafe import analyze_password
+The same analysis is available from Python; the CLI is one front end. The
+supported surface is `analyze_password`, `AuditResult`, `result_to_dict`,
+`render_json`, `SCHEMA_VERSION`, and `__version__`.
 
-result = analyze_password(
-    "correct-horse-battery-staple",
-    check_breach=False,
-    engine_name="ts",  # or "auto", "python", "native"
-)
-print(result.score.value)
-print(result.score.rating)
-print(result.engine_used)
-print(result.breach.checked)
-```
-
-`check_breach=True` is the default. `engine_name="auto"` follows the same no-silent-native rule as the CLI.
+See [Python API](https://github.com/Roma476/IsMyPwdSafe/blob/main/docs/python-api.md)
+for examples, error handling, engine requirements, and JSON output. For other
+languages, use `imps --json`; this is a Python API, not a cross-language SDK.
 
 ---
 
