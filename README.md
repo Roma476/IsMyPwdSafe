@@ -698,6 +698,8 @@ truth, and a tag is only created after the candidate has been exercised.
    the Action result, and the CLI output before promoting it.
 6. Only then create the stable tag (`v2.0.1`), publish to PyPI, and merge the
    release branch into `main`.
+7. Move the `v2` major-version tag to the released commit so
+   `uses: Roma476/IsMyPwdSafe@v2` follows the 2.x line.
 
 Patch releases do not rewrite already published tags or PyPI provenance. If a
 release needs a correction, publish a new patch rather than moving a tag.

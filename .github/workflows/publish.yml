@@ -3,7 +3,8 @@ name: Publish
 on:
   push:
     tags:
-      - "v*"
+      # Release tags only; the `v2` major alias is not a release.
+      - "v*.*.*"
 
 permissions:
   contents: read
