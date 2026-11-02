@@ -211,6 +211,11 @@ def _columns(
 
 
 _TITLE_GLYPHS = "01#$%&@?*+=-<>/\\|"
+_FADE_COLORS = (
+    "\033[38;5;236m",
+    "\033[38;5;242m",
+    "\033[38;5;248m",
+)
 _TITLES = (
     "SUMMARY",
     "TIME TO CRACK",
@@ -245,10 +250,8 @@ def _animate_title_line(line: str) -> bool:
     if not fragments:
         return False
     longest = max(len(title) for _, title in fragments)
-    steps = list(range(1, longest + 1, max(1, longest // 5)))
-    if steps[-1] != longest:
-        steps.append(longest)
-    for revealed in [0, *steps]:
+    for step in range(13):
+        revealed = round(longest * step / 12)
         frame = line
         for needle, title in fragments:
             frame = frame.replace(
@@ -257,21 +260,22 @@ def _animate_title_line(line: str) -> bool:
             )
         sys.stdout.write("\r" + frame)
         sys.stdout.flush()
-        time.sleep(0.045 if revealed == 0 else 0.022)
+        time.sleep(0.1 if step == 0 else 0.03)
     sys.stdout.write("\r" + line + "\n")
     sys.stdout.flush()
     return True
 
 
-def _fade_line(line: str, *, hold: float = 0.012, after: float = 0.005) -> None:
+def _fade_line(line: str, *, hold: float = 0.025, after: float = 0.004) -> None:
     if not line:
         print()
         time.sleep(after)
         return
     plain = _ANSI.sub("", line)
-    sys.stdout.write(C.DIM + plain + C.RESET)
-    sys.stdout.flush()
-    time.sleep(hold)
+    for shade in _FADE_COLORS:
+        sys.stdout.write("\r" + shade + plain + C.RESET)
+        sys.stdout.flush()
+        time.sleep(hold)
     sys.stdout.write("\r" + line + "\n")
     sys.stdout.flush()
     time.sleep(after)

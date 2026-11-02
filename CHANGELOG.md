@@ -16,10 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and places time-to-crack and pattern matches side by side on wide terminals.
   Empty zxcvbn sections are omitted for the native engine.
 - The original gradual reveal is back, with a more deliberate rhythm: banner
-  and report lines fade in, section titles resolve from scrambled characters,
-  sections are spaced with short beats, and the summary score bar fills with
-  eased motion and a moving highlight. Animation stays disabled for non-TTY
-  output and when `NO_COLOR` is set.
+  and report lines fade through a multi-step luminance ramp, section titles
+  resolve visibly from scrambled characters, sections are spaced with short
+  beats, and the summary score bar fills with eased motion and a moving
+  highlight. Animation stays disabled for non-TTY output and when `NO_COLOR`
+  is set.
 - Breach details are shown once, in `BREACH CHECK`, instead of being repeated
   in the score, pattern matches, and feedback sections.
 - The score line shows one rating (`STRONG 100/100`) instead of repeating the
