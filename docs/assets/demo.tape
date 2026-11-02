@@ -21,7 +21,7 @@ Sleep 6s
 
 Type 'echo "exit=$?"'
 Enter
-Sleep 2s
+Sleep 4s
 
 Ctrl+L
 Sleep 500ms
