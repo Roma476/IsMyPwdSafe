@@ -150,7 +150,7 @@ it is also why the tool is occasionally annoying in CI.
 
 The default zxcvbn path renders:
 
-- zxcvbn score `0-4` and a readable `0-100` percentage;
+- a readable `0-100` score; zxcvbn's raw `0-4` score is kept in JSON;
 - estimated time to crack under four attacker models;
 - **pattern matches** that explain the score: dictionary matches, keyboard walks, repeats, dates, sequences, regexes, and brute force;
 - zxcvbn feedback (warning + suggestions) under `WHAT TO DO`;
