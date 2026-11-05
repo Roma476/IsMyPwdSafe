@@ -1,14 +1,18 @@
 name: 'IsMyPwdSafe'
-description: 'Fail the job if a password is weak, pwned, or has an unknown breach status'
+description: 'Fail the job if a password is weak, pwned, or has an unknown breach status; optionally scan repository .env files without printing values'
 author: 'Roma476'
 branding:
   icon: 'shield'
   color: 'green'
 
 inputs:
+  mode:
+    description: 'audit (one password) or scan (repository .env files).'
+    default: 'audit'
   password:
-    description: 'The password to audit. Pass it using GitHub Secrets.'
-    required: true
+    description: 'The password to audit in audit mode. Pass it using GitHub Secrets.'
+    required: false
+    default: ''
   engine:
     description: 'auto | ts | python | native. auto prefers zxcvbn-ts.'
     default: 'auto'
@@ -19,23 +23,66 @@ inputs:
     description: 'Set to true to skip HIBP and all network calls.'
     default: 'false'
   min-score:
-    description: 'Fail if the password score is below this value (0-100).'
+    description: 'Fail if the score is below this value (0-100).'
     default: '70'
+  scan-paths:
+    description: 'Optional space-separated files or directories for scan mode. Empty uses git-aware discovery.'
+    default: ''
+  scan-include:
+    description: 'Optional comma-separated additional glob(s) for scan mode.'
+    default: ''
+  include-untracked:
+    description: 'Scan mode: include untracked and ignored files.'
+    default: 'false'
+  no-git:
+    description: 'Scan mode: walk the current directory instead of using git discovery.'
+    default: 'false'
+  annotation-limit:
+    description: 'Maximum file:line annotations emitted by scan mode.'
+    default: '10'
+  scan-json-artifact:
+    description: 'Artifact name for scan JSON. Set to an empty string to skip upload.'
+    default: 'ismypwdsafe-scan'
 
 outputs:
   score:
-    description: 'The security score (0-100).'
+    description: 'The audit security score (0-100). Empty in scan mode.'
     value: ${{ steps.audit.outputs.score }}
   rating:
-    description: 'The rating (weak, medium, strong).'
+    description: 'The audit rating (weak, medium, strong). Empty in scan mode.'
     value: ${{ steps.audit.outputs.rating }}
   exit-code:
-    description: 'The imps exit code (0 ok, 1 weak, 2 usage, 3 pwned, 4 engine error, 5 HIBP unknown, 130 interrupted).'
-    value: ${{ steps.audit.outputs.exit-code }}
+    description: 'The imps exit code (0 ok, 1 weak, 2 usage, 3 pwned, 4 engine error, 5 HIBP unknown, 6 critical scan finding, 130 interrupted).'
+    value: ${{ steps.audit.outputs.exit-code || steps.scan.outputs.exit-code }}
+  scan-findings:
+    description: 'Scan mode: number of findings.'
+    value: ${{ steps.scan.outputs.scan-findings }}
+  scan-critical:
+    description: 'Scan mode: number of critical private-key findings.'
+    value: ${{ steps.scan.outputs.scan-critical }}
+  scan-pwned:
+    description: 'Scan mode: number of pwned password findings.'
+    value: ${{ steps.scan.outputs.scan-pwned }}
+  scan-incomplete:
+    description: 'Scan mode: true when HIBP did not finish before the deadline.'
+    value: ${{ steps.scan.outputs.scan-incomplete }}
 
 runs:
   using: 'composite'
   steps:
+    - name: Validate mode
+      shell: bash
+      env:
+        MODE: ${{ inputs.mode }}
+      run: |
+        case "$MODE" in
+          audit|scan) ;;
+          *)
+            echo "::error::mode must be 'audit' or 'scan', got '$MODE'."
+            exit 2
+            ;;
+        esac
+
     - name: Set up Node.js
       if: inputs.engine == 'ts' || inputs.engine == 'auto'
       uses: actions/setup-node@v4
@@ -51,16 +98,22 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install "${GITHUB_ACTION_PATH}[python]"
+        pip install "${GITHUB_ACTION_PATH}"
 
     - name: Run audit
       id: audit
+      if: inputs.mode == 'audit'
       shell: bash
       env:
         PASSWORD_TO_AUDIT: ${{ inputs.password }}
         OFFLINE_MODE: ${{ inputs.offline }}
         ENGINE: ${{ inputs.engine }}
       run: |
+        if [ -z "$PASSWORD_TO_AUDIT" ]; then
+          echo "::error::password is required when mode is 'audit'."
+          exit 2
+        fi
+
         FLAGS=(--json --engine="$ENGINE")
         if [ "$OFFLINE_MODE" = "true" ]; then
           FLAGS+=(--offline)
@@ -94,6 +147,7 @@ runs:
         esac
 
     - name: Check score threshold
+      if: inputs.mode == 'audit'
       shell: bash
       env:
         MIN_SCORE: ${{ inputs.min-score }}
@@ -108,3 +162,204 @@ runs:
           exit 1
         fi
         echo "Score $SCORE meets the minimum threshold of $MIN_SCORE."
+
+    - name: Run scan
+      id: scan
+      if: inputs.mode == 'scan'
+      shell: bash
+      env:
+        ENGINE: ${{ inputs.engine }}
+        OFFLINE_MODE: ${{ inputs.offline }}
+        MIN_SCORE: ${{ inputs.min-score }}
+        SCAN_PATHS: ${{ inputs.scan-paths }}
+        SCAN_INCLUDE: ${{ inputs.scan-include }}
+        INCLUDE_UNTRACKED: ${{ inputs.include-untracked }}
+        NO_GIT: ${{ inputs.no-git }}
+        ANNOTATION_LIMIT: ${{ inputs.annotation-limit }}
+        JSON_PATH: ${{ runner.temp }}/ismypwdsafe-scan.json
+      run: |
+        case "$ANNOTATION_LIMIT" in
+          ''|*[!0-9]*)
+            echo "::error::annotation-limit must be a non-negative integer."
+            exit 2
+            ;;
+        esac
+
+        FLAGS=(--json --engine="$ENGINE" --min-score="$MIN_SCORE" --timeout=60)
+        if [ "$OFFLINE_MODE" = "true" ]; then
+          FLAGS+=(--offline)
+        fi
+        if [ "$INCLUDE_UNTRACKED" = "true" ]; then
+          FLAGS+=(--include-untracked)
+        fi
+        if [ "$NO_GIT" = "true" ]; then
+          FLAGS+=(--no-git)
+        fi
+        if [ -n "$SCAN_INCLUDE" ]; then
+          IFS=',' read -r -a GLOBS <<< "$SCAN_INCLUDE"
+          for glob in "${GLOBS[@]}"; do
+            glob="$(printf '%s' "$glob" | xargs)"
+            if [ -n "$glob" ]; then
+              FLAGS+=(--include "$glob")
+            fi
+          done
+        fi
+
+        PATHS=()
+        if [ -n "$SCAN_PATHS" ]; then
+          read -r -a PATHS <<< "$SCAN_PATHS"
+        fi
+
+        set +e
+        JSON_OUTPUT=$(imps scan "${FLAGS[@]}" "${PATHS[@]}")
+        CODE=$?
+        set -e
+
+        if [ -z "$JSON_OUTPUT" ]; then
+          echo "::error::imps scan returned no JSON output (exit $CODE)."
+          echo "exit-code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "scan-findings=0" >> "$GITHUB_OUTPUT"
+          echo "scan-critical=0" >> "$GITHUB_OUTPUT"
+          echo "scan-pwned=0" >> "$GITHUB_OUTPUT"
+          echo "scan-incomplete=unknown" >> "$GITHUB_OUTPUT"
+          exit "$CODE"
+        fi
+
+        printf '%s\n' "$JSON_OUTPUT" > "$JSON_PATH"
+
+        python3 - "$JSON_PATH" "$MIN_SCORE" "$ANNOTATION_LIMIT" "$GITHUB_OUTPUT" <<'PY'
+        import json
+        import sys
+
+        path, min_score_raw, limit_raw, output_path = sys.argv[1:5]
+        min_score = int(min_score_raw)
+        limit = max(0, int(limit_raw))
+
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+
+        summary = data.get("summary") or {}
+        findings = data.get("findings") or []
+
+        def write_output(name, value):
+            with open(output_path, "a", encoding="utf-8") as handle:
+                handle.write(f"{name}={value}\n")
+
+        write_output("exit-code", data.get("exit_code", ""))
+        write_output("scan-findings", len(findings))
+        write_output("scan-critical", summary.get("critical", 0))
+        write_output("scan-pwned", summary.get("pwned", 0))
+        write_output("scan-incomplete", str(bool(data.get("incomplete"))).lower())
+
+        def escape(value):
+            return (
+                str(value)
+                .replace("%", "%25")
+                .replace("\r", "%0D")
+                .replace("\n", "%0A")
+                .replace(":", "%3A")
+                .replace(",", "%2C")
+            )
+
+        annotations = []
+        for item in findings:
+            kind = item.get("kind")
+            key = item.get("key", "value")
+            location = f"{item.get('path', '?')}:{item.get('line', 0)}"
+            breach = item.get("breach") or {}
+            if kind == "critical":
+                annotations.append(
+                    (
+                        0,
+                        "error",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "critical private key",
+                        f"CRITICAL private key in {key} at {location}. Move it to a secret manager and rotate it.",
+                    )
+                )
+            elif kind == "password" and breach.get("pwned") is True:
+                annotations.append(
+                    (
+                        1,
+                        "error",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "pwned password",
+                        f"{key} at {location} was found in HIBP.",
+                    )
+                )
+            elif kind == "password" and breach.get("checked") and breach.get("pwned") is None:
+                annotations.append(
+                    (
+                        2,
+                        "error",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "unknown breach status",
+                        f"HIBP status for {key} at {location} is unknown. Failing closed.",
+                    )
+                )
+            elif kind == "password" and item.get("score") is None:
+                annotations.append(
+                    (
+                        2,
+                        "error",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "password not scored",
+                        f"{key} at {location} could not be scored. Failing closed.",
+                    )
+                )
+            elif kind == "password" and item.get("score") is not None and item["score"] < min_score:
+                annotations.append(
+                    (
+                        3,
+                        "warning",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "weak password",
+                        f"{key} at {location} scores {item['score']}/100, below the threshold of {min_score}.",
+                    )
+                )
+            elif kind == "token" and item.get("message"):
+                annotations.append(
+                    (
+                        4,
+                        "notice",
+                        item.get("path", "?"),
+                        item.get("line", 0),
+                        "token-like value",
+                        f"TOKEN {key} at {location}: {item['message']}",
+                    )
+                )
+
+        annotations.sort(key=lambda item: item[0])
+        shown = annotations[:limit]
+        for _, level, file_path, line, title, message in shown:
+            print(
+                f"::{level} file={escape(file_path)},line={line},"
+                f"title={escape(title)}::{escape(message)}"
+            )
+        if len(annotations) > len(shown):
+            print(
+                f"::notice::{len(annotations) - len(shown)} additional scan finding(s) "
+                "were omitted by annotation-limit; see the JSON artifact."
+            )
+
+        print(
+            f"Scan: {summary.get('files', 0)} files, {summary.get('values', 0)} values, "
+            f"{summary.get('weak', 0)} weak, {summary.get('pwned', 0)} pwned, "
+            f"{summary.get('critical', 0)} critical, incomplete={data.get('incomplete')}"
+        )
+        PY
+
+        exit "$CODE"
+
+    - name: Upload scan JSON
+      if: always() && inputs.mode == 'scan' && inputs.scan-json-artifact != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.scan-json-artifact }}
+        path: ${{ runner.temp }}/ismypwdsafe-scan.json
+        if-no-files-found: warn

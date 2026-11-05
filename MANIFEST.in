@@ -3,6 +3,7 @@ include README.md
 include CHANGELOG.md
 include version.txt
 include docs/python-api.md
+include docs/scan-spec.md
 recursive-include schema *.json
 recursive-include tests/golden *.json
 recursive-include ismypwdsafe/js *.js *.mjs *.json

@@ -2,10 +2,10 @@ name: Test GitHub Action
 
 on:
   push:
-    branches: [v2]
+    branches: [main, v2]
     tags: ["v2.0.0rc1"]
   pull_request:
-    branches: [v2]
+    branches: [main, v2]
 
 jobs:
   test-action:
@@ -49,6 +49,38 @@ jobs:
         run: |
           echo "Expected min-score to fail, but it succeeded!"
           exit 1
+
+      - name: Prepare scan fixture
+        run: printf 'DB_PASSWORD=password\n' > scan-fixture.env
+
+      - name: Test scan weak password (should fail)
+        id: scan_weak
+        continue-on-error: true
+        uses: ./
+        with:
+          mode: scan
+          engine: native
+          offline: "true"
+          scan-paths: scan-fixture.env
+          scan-json-artifact: ismypwdsafe-scan-weak
+
+      - name: Verify scan weak test failed
+        if: steps.scan_weak.outcome == 'success'
+        run: |
+          echo "Expected the scan to reject a weak password."
+          exit 1
+
+      - name: Prepare strong scan fixture
+        run: printf 'DB_PASSWORD=correct-horse-battery-staple\n' > scan-strong.env
+
+      - name: Test strong scan fixture (should pass)
+        uses: ./
+        with:
+          mode: scan
+          engine: native
+          offline: "true"
+          scan-paths: scan-strong.env
+          scan-json-artifact: ismypwdsafe-scan-strong
 
   test-rc-tag:
     if: startsWith(github.ref, 'refs/tags/v2.0.0rc')

@@ -17,6 +17,13 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="imps",
         description="IsMyPwdSafe - zxcvbn, but readable. Your password stays local.",
         usage="imps [options] [password|-]",
+        epilog=(
+            "Subcommands:\n"
+            "  imps scan [options] [path ...]\n"
+            "      Audit .env files without printing values. Use 'imps -- scan'\n"
+            "      to audit the literal password 'scan'.\n"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         add_help=True,
     )
     parser.add_argument(
@@ -113,8 +120,14 @@ def _read_password(args: argparse.Namespace) -> Optional[str]:
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    if raw_argv and raw_argv[0] == "scan":
+        from .scan import scan_main
+
+        return scan_main(raw_argv[1:])
+
     parser = _build_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args(raw_argv)
     if args.json_full:
         args.json = True
 

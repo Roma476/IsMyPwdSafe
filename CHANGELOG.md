@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-11-05
+
+### Added
+
+- `imps scan`: audit `.env`/dotenv-style files without printing, logging, or
+  storing secret values. The scan reports paths, line numbers, key names,
+  scores, pattern labels, token formats, and HIBP status only.
+- Git-aware discovery: by default only tracked `.env`, `.env.*`, `*.env`, and
+  `*.env.*` files are scanned. Explicit paths always work; `--include-untracked`
+  opts into untracked and ignored local files; `--no-git` supports non-git
+  directories.
+- Separate scan JSON contract (`schema_version: "1.0"`, `kind: "scan"`) in
+  [`schema/scan.schema.json`](schema/scan.schema.json) and the full scan
+  specification in [`docs/scan-spec.md`](docs/scan-spec.md).
+- Scan exit codes: `6` for a private key, `4` for an unusable scoring engine,
+  `3` for a pwned password, `5` for incomplete/unknown HIBP, `1` below the
+  score threshold, and `2` for usage errors.
+- HIBP for password-like findings with unique-value deduplication, four
+  concurrent requests, a five-second per-request timeout, and a 60-second global
+  deadline. A timeout keeps completed findings and reports `incomplete`.
+- `TOKEN` findings are labeled honestly: no numeric score and no HIBP lookup.
+  Private-key blocks are `CRITICAL`, exit `6`, and are never sent to HIBP.
+- The composite GitHub Action now supports `mode: scan` with `file:line`
+  annotations, an annotation limit, and a values-free JSON artifact. The
+  existing `mode: audit` behavior remains the default.
+- A custom line-oriented dotenv parser preserves line numbers, handles quotes,
+  comments, `export`, continuations, CRLF/BOM, references, and placeholders
+  without interpolation.
+
+### Changed
+
+- The default package install now includes `zxcvbn-python`, so
+  `pipx install ismypwdsafe` has a usable scoring engine without Node.js.
+  `--engine=ts` and the `auto`-to-ts branch still require Node 18+.
+- Added PyPI classifiers, keywords, and project URLs for discoverability.
+
+### Deferred to 2.1.1
+
+- Pre-commit integration using only staged files and offline mode by default.
+- A key-plus-fingerprint allowlist for non-sensitive fixtures. It will never
+  store or match raw values.
+
 ## [2.0.1] - 2026-11-01
 
 ### Changed

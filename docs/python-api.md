@@ -7,12 +7,13 @@ is not a cross-language SDK or an HTTP service.
 ## Install
 
 ```bash
-pip install "ismypwdsafe[python]"
+pip install ismypwdsafe
 ```
 
-The `python` extra installs zxcvbn-python. The default `auto` engine still uses
-zxcvbn-ts when Node.js 18+ is available; otherwise it falls back to
-zxcvbn-python. `native` is the explicit legacy engine.
+The default install includes zxcvbn-python. The `python` extra remains accepted
+for compatibility. The default `auto` engine still uses zxcvbn-ts when Node.js
+18+ is available; otherwise it falls back to zxcvbn-python. `native` is the
+explicit legacy engine.
 
 ## Basic use
 
@@ -66,6 +67,8 @@ These names are supported for Python callers in the 2.x line:
 
 Modules such as `ismypwdsafe.engines`, `ismypwdsafe.network`, and
 `ismypwdsafe.ui` are implementation details unless documented otherwise.
+`imps scan` is a CLI feature; its versioned output is documented in
+[`scan-spec.md`](scan-spec.md) and [`schema/scan.schema.json`](../schema/scan.schema.json).
 
 The package ships `py.typed`, so type checkers can use the annotations.
 

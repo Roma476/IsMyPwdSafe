@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Roma476/IsMyPwdSafe/schema/scan.schema.json",
+  "title": "IsMyPwdSafe scan result",
+  "description": "A values-free report produced by `imps scan`. Implementations MUST NOT add secret values to this document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "tool_version",
+    "exit_code",
+    "summary",
+    "findings",
+    "warnings",
+    "incomplete",
+    "unchecked_values",
+    "engine_error"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "kind": {
+      "const": "scan"
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "exit_code": {
+      "type": "integer",
+      "enum": [0, 1, 2, 3, 4, 5, 6]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "values",
+        "weak",
+        "medium",
+        "strong",
+        "pwned",
+        "unknown",
+        "critical",
+        "unparseable_lines",
+        "empty_values",
+        "references",
+        "placeholders",
+        "skipped_large"
+      ],
+      "properties": {
+        "files": { "type": "integer", "minimum": 0 },
+        "values": { "type": "integer", "minimum": 0 },
+        "weak": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "strong": { "type": "integer", "minimum": 0 },
+        "pwned": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 },
+        "critical": { "type": "integer", "minimum": 0 },
+        "unparseable_lines": { "type": "integer", "minimum": 0 },
+        "empty_values": { "type": "integer", "minimum": 0 },
+        "references": { "type": "integer", "minimum": 0 },
+        "placeholders": { "type": "integer", "minimum": 0 },
+        "skipped_large": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "line",
+          "key",
+          "kind",
+          "score",
+          "rating",
+          "patterns",
+          "breach",
+          "token_format",
+          "message"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repository-relative path. Never contains a value."
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "description": "Environment variable name. Never contains a value."
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["password", "token", "critical"]
+          },
+          "score": {
+            "type": ["integer", "null"],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "rating": {
+            "type": ["string", "null"],
+            "enum": ["weak", "medium", "strong", null]
+          },
+          "patterns": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "breach": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["checked", "pwned", "breach_count", "reason"],
+                "properties": {
+                  "checked": { "type": "boolean" },
+                  "pwned": { "type": ["boolean", "null"] },
+                  "breach_count": { "type": ["integer", "null"], "minimum": 0 },
+                  "reason": {
+                    "type": ["string", "null"],
+                    "enum": [
+                      "offline",
+                      "disabled",
+                      "api_error",
+                      "scan_timeout",
+                      null
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "token_format": {
+            "type": ["string", "null"],
+            "description": "Format label or PEM type. Never contains a value."
+          },
+          "message": {
+            "type": ["string", "null"],
+            "description": "A values-free explanation or remediation hint."
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "incomplete": {
+      "type": "boolean"
+    },
+    "unchecked_values": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "engine_error": {
+      "type": ["string", "null"]
+    }
+  }
+}

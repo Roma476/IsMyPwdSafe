@@ -8,7 +8,8 @@
   zxcvbn-first scoring by default: zxcvbn-ts with Node.js 18+, zxcvbn-python
   otherwise, and a clean exit <code>4</code> if neither is installed. HIBP is
   on by default, exit codes are semantic, JSON is strict, and the GitHub Action
-  fails closed.
+  fails closed. <code>imps scan</code> audits repository <code>.env</code>
+  files without ever displaying secret values.
 </p>
 
 <p align="center">
@@ -29,12 +30,14 @@
 <p align="center"><sub>The demo uses the real CLI and a public throwaway password; the first scene makes a live HIBP request, so its result and exit code are real. The second scene runs offline.</sub></p>
 
 > Node.js 18+ is required only for `--engine=ts`. With `--engine=auto` (the
-> default), `imps` uses zxcvbn-python when Node is unavailable, provided the
-> optional Python dependency is installed. See [Scoring engines](#scoring-engines).
+> default), `imps` uses the bundled zxcvbn-python engine when Node is
+> unavailable. See [Scoring engines](#scoring-engines).
 
-> **Version 2.0.1.** Documentation, contract, and terminal-report patch for the
-> 2.0 line. Final scores, privacy, exit-code, and network behavior are unchanged
-> from `2.0.0`; zxcvbn-ts now keeps its pattern details behind a breach cap.
+> **Version 2.1.0.** Adds `imps scan` for recurring CI use (pre-commit
+> integration follows in 2.1.1),
+> a separate scan JSON contract, git-aware `.env` discovery, honest token
+> labeling, private-key detection, and actionable scan exit codes. The single
+> password contract, scores, privacy, and network behavior are unchanged.
 
 > A small wrapper around excellent work — see [A note on humility](#a-note-on-humility)
 > for what this tool cannot do.
@@ -46,6 +49,7 @@
 ## Contents
 
 - [Quick start](#quick-start)
+- [Scan a repository](#scan-a-repository)
 - [A note on humility](#a-note-on-humility)
 - [What it reports](#what-it-reports)
 - [Scoring engines](#scoring-engines)
@@ -79,11 +83,9 @@ pipx install ismypwdsafe
 pip install ismypwdsafe
 ```
 
-For the optional zxcvbn-python fallback:
-
-```bash
-pipx install "ismypwdsafe[python]"
-```
+The default install includes the zxcvbn-python fallback, so a clean install has
+a usable scoring engine without Node.js. Node.js 18+ is still needed for
+`--engine=ts`.
 
 ### Run
 
@@ -97,15 +99,15 @@ imps --json - < password.txt # machine-readable output
 The default engine is `auto`:
 
 1. zxcvbn-ts 4.x, if Node.js 18+ is on `PATH`;
-2. otherwise zxcvbn-python, if installed;
-3. otherwise exit `4` with an explanation.
+2. otherwise the bundled zxcvbn-python engine;
+3. if neither is usable, exit `4` with an explanation.
 
 `native` is **never selected silently**. It is the explicit legacy 1.x
 heuristic; see [Legacy native engine](#legacy-native-engine).
 
 ```bash
 imps --engine=ts "correct-horse-battery-staple"
-imps --engine=python "correct-horse-battery-staple"   # needs: pip install "ismypwdsafe[python]"
+imps --engine=python "correct-horse-battery-staple"   # bundled fallback
 ```
 
 ### Node.js
@@ -124,9 +126,111 @@ winget install OpenJS.NodeJS.LTS
 ```
 
 Verify with `node --version`. Node is needed only for `--engine=ts` and for the
-`ts` branch of `auto`. If Node is unavailable, install the Python fallback
-(`pip install "ismypwdsafe[python]"`) or `auto` exits `4` rather than pretending
-the native heuristic is zxcvbn.
+`ts` branch of `auto`. If Node is unavailable, `auto` uses the bundled
+zxcvbn-python engine rather than pretending the native heuristic is zxcvbn.
+
+---
+
+## Scan a repository
+
+`imps scan` is the recurring CI use case: it finds password-like values in
+dotenv files and tells you what to fix without printing the secrets. Pre-commit
+integration using staged files is planned for `2.1.1`.
+
+```bash
+imps scan                              # tracked .env files in this repository
+imps scan .env .env.local              # explicit files always work
+imps scan --include-untracked          # opt into local/ignored .env files
+imps scan --no-git                     # non-git checkout
+imps scan --json                       # values-free scan JSON
+imps scan --offline                    # no HIBP or other network calls
+imps scan --min-score 70               # stricter score threshold
+imps scan --engine=ts --include-untracked
+```
+
+Discovery is git-aware by default: tracked files matching `.env`, `.env.*`,
+`*.env`, or `*.env.*` are scanned. Explicit paths override discovery, so an
+ignored `.env.local` is scanned when you name it. `--include-untracked` adds
+untracked and ignored files. Outside a git work tree, the command exits `2` and
+asks for `--no-git` or an explicit path.
+
+The scanner:
+
+- never prints, logs, or persists a value, a value fragment, or a password in
+  an error message;
+- scores `PASSWORD`, `PASSWD`, `PASSPHRASE`, `PWD`, and `PASS` keys with the
+  selected zxcvbn engine;
+- labels `SECRET`, `TOKEN`, `API_KEY`, `ACCESS_KEY`, `PRIVATE_KEY`,
+  `CLIENT_SECRET`, and `AUTH_TOKEN` values as `TOKEN` with **no numeric score**
+  and **no HIBP lookup** — HIBP is a password corpus, not an API-key leak
+  database;
+- treats a private-key PEM block as `CRITICAL`, exits `6`, and never sends it to
+  HIBP;
+- skips hashes, salts, file paths, URLs, usernames, lengths, reset tokens, and
+  other metadata suffixes;
+- ignores empty values, `${VAR}` references, and obvious placeholders;
+- reports `path:line`, key name, score, rating, pattern labels, token format, and
+  breach status.
+
+HIBP is on by default for password-class findings. Duplicate values share one
+request; concurrency is four; each request has a five-second timeout; the whole
+scan has a 60-second deadline. On a timeout, completed findings are retained,
+the result is marked `incomplete`, and the exit code is `5` unless a more severe
+finding exists. `--offline` and `--no-breach-check` never produce exit `5`.
+
+The scan has its own JSON contract, [`schema/scan.schema.json`](schema/scan.schema.json),
+with `schema_version: "1.0"` and `kind: "scan"`. `--json-full` is intentionally
+unsupported by scan and exits `2`: scan never emits values.
+
+```json
+{
+  "schema_version": "1.0",
+  "kind": "scan",
+  "tool_version": "2.1.0",
+  "exit_code": 3,
+  "summary": {
+    "files": 1,
+    "values": 1,
+    "weak": 1,
+    "medium": 0,
+    "strong": 0,
+    "pwned": 1,
+    "unknown": 0,
+    "critical": 0,
+    "unparseable_lines": 0,
+    "empty_values": 0,
+    "references": 0,
+    "placeholders": 0,
+    "skipped_large": 0
+  },
+  "findings": [
+    {
+      "path": ".env",
+      "line": 4,
+      "key": "DB_PASSWORD",
+      "kind": "password",
+      "score": 0,
+      "rating": "weak",
+      "patterns": ["dictionary"],
+      "breach": {
+        "checked": true,
+        "pwned": true,
+        "breach_count": 12345,
+        "reason": null
+      },
+      "token_format": null,
+      "message": null
+    }
+  ],
+  "warnings": [],
+  "incomplete": false,
+  "unchecked_values": 0,
+  "engine_error": null
+}
+```
+
+Full details, including parsing and the exit precedence, are in
+[`docs/scan-spec.md`](docs/scan-spec.md).
 
 ---
 
@@ -274,6 +378,10 @@ The GitHub update check is opt-in and separate: `--check-updates`.
 ```text
 imps [--engine {auto,ts,python,native}] [-M] [-o | --no-breach-check]
      [-s | -dw] [--check-updates] [--json | --json-full | -q] [password|-]
+
+imps scan [--engine {auto,ts,python,native}] [--min-score N]
+          [--offline | --no-breach-check] [--include GLOB]...
+          [--include-untracked | --no-git] [--json | -q] [path ...]
 ```
 
 | Flag | Description |
@@ -307,6 +415,8 @@ Flag notes:
   exposes it to shell history; see the warning at the top.
 - In a non-interactive shell with no password and no stdin, `imps` exits `2`
   instead of hanging.
+- `imps scan` is a subcommand. To audit the literal password `scan`, use
+  `imps -- scan`. `--json-full` is not supported by scan and exits `2`.
 
 ---
 
@@ -320,7 +430,12 @@ Flag notes:
 | `3` | Pwned: found in HIBP |
 | `4` | Engine error: no usable engine, Node too old, engine failure |
 | `5` | HIBP status unknown: do not treat the password as safe |
+| `6` | `imps scan` only: a private-key block was found |
 | `130` | Interrupted with Ctrl+C |
+
+`imps scan` uses the same codes with a different precedence:
+`6` (critical) > `3` (pwned) > `5` (HIBP unknown or incomplete) > `4` (engine
+error) > `1` (below `--min-score`) > `0` (clean). A usage error is `2`.
 
 For CI, use `-q` when you only need the code, or `--json` when you need the data:
 
@@ -351,7 +466,7 @@ Example (abridged):
 ```json
 {
   "schema_version": "2.0",
-  "tool_version": "2.0.1",
+  "tool_version": "2.1.0",
   "exit_code": 0,
   "error": null,
   "input": {
@@ -496,6 +611,7 @@ jobs:
         id: audit
         uses: Roma476/IsMyPwdSafe@v2
         with:
+          mode: audit
           password: ${{ secrets.PASSWORD_TO_AUDIT }}
           engine: auto          # auto | ts | python | native
           node-version: "20"
@@ -508,23 +624,58 @@ jobs:
 
 The Action passes the password through stdin, not as a process argument. It fails closed on weak, pwned, engine-error, and HIBP-unknown results.
 
+### Scan mode
+
+Use scan mode in a repository checkout to audit `.env` files without passing a
+secret to the Action:
+
+```yaml
+- uses: actions/checkout@v4
+
+- name: Scan repository .env files
+  uses: Roma476/IsMyPwdSafe@v2
+  with:
+    mode: scan
+    engine: auto
+    min-score: 70
+    offline: false            # HIBP on by default
+    annotation-limit: 20
+    scan-json-artifact: ismypwdsafe-scan
+```
+
+Scan mode emits `file:line` annotations for critical private keys, pwned
+passwords, unknown HIBP status, and weak scores. It writes a values-free JSON
+artifact for the full report. Private-key findings annotate as errors and exit
+`6`; the artifact is uploaded even when the scan fails.
+
 For exit `2` and `4`, `score` is `null` and the Action's `score` output is empty;
 use `exit-code` as the reliable signal. The Action already exits before applying
 `min-score` in those cases.
 
 | Input | Default | Description |
 | ----- | ------- | ----------- |
-| `password` | required | Always pass through GitHub Secrets. |
+| `mode` | `audit` | `audit` for one password or `scan` for repository `.env` files. |
+| `password` | — | Required in audit mode. Always pass through GitHub Secrets. |
 | `engine` | `auto` | `auto`, `ts`, `python`, or `native`. |
 | `node-version` | `20` | Node version for `auto`/`ts`. |
 | `min-score` | `70` | Fail below this score. |
 | `offline` | `false` | Skip HIBP and all network calls. |
+| `scan-paths` | — | Optional space-separated files/directories; empty uses git discovery. |
+| `scan-include` | — | Optional comma-separated extra glob(s). |
+| `include-untracked` | `false` | Scan mode: include untracked/ignored files. |
+| `no-git` | `false` | Scan mode: walk the current directory instead of git discovery. |
+| `annotation-limit` | `10` | Maximum scan annotations; the JSON artifact has the full report. |
+| `scan-json-artifact` | `ismypwdsafe-scan` | Artifact name; set empty to skip upload. |
 
 | Output | Description |
 | ------ | ----------- |
-| `score` | `0-100` score. Empty for exit `2`/`4`. |
-| `rating` | `weak`, `medium`, or `strong`. Empty for exit `2`/`4`. |
-| `exit-code` | The `imps` exit code. |
+| `score` | `0-100` audit score. Empty in scan mode. |
+| `rating` | `weak`, `medium`, or `strong`. Empty in scan mode. |
+| `exit-code` | The `imps` exit code for the selected mode. |
+| `scan-findings` | Scan mode: number of findings. |
+| `scan-critical` | Scan mode: number of critical private-key findings. |
+| `scan-pwned` | Scan mode: number of pwned password findings. |
+| `scan-incomplete` | Scan mode: `true` when HIBP timed out. |
 
 ---
 
@@ -590,15 +741,17 @@ In particular:
 - **The native engine is legacy.** `--engine=native` uses the 1.x ASCII-oriented
   entropy model and a finite pattern list. It is retained for compatibility, not
   recommended for new use.
-- **Node is external.** `--engine=auto`/`ts` needs Node.js 18+. Without Node and
-  without zxcvbn-python, `imps` exits `4`.
+- **Node is external.** `--engine=auto`/`ts` needs Node.js 18+. The default
+  install includes zxcvbn-python; if that fallback is unavailable or broken,
+  `imps` exits `4`.
 - **Bundled languages are English.** The shipped zxcvbn-ts bundle includes the
   `language-common` and `language-en` dictionaries. It does not claim 20+
   bundled languages.
 - **This is not a password manager, a policy engine, or a compliance tool.** It
-  audits one password at a time; it does not store, generate, rotate, or
-  centrally enforce credentials. It also cannot tell whether a password is
-  reused, shared, written on a sticky note, or sent over an insecure channel.
+  audits one password at a time, or `.env` files in scan mode; it does not
+  store, generate, rotate, or centrally enforce credentials. It also cannot
+  tell whether a password is reused, shared, written on a sticky note, or sent
+  over an insecure channel.
 
 If you need a guarantee, you need a password manager, a reviewed policy,
 multi-factor authentication, and an incident process. This tool can be one
@@ -612,12 +765,12 @@ small input to that work, not a replacement for it.
 | ---- | --------------- |
 | Python runtime | `>=3.8` in package metadata; CI covers 3.8, 3.10, and 3.12 |
 | Recommended engine | Node.js 18+ and zxcvbn-ts 4.2.0 |
-| Fallback engine | zxcvbn-python 4.4+ (`pip install "ismypwdsafe[python]"`) |
+| Fallback engine | Bundled zxcvbn-python 4.4+ |
 | Operating systems | CI coverage on Ubuntu, macOS, and Windows |
-| JSON contract | validated against `schema/result.schema.json` |
+| JSON contract | validated against `schema/result.schema.json` and `schema/scan.schema.json` |
 | zxcvbn-ts bundle | rebuilt and checked for reproducibility in CI on Node 18 and 20 |
 | HIBP failure path | unit tests plus a simulated missing-`fetch` run; exit `5` |
-| Action | smoke-tested with strong, weak, and below-threshold passwords |
+| Action | smoke-tested with strong, weak, below-threshold passwords, and scan mode |
 
 "CI covers" means the workflow is configured to run those jobs; it is not a
 claim that every combination has been manually exercised on every machine. The
@@ -666,6 +819,8 @@ ismypwdsafe/
 ├── core.py           # result model, HIBP overlay, exit codes
 ├── render.py         # strict JSON + redaction
 ├── cli.py            # argparse, stdin, output
+├── scan.py           # imps scan orchestration and scan JSON
+├── scan_parser.py    # dotenv parser, key classifier, PEM detection
 ├── ui.py             # terminal report
 ├── network.py        # HIBP + optional update check
 └── metrics.py        # native/legacy metrics
@@ -678,7 +833,7 @@ ismypwdsafe/
 The release is intentionally boring. `version.txt` is the single source of
 truth, and a tag is only created after the candidate has been exercised.
 
-1. Set `version.txt` to the candidate version (for example `2.0.1rc1`) and update
+1. Set `version.txt` to the candidate version (for example `2.1.0rc1`) and update
    the changelog.
 2. Run the full local checks:
    ```bash
@@ -692,11 +847,11 @@ truth, and a tag is only created after the candidate has been exercised.
 4. Install from TestPyPI in a clean environment and run the GitHub Action with
    the candidate tag, for example:
    ```yaml
-   uses: Roma476/IsMyPwdSafe@v2.0.1rc1
+   uses: Roma476/IsMyPwdSafe@v2.1.0rc1
    ```
 5. Let the candidate sit for a short soak period. Check the TestPyPI artifact,
    the Action result, and the CLI output before promoting it.
-6. Only then create the stable tag (`v2.0.1`), publish to PyPI, and merge the
+6. Only then create the stable tag (`v2.1.0`), publish to PyPI, and merge the
    release branch into `main`.
 7. Move the `v2` major-version tag to the released commit so
    `uses: Roma476/IsMyPwdSafe@v2` follows the 2.x line.
