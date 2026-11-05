@@ -3,6 +3,15 @@
 `demo.gif` is the terminal demo at the top of the project README. It is
 generated from `demo.tape` with [VHS](https://github.com/charmbracelet/vhs).
 
+`social-preview.png` is the 1280x640 GitHub social preview. Regenerate it with:
+
+```bash
+python docs/assets/make-social-preview.py
+```
+
+The generator uses Pillow and the Lato/DejaVu fonts available on most Linux
+systems. Upload the PNG under repository **Settings → General → Social preview**.
+
 ## Regenerate
 
 ```bash
