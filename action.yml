@@ -1,5 +1,5 @@
 name: 'IsMyPwdSafe'
-description: 'Fail the job if a password is weak, pwned, or has an unknown breach status; optionally scan repository .env files without printing values'
+description: 'Fail CI on weak, pwned, or unknown passwords; values-free .env audit with zxcvbn and HIBP.'
 author: 'Roma476'
 branding:
   icon: 'shield'

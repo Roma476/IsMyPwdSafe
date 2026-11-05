@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-11-05
+
+### Fixed
+
+- Shortened the GitHub Action description to satisfy GitHub Marketplace's
+  125-character metadata limit. The CLI, scan behavior, JSON contract, privacy,
+  and network behavior are unchanged.
+
 ## [2.1.0] - 2026-11-05
 
 ### Added
@@ -41,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `--engine=ts` and the `auto`-to-ts branch still require Node 18+.
 - Added PyPI classifiers, keywords, and project URLs for discoverability.
 
-### Deferred to 2.1.1
+### Deferred to 2.1.2
 
 - Pre-commit integration using only staged files and offline mode by default.
 - A key-plus-fingerprint allowlist for non-sensitive fixtures. It will never

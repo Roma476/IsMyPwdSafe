@@ -33,11 +33,12 @@
 > default), `imps` uses the bundled zxcvbn-python engine when Node is
 > unavailable. See [Scoring engines](#scoring-engines).
 
-> **Version 2.1.0.** Adds `imps scan` for recurring CI use (pre-commit
-> integration follows in 2.1.1),
-> a separate scan JSON contract, git-aware `.env` discovery, honest token
-> labeling, private-key detection, and actionable scan exit codes. The single
-> password contract, scores, privacy, and network behavior are unchanged.
+> **Version 2.1.1.** 2.1.0 added `imps scan` for recurring CI use, a separate
+> scan JSON contract, git-aware `.env` discovery, honest token labeling,
+> private-key detection, and actionable scan exit codes. 2.1.1 is a GitHub
+> Action Marketplace metadata patch; the single password contract, scores,
+> privacy, and network behavior are unchanged. Pre-commit integration follows in
+> 2.1.2.
 
 > A small wrapper around excellent work — see [A note on humility](#a-note-on-humility)
 > for what this tool cannot do.
@@ -135,7 +136,7 @@ zxcvbn-python engine rather than pretending the native heuristic is zxcvbn.
 
 `imps scan` is the recurring CI use case: it finds password-like values in
 dotenv files and tells you what to fix without printing the secrets. Pre-commit
-integration using staged files is planned for `2.1.1`.
+integration using staged files is planned for `2.1.2`.
 
 ```bash
 imps scan                              # tracked .env files in this repository
@@ -186,7 +187,7 @@ unsupported by scan and exits `2`: scan never emits values.
 {
   "schema_version": "1.0",
   "kind": "scan",
-  "tool_version": "2.1.0",
+  "tool_version": "2.1.1",
   "exit_code": 3,
   "summary": {
     "files": 1,
@@ -466,7 +467,7 @@ Example (abridged):
 ```json
 {
   "schema_version": "2.0",
-  "tool_version": "2.1.0",
+  "tool_version": "2.1.1",
   "exit_code": 0,
   "error": null,
   "input": {

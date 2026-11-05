@@ -1,7 +1,7 @@
 # `imps scan` specification
 
-Status: implemented for `2.1.0`; pre-commit integration and the allowlist are
-planned for `2.1.1`.
+Status: implemented for `2.1.0`; `2.1.1` is an Action Marketplace metadata
+patch. Pre-commit integration and the allowlist are planned for `2.1.2`.
 
 `imps scan` audits password-like values in dotenv-style files. It is designed
 for a repository checkout and CI, not for scanning an entire workstation. The
@@ -150,7 +150,7 @@ tokens and critical findings. See [`schema/scan.schema.json`](../schema/scan.sch
 `--quiet` suppresses both the human report and JSON. `--json` and `--quiet` can
 be combined; quiet wins.
 
-## 2.1.1 follow-up
+## 2.1.2 follow-up
 
 The allowlist will be based on a key name plus a fingerprint of the value, never
 the raw value:
