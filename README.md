@@ -47,8 +47,84 @@
 
 ---
 
+## Who this is for
+
+**Short answer:** IsMyPwdSafe is a guardrail for developers, DevOps/platform
+teams, and security engineers who own a codebase or a CI pipeline. It is not an
+offensive red-team tool, a password manager, or a compliance certification.
+
+| If you are... | How it fits |
+|---|---|
+| **Developer** | A readable second opinion on a password before you use it. |
+| **DevOps / platform engineer** | A fail-closed CI check for weak or pwned passwords and dotenv secrets. |
+| **Security engineer** | A small, auditable control with JSON output and values-free scan results. |
+| **Red team / pentester** | Not the primary use case. It is not an offensive tool and must not be used against credentials you do not own. In a lab it can validate generated test credentials or guard a CI pipeline. |
+| **Auditor / compliance owner** | Technical evidence for password and secret-hygiene controls, not a certification. |
+
+### Good fit
+
+- Developers who want a local check before shipping a password, test
+  credential, or dotenv file.
+- DevOps and security teams that want a fail-closed CI gate for weak or pwned
+  passwords and `.env` secrets.
+- Students and CTF players who want to understand *why* a password is weak.
+
+### Not a good fit
+
+- **Password managers and vaults.** It does not store, generate, or sync
+  passwords.
+- **Offensive credential testing.** It is not a cracker, a credential
+  harvester, or a tool for testing passwords you do not own.
+- **Full secret scanning.** `imps scan` handles dotenv-style files and a small
+  set of token formats; it does not replace GitHub secret scanning, gitleaks,
+  TruffleHog, or a secret manager.
+- **Git history or password reuse.** It checks the working tree, password
+  strength, and HIBP breaches; it does not inspect old commits or know whether
+  the same password is used elsewhere.
+- **Compliance certification.** It can support evidence for a control, but it
+  does not certify ISO 27001, SOC 2, PCI DSS, or GDPR compliance.
+- **Password cracking benchmarks.** Crack-time estimates come from zxcvbn, not
+  from a GPU benchmark.
+
+### Typical use cases
+
+| I need to... | Use... |
+|---|---|
+| Choose a better password with a readable explanation | `imps` |
+| Avoid shell history and process listings | `imps` (hidden prompt) or `imps -` |
+| Get machine-readable output | `imps --json -` |
+| Block weak or pwned passwords in CI | GitHub Action, `mode: audit` |
+| Find weak passwords and private keys in `.env` files | `imps scan` or GitHub Action, `mode: scan` |
+| Audit without network calls | `imps --offline` |
+| Integrate the audit in Python | `ismypwdsafe.analyze_password()` |
+
+For CI and shared logs, use `--json`, `-s`, `-M`, or the GitHub Action. The full
+interactive report is meant for a local terminal.
+
+### Compliance context
+
+IsMyPwdSafe is **not** a compliance scanner. It can help produce technical
+evidence for controls such as:
+
+- **NIST SP 800-63B**: checking memorized secrets against a breach corpus and
+  avoiding composition-based rules.
+- **OWASP ASVS**: password security and secrets-management requirements.
+- **ISO/IEC 27001:2022 Annex A 5.17**: authentication information.
+- **SOC 2 CC6.1**: logical access controls.
+- **PCI DSS Requirement 8**: authentication and credential hygiene.
+- **GDPR Article 32**: appropriate technical measures for personal data.
+
+Your policy and auditor still decide whether that evidence is sufficient. See
+also [What a clean result does not mean](#what-a-clean-result-does-not-mean).
+
+HIBP is on by default and sends only a five-character SHA-1 prefix; use
+`--offline` to disable all network calls.
+
+---
+
 ## Contents
 
+- [Who this is for](#who-this-is-for)
 - [Quick start](#quick-start)
 - [Scan a repository](#scan-a-repository)
 - [A note on humility](#a-note-on-humility)
